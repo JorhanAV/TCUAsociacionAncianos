@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { InventarioRoutes } from "./inventario.routes";
 import { HistorialInventarioRoutes } from "./historialInventario.routes";
+import { PerfilRoutes } from "./perfiles.routes";
 
 
 export class AppRoutes {
@@ -14,7 +15,8 @@ export class AppRoutes {
     router.use("/inventario", InventarioRoutes.routes);
 
     router.use("/historial", HistorialInventarioRoutes.routes);
-
+     // localhost:3000/perfiles/
+    router.use("/perfiles", PerfilRoutes.routes);
     return router;
   }
 }
