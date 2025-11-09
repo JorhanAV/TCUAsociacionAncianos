@@ -15,7 +15,6 @@ export class HistorialInventarioRoutes {
         //localhost:3000/historial/
         router.post('/',controller.create)
 
-        router.put('/:id',controller.update)
 
         return router 
     } 

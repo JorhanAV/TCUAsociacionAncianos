@@ -54,20 +54,25 @@ export class HistorialInventarioController {
     next: NextFunction
   ) => {
     try {
-      let idInventario = parseInt(request.params.id);
-      const inventario = await this.prisma.inventario.findUnique({
-        where: { id: idInventario },
+      let idHistorial = parseInt(request.params.id);
+      const historial = await this.prisma.historialInventario.findUnique({
+        where: { id: idHistorial },
         select: {
           id: true,
-          Nombre: true,
+          fecha: true,
           descripcion: true,
-          stock: true,
-          estado: true,
-          createdAt: true,
-          updatedAt: true,
+          tipoMovimiento: true,
+          inventario: {
+            select: {
+              Nombre: true,
+            },
+          },
+          usuario: {
+            select: { id: true, nombre_usuario: true },
+          },
         },
       });
-      response.json(inventario);
+      response.json(historial);
     } catch (error: any) {
       next(error);
     }
@@ -135,28 +140,6 @@ export class HistorialInventarioController {
 
       response.status(201).json(nuevoMovimiento);
     } catch (error) {
-      next(error);
-    }
-  };
-
-  update = async (request: Request, response: Response, next: NextFunction) => {
-    try {
-      const idInventario = parseInt(request.params.id);
-      const body = request.body;
-
-      const inventarioActualizado = await this.prisma.inventario.update({
-        where: { id: idInventario },
-        data: {
-          Nombre: body.Nombre,
-          descripcion: body.descripcion,
-          stock: body.stock,
-          estado: body.estado,
-          idCategoria: body.idCategoria,
-        },
-      });
-
-      response.status(200).json(inventarioActualizado);
-    } catch (error: any) {
       next(error);
     }
   };

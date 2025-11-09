@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../errors/custom.error";
-import { ECategoria, PrismaClient } from "../../generated/prisma";
+import {
+  ECategoria,
+  EMovimientoInventario,
+  PrismaClient,
+} from "../../generated/prisma";
 
 export class InventarioController {
   prisma = new PrismaClient();
@@ -105,21 +109,60 @@ export class InventarioController {
   };
 
   //Crear
-  create = async (request: Request, response: Response, next: NextFunction) => {
+  create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const body = request.body;
+      const {
+        Nombre,
+        descripcion,
+        stock = 0,
+        estado, // enum EEstado
+        idCategoria, // enum ECategoria
+        idUsuario = 1, // <- quién realiza la acción (requerido para historial)
+        historialDescripcion = "Se agrega ", // opcional
+      } = req.body;
 
-      const nuevoInventario = await this.prisma.inventario.create({
-        data: {
-          Nombre: body.Nombre,
-          descripcion: body.descripcion,
-          stock: body.stock,
-          estado: body.estado,
-          idCategoria: body.idCategoria,
-        },
+      if (typeof idUsuario !== "number") {
+        return res
+          .status(400)
+          .json({
+            message: "idUsuario (number) es requerido para generar historial",
+          });
+      }
+
+      const result = await this.prisma.$transaction(async (tx) => {
+        const nuevo = await tx.inventario.create({
+          data: { Nombre, descripcion, stock, estado, idCategoria },
+        });
+
+        // Si hay stock inicial, registramos un ADD
+        if (stock > 0) {
+          await tx.historialInventario.create({
+            data: {
+              idInventario: nuevo.id,
+              idUsuario,
+              tipoMovimiento: EMovimientoInventario.ADD,
+              descripcion:
+                `${historialDescripcion} (${nuevo.Nombre}) (+${stock})`,
+            },
+          });
+        } else {
+          // Si quieres dejar constancia aún con 0, descomenta:
+          await tx.historialInventario.create({
+            data: {
+              idInventario: nuevo.id,
+              idUsuario,
+              tipoMovimiento: EMovimientoInventario.ADD,
+              descripcion:
+                historialDescripcion ??
+                `Creación de inventario (stock inicial 0)`,
+            },
+          });
+        }
+
+        return nuevo;
       });
 
-      response.status(201).json(nuevoInventario);
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
