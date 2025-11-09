@@ -107,7 +107,24 @@ export class InventarioController {
   //Crear
   create = async (request: Request, response: Response, next: NextFunction) => {
     try {
-      response.status(201).json();
+
+        const body = request.body;
+
+        let idNombre = "test1234";
+
+        const nuevoInventario = await this.prisma.inventario.create({
+            data:{
+                
+                Nombre: body.Nombre,
+                descripcion: body.descripcion,
+                stock: body.stock,
+                estado: body.estado,
+                idCategoria: body.idCategoria
+            }
+        });
+
+
+      response.status(201).json(nuevoInventario);
     } catch (error) {
       next(error);
     }
