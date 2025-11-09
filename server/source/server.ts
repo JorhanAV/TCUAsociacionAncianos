@@ -1,21 +1,40 @@
-import express from "express";
+import express, {Express} from 'express'
 import cors from "cors";
 import morgan from "morgan";
-import dotenv from "dotenv";
+import * as dotenv from 'dotenv' 
+import path from 'path'
+import { ErrorMiddleware } from './middleware/error.middleware';
+import { AppRoutes } from './routes/routes';
+import "./config/passport"  
 
+const rootDir = __dirname;
+
+
+const app: Express=express()
 dotenv.config();
-
-const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
 app.use(morgan("dev"));
 
-app.get("/health", (_req, res) => {
-  res.json({ ok: true, uptime: process.uptime() });
-});
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
+//---- Registro de rutas ----
+app.use(AppRoutes.routes)
+
+//Gestión de errores middleware
+app.use(ErrorMiddleware.handleError);
+
+//Acceso a las imágenes
+app.use("/imagenes",express.static(
+  path.join(path.resolve(),"assets/uploads")))
 
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
+  console.log('Presione CTRL-C para detenerlo\n');
 });
