@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../errors/custom.error";
-import { ECategoria, PrismaClient } from "../../generated/prisma";
+import {
+  ECategoria,
+  EMovimientoInventario,
+  PrismaClient,
+} from "../../generated/prisma";
 
 export class InventarioController {
   prisma = new PrismaClient();
@@ -105,34 +109,127 @@ export class InventarioController {
   };
 
   //Crear
-  create = async (request: Request, response: Response, next: NextFunction) => {
+  create = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const {
+        Nombre,
+        descripcion,
+        stock = 0,
+        estado, // enum EEstado
+        idCategoria, // enum ECategoria
+        idUsuario = 1, // <- quién realiza la acción (requerido para historial)
+        historialDescripcion = "Se agrega ", // opcional
+      } = req.body;
 
-        const body = request.body;
+      if (typeof idUsuario !== "number") {
+        return res.status(400).json({
+          message: "idUsuario (number) es requerido para generar historial",
+        });
+      }
 
-        let idNombre = "test1234";
-
-        const nuevoInventario = await this.prisma.inventario.create({
-            data:{
-                
-                Nombre: body.Nombre,
-                descripcion: body.descripcion,
-                stock: body.stock,
-                estado: body.estado,
-                idCategoria: body.idCategoria
-            }
+      const result = await this.prisma.$transaction(async (tx) => {
+        const nuevo = await tx.inventario.create({
+          data: { Nombre, descripcion, stock, estado, idCategoria },
         });
 
+        // Si hay stock inicial, registramos un ADD
+        if (stock > 0) {
+          await tx.historialInventario.create({
+            data: {
+              idInventario: nuevo.id,
+              idUsuario,
+              tipoMovimiento: EMovimientoInventario.ADD,
+              descripcion: `${historialDescripcion} (${nuevo.Nombre}) (+${stock})`,
+            },
+          });
+        } else {
+          // Si quieres dejar constancia aún con 0, descomenta:
+          await tx.historialInventario.create({
+            data: {
+              idInventario: nuevo.id,
+              idUsuario,
+              tipoMovimiento: EMovimientoInventario.ADD,
+              descripcion:
+                historialDescripcion ??
+                `Creación de inventario (stock inicial 0)`,
+            },
+          });
+        }
 
-      response.status(201).json(nuevoInventario);
+        return nuevo;
+      });
+
+      res.status(201).json(result);
     } catch (error) {
       next(error);
     }
   };
 
-  update = async (request: Request, response: Response, next: NextFunction) => {
+  update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      response.status(200).json();
+      const idInventario = parseInt(req.params.id);
+      const {
+        Nombre,
+        descripcion,
+        stock, // number | undefined
+        estado, // enum EEstado
+        idCategoria, // enum ECategoria
+        idUsuario = 1, // <- quién realiza la acción (requerido si cambia stock)
+        historialDescripcion, // opcional
+      } = req.body;
+
+      const result = await this.prisma.$transaction(async (tx) => {
+        // Traer el actual para calcular delta de stock
+        const actual = await tx.inventario.findUnique({
+          where: { id: idInventario },
+        });
+        if (!actual) {
+          throw new Error("Inventario no encontrado");
+        }
+
+        const updated = await tx.inventario.update({
+          where: { id: idInventario },
+          data: {
+            Nombre,
+            descripcion,
+            stock, // puede ser undefined; Prisma no lo actualiza si no se envía
+            estado,
+            idCategoria,
+          },
+        });
+
+        // Si se envió 'stock', calculamos delta y registramos historial
+        if (typeof stock === "number" && stock !== actual.stock) {
+          if (typeof idUsuario !== "number") {
+            throw new Error(
+              "idUsuario es requerido para registrar el movimiento de stock"
+            );
+          }
+
+          const delta = stock - actual.stock;
+          const movimiento =
+            delta > 0
+              ? EMovimientoInventario.ADD
+              : EMovimientoInventario.DELETE;
+
+          await tx.historialInventario.create({
+            data: {
+              idInventario,
+              idUsuario,
+              tipoMovimiento: movimiento,
+              descripcion:
+                historialDescripcion ??
+                (delta > 0
+                  ? `Ajuste de stock (+${delta})`
+                  : `Ajuste de stock (${delta})`),
+            },
+          });
+        }
+
+        return updated;
+      });
+
+      res.status(200).json(result);
     } catch (error: any) {
       next(error);
     }
