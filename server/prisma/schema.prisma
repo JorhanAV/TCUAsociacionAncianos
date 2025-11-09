@@ -1,9 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -50,21 +45,21 @@ enum EMovimientoInventario {
 /////////////////////
 
 model Usuario {
-  id                 String              @id @default(cuid())
-  nombre_usuario     String              @db.VarChar(191)
-  correo             String              @unique @db.VarChar(191)
-  contrasenia        String
+  id                   Int                  @id @default(autoincrement())
+  nombre_usuario       String               @db.VarChar(191)
+  correo               String               @unique @db.VarChar(191)
+  contrasenia          String
   ultimo_inicio_sesion DateTime?
 
   // Relaciones
-  historialInventario HistorialInventario[]
-  actas               Actas[]
+  historialInventario  HistorialInventario[]
+  actas                Actas[]
 
   @@index([nombre_usuario])
 }
 
 model Perfiles {
-  id               String     @id @default(cuid())
+  id               Int        @id @default(autoincrement())
   nombre           String
   fechaNacimiento  DateTime
   cedula           String     @unique @db.VarChar(191)
@@ -84,7 +79,7 @@ model Perfiles {
 }
 
 model Actividad {
-  id             String             @id @default(cuid())
+  id             Int                 @id @default(autoincrement())
   nombre         String
   fechaActividad DateTime
   horaInicio     DateTime
@@ -103,7 +98,7 @@ model Actividad {
 }
 
 model Inventario {
-  id          String      @id @default(cuid())
+  id          Int         @id @default(autoincrement())
   idCategoria ECategoria
   Nombre      String
   descripcion String?
@@ -123,27 +118,27 @@ model Inventario {
 }
 
 model HistorialInventario {
-  id           String                 @id @default(cuid())
-  idInventario String
-  idUsuario    String
-  fecha        DateTime               @default(now())
-  descripcion  String?
+  id             Int                    @id @default(autoincrement())
+  idInventario   Int
+  idUsuario      Int
+  fecha          DateTime               @default(now())
+  descripcion    String?
   tipoMovimiento EMovimientoInventario
 
-  inventario   Inventario             @relation(fields: [idInventario], references: [id], onDelete: Cascade)
-  usuario      Usuario                @relation(fields: [idUsuario], references: [id], onDelete: Restrict)
+  inventario     Inventario             @relation(fields: [idInventario], references: [id], onDelete: Cascade)
+  usuario        Usuario                @relation(fields: [idUsuario], references: [id], onDelete: Restrict)
 
   @@index([idInventario, fecha])
   @@index([idUsuario])
 }
 
 model Actas {
-  id        String   @id @default(cuid())
+  id        Int       @id @default(autoincrement())
   URL       String
-  idUsuario String
-  fecha     DateTime @default(now())
+  idUsuario Int
+  fecha     DateTime  @default(now())
 
-  usuario   Usuario  @relation(fields: [idUsuario], references: [id], onDelete: Restrict)
+  usuario   Usuario   @relation(fields: [idUsuario], references: [id], onDelete: Restrict)
   perfiles  ActaPerfil[]
 
   @@index([fecha])
@@ -154,9 +149,9 @@ model Actas {
 /////////////////////
 
 model ActividadPerfil {
-  id          String    @id @default(cuid())
-  idPerfil    String
-  idActividad String
+  id          Int       @id @default(autoincrement())
+  idPerfil    Int
+  idActividad Int
 
   perfil      Perfiles  @relation(fields: [idPerfil], references: [id], onDelete: Cascade)
   actividad   Actividad @relation(fields: [idActividad], references: [id], onDelete: Cascade)
@@ -166,24 +161,24 @@ model ActividadPerfil {
 }
 
 model InventarioActividad {
-  id          String     @id @default(cuid())
-  idInventario String
-  idActividad String
+  id           Int        @id @default(autoincrement())
+  idInventario Int
+  idActividad  Int
 
-  inventario  Inventario @relation(fields: [idInventario], references: [id], onDelete: Cascade)
-  actividad   Actividad  @relation(fields: [idActividad], references: [id], onDelete: Cascade)
+  inventario   Inventario @relation(fields: [idInventario], references: [id], onDelete: Cascade)
+  actividad    Actividad  @relation(fields: [idActividad], references: [id], onDelete: Cascade)
 
   @@unique([idInventario, idActividad])
   @@index([idActividad])
 }
 
 model ActaPerfil {
-  id        String   @id @default(cuid())
-  idActa    String
-  idPerfiles String
+  id         Int      @id @default(autoincrement())
+  idActa     Int
+  idPerfiles Int
 
-  acta      Actas    @relation(fields: [idActa], references: [id], onDelete: Cascade)
-  perfil    Perfiles @relation(fields: [idPerfiles], references: [id], onDelete: Cascade)
+  acta       Actas    @relation(fields: [idActa], references: [id], onDelete: Cascade)
+  perfil     Perfiles @relation(fields: [idPerfiles], references: [id], onDelete: Cascade)
 
   @@unique([idActa, idPerfiles])
   @@index([idPerfiles])

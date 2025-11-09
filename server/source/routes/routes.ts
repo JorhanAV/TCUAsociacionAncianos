@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { InventarioRoutes } from "./inventario.routes";
 
 
 export class AppRoutes {
@@ -6,8 +7,12 @@ export class AppRoutes {
     const router = Router();
 
     // ----Agregar las rutas----
-
+    // Ruta de inventario
     
+    // localhost:3000/inventario/
+    router.use("/inventario", InventarioRoutes.routes);
+
+
     return router;
   }
 }
