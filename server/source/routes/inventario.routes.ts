@@ -8,7 +8,9 @@ export class InventarioRoutes {
         //localhost:3000/categoria/ 
         router.get('/',controller.get) 
         //localhost:3000/categoria/6
-        router.get('/:id',controller.getById)         
+        router.get('/:id',controller.getById)      
+        //localhost:3000/categoria/6
+        router.get('/categoria/:id',controller.getByCategoria)      
         return router 
     } 
 }
