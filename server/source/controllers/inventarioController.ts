@@ -122,11 +122,9 @@ export class InventarioController {
       } = req.body;
 
       if (typeof idUsuario !== "number") {
-        return res
-          .status(400)
-          .json({
-            message: "idUsuario (number) es requerido para generar historial",
-          });
+        return res.status(400).json({
+          message: "idUsuario (number) es requerido para generar historial",
+        });
       }
 
       const result = await this.prisma.$transaction(async (tx) => {
@@ -141,8 +139,7 @@ export class InventarioController {
               idInventario: nuevo.id,
               idUsuario,
               tipoMovimiento: EMovimientoInventario.ADD,
-              descripcion:
-                `${historialDescripcion} (${nuevo.Nombre}) (+${stock})`,
+              descripcion: `${historialDescripcion} (${nuevo.Nombre}) (+${stock})`,
             },
           });
         } else {
@@ -168,23 +165,71 @@ export class InventarioController {
     }
   };
 
-  update = async (request: Request, response: Response, next: NextFunction) => {
+  update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const idInventario = parseInt(request.params.id);
-      const body = request.body;
+      const idInventario = parseInt(req.params.id);
+      const {
+        Nombre,
+        descripcion,
+        stock, // number | undefined
+        estado, // enum EEstado
+        idCategoria, // enum ECategoria
+        idUsuario = 1, // <- quién realiza la acción (requerido si cambia stock)
+        historialDescripcion, // opcional
+      } = req.body;
 
-      const inventarioActualizado = await this.prisma.inventario.update({
-        where: { id: idInventario },
-        data: {
-          Nombre: body.Nombre,
-          descripcion: body.descripcion,
-          stock: body.stock,
-          estado: body.estado,
-          idCategoria: body.idCategoria,
-        },
+      const result = await this.prisma.$transaction(async (tx) => {
+        // Traer el actual para calcular delta de stock
+        const actual = await tx.inventario.findUnique({
+          where: { id: idInventario },
+        });
+        if (!actual) {
+          throw new Error("Inventario no encontrado");
+        }
+
+        const updated = await tx.inventario.update({
+          where: { id: idInventario },
+          data: {
+            Nombre,
+            descripcion,
+            stock, // puede ser undefined; Prisma no lo actualiza si no se envía
+            estado,
+            idCategoria,
+          },
+        });
+
+        // Si se envió 'stock', calculamos delta y registramos historial
+        if (typeof stock === "number" && stock !== actual.stock) {
+          if (typeof idUsuario !== "number") {
+            throw new Error(
+              "idUsuario es requerido para registrar el movimiento de stock"
+            );
+          }
+
+          const delta = stock - actual.stock;
+          const movimiento =
+            delta > 0
+              ? EMovimientoInventario.ADD
+              : EMovimientoInventario.DELETE;
+
+          await tx.historialInventario.create({
+            data: {
+              idInventario,
+              idUsuario,
+              tipoMovimiento: movimiento,
+              descripcion:
+                historialDescripcion ??
+                (delta > 0
+                  ? `Ajuste de stock (+${delta})`
+                  : `Ajuste de stock (${delta})`),
+            },
+          });
+        }
+
+        return updated;
       });
 
-      response.status(200).json(inventarioActualizado);
+      res.status(200).json(result);
     } catch (error: any) {
       next(error);
     }
