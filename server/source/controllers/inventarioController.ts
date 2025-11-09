@@ -45,7 +45,7 @@ export class InventarioController {
     next: NextFunction
   ) => {
     try {
-      let idInventario = request.params.id;
+      let idInventario = parseInt(request.params.id);
       const inventario = await this.prisma.inventario.findUnique({
         where: { id: idInventario },
         select: {
