@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../errors/custom.error";
-import { ECategoria, PrismaClient } from "../../generated/prisma";
+import {
+  ECategoria,
+  EMovimientoInventario,
+  PrismaClient,
+} from "../../generated/prisma";
 
 export class HistorialInventarioController {
   prisma = new PrismaClient();
@@ -15,14 +19,14 @@ export class HistorialInventarioController {
           tipoMovimiento: true,
           inventario: {
             select: {
-              Nombre: true, 
+              Nombre: true,
             },
           },
           usuario: {
             select: { id: true, nombre_usuario: true },
           },
         },
-        orderBy: { fecha: "desc" }, 
+        orderBy: { fecha: "desc" },
       });
 
       response.json(historial);
@@ -70,40 +74,46 @@ export class HistorialInventarioController {
   };
 
   //Obtener por Id
-  getByCategoria = async (
+  getByMovimiento = async (
     request: Request,
     response: Response,
     next: NextFunction
   ) => {
     try {
       const raw = (
-        request.params.categoria ??
+        request.params.movimiento ??
         request.params.id ??
         ""
       ).toString();
 
-      const categoria = raw as ECategoria;
-      if (!Object.values(ECategoria).includes(categoria)) {
+      const movimiento = raw as EMovimientoInventario;
+      if (!Object.values(EMovimientoInventario).includes(movimiento)) {
         return response.status(400).json({
-          message: `Categoría inválida. Usa una de: ${Object.values(
-            ECategoria
+          message: `Movimiento inválido. Usa uno de: ${Object.values(
+            EMovimientoInventario
           ).join(", ")}`,
         });
       }
 
-      const inventario = await this.prisma.inventario.findMany({
-        where: { idCategoria: categoria },
+      const historial = await this.prisma.historialInventario.findMany({
+        where: { tipoMovimiento: movimiento },
         select: {
           id: true,
-          Nombre: true,
+          fecha: true,
           descripcion: true,
-          stock: true,
-          estado: true,
-          createdAt: true,
-          updatedAt: true,
+          tipoMovimiento: true,
+          inventario: {
+            select: {
+              Nombre: true,
+            },
+          },
+          usuario: {
+            select: { id: true, nombre_usuario: true },
+          },
         },
+        orderBy: { fecha: "desc" },
       });
-      response.json(inventario);
+      response.json(historial);
     } catch (error: any) {
       next(error);
     }
@@ -114,17 +124,16 @@ export class HistorialInventarioController {
     try {
       const body = request.body;
 
-      const nuevoInventario = await this.prisma.inventario.create({
+      const nuevoMovimiento = await this.prisma.historialInventario.create({
         data: {
-          Nombre: body.Nombre,
           descripcion: body.descripcion,
-          stock: body.stock,
-          estado: body.estado,
-          idCategoria: body.idCategoria,
+          tipoMovimiento: body.tipoMovimiento,
+          idInventario: body.idInventario,
+          idUsuario: body.idUsuario,
         },
       });
 
-      response.status(201).json(nuevoInventario);
+      response.status(201).json(nuevoMovimiento);
     } catch (error) {
       next(error);
     }

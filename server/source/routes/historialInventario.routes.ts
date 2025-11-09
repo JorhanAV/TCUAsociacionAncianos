@@ -9,8 +9,8 @@ export class HistorialInventarioRoutes {
         router.get('/',controller.get) 
         //localhost:3000/historial/6
         router.get('/:id',controller.getById)      
-        //localhost:3000/historial/categoria/6
-        router.get('/categoria/:id',controller.getByCategoria)
+        //localhost:3000/historial/movimiento/6
+        router.get('/movimiento/:id',controller.getByMovimiento)
         
         //localhost:3000/historial/
         router.post('/',controller.create)
