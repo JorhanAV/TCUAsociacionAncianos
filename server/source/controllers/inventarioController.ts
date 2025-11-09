@@ -107,22 +107,17 @@ export class InventarioController {
   //Crear
   create = async (request: Request, response: Response, next: NextFunction) => {
     try {
+      const body = request.body;
 
-        const body = request.body;
-
-        let idNombre = "test1234";
-
-        const nuevoInventario = await this.prisma.inventario.create({
-            data:{
-                
-                Nombre: body.Nombre,
-                descripcion: body.descripcion,
-                stock: body.stock,
-                estado: body.estado,
-                idCategoria: body.idCategoria
-            }
-        });
-
+      const nuevoInventario = await this.prisma.inventario.create({
+        data: {
+          Nombre: body.Nombre,
+          descripcion: body.descripcion,
+          stock: body.stock,
+          estado: body.estado,
+          idCategoria: body.idCategoria,
+        },
+      });
 
       response.status(201).json(nuevoInventario);
     } catch (error) {
@@ -132,7 +127,21 @@ export class InventarioController {
 
   update = async (request: Request, response: Response, next: NextFunction) => {
     try {
-      response.status(200).json();
+      const idInventario = parseInt(request.params.id);
+      const body = request.body;
+
+      const inventarioActualizado = await this.prisma.inventario.update({
+        where: { id: idInventario },
+        data: {
+          Nombre: body.Nombre,
+          descripcion: body.descripcion,
+          stock: body.stock,
+          estado: body.estado,
+          idCategoria: body.idCategoria,
+        },
+      });
+
+      response.status(200).json(inventarioActualizado);
     } catch (error: any) {
       next(error);
     }

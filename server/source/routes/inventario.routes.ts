@@ -15,6 +15,8 @@ export class InventarioRoutes {
         //localhost:3000/inventario/
         router.post('/',controller.create)
 
+        router.put('/:id',controller.update)
+
         return router 
     } 
 }
