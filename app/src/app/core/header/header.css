@@ -1,0 +1,132 @@
+/* HEADER SUPERIOR */
+.top-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #000;
+  color: white;
+  z-index: 1000;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  font-family: "Montserrat", sans-serif;
+}
+/* MENÚ PRINCIPAL */
+.main-menu {
+  position: solid;
+  margin-top: 48px;
+  width: 100%;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  height: fit-content;
+  font-family: "Montserrat", sans-serif;
+  flex-wrap: wrap;
+}
+
+/* LOGO */
+.main-logo {
+  background-image: url("/images/LogoBlanco.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 100px;
+  width: 100px;
+}
+
+/* ICONOS DE USUARIO */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.user-email {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* BOTÓN DE MENÚ PARA MÓVIL */
+.mobile-menu-button {
+  display: none;
+}
+
+/* ENLACES */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a,
+.more-link {
+  color: black;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  position: relative;
+  transition: color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem; /* espacio entre texto y flecha */
+  padding: 0.25rem 0; /* para que el ::after quede bien */
+}
+
+.nav-links a::after,
+.more-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #c0a060;
+  transition: width 0.3s;
+}
+
+.nav-links a:hover::after,
+.more-link:hover::after {
+  width: 100%;
+}
+
+.nav-links a:hover,
+.more-link:hover {
+  color: #c0a060;
+}
+.more-link .mat-ripple-element {
+  background-color: transparent !important;
+}
+
+/* Ajusta el ícono de flecha */
+.more-link .arrow-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+}
+.more-link:hover .arrow-icon {
+  transform: translateY(2px);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .main-menu {
+    display: flex;
+    margin-top: 5%;
+  }
+  .main-logo {
+    background-image: url("/images/LogoBlanco.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-top: 25px;
+    margin-left: 120px;
+    height: 200px;
+    width: 2000px;
+  }
+  .nav-links {
+    margin-top: 5%;
+  }
+  .user-actions {
+    margin-top: 5%;
+  }
+}

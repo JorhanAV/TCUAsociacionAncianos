@@ -1,5 +1,4 @@
-import { Component, signal } from '@angular/core';
-
+import { Component, HostListener } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
@@ -7,5 +6,8 @@ import { Component, signal } from '@angular/core';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('app');
+  protected title = 'app';
+
+  
+
 }
