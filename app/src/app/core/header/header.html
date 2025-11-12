@@ -1,6 +1,52 @@
-<!-- HEADER SUPERIOR FIJO EN NEGRO -->
-<mat-toolbar class="top-header">
-  <span>Joyería Brillos Eternos</span>
-</mat-toolbar>
+<mat-toolbar color="primary" class="header">
+  <button mat-icon-button 
+  class="example-header-image" 
+   matTooltip="AppVideojuegos"
+  [routerLink]="['/inicio']" routerLinkActive="active-link" ></button>
+ <button [matMenuTriggerFor]="menu1" mat-icon-button class="example-icon"
+   matTooltip="Menu">
+   <mat-icon>menu</mat-icon>
+ </button>
+ 
+ <!--https://fonts.google.com/icons-->
+ <button mat-icon-button matTooltip="Mantenimientos" [matMenuTriggerFor]="menu2"> <mat-icon>save_as</mat-icon></button>
+ <button mat-icon-button matTooltip="Reportes" [matMenuTriggerFor]="menu4"> <mat-icon>monitoring</mat-icon></button>
+  <!-- 
+       https://material.angular.io/components/menu/overview
+   -->
+ <mat-menu #menu1="matMenu">
+   <button mat-menu-item [routerLink]="['/inicio']" routerLinkActive="active-link">Inicio</button>
+   <button mat-menu-item [routerLink]="['/acerca-de']" routerLinkActive="active-link">Acerca de</button>
+   <button mat-menu-item [routerLink]="['/videojuego']" routerLinkActive="active-link">Videojuego</button>
 
-<!-- MENÚ PRINCIPAL TRANSPARENTE -->
+ </mat-menu>
+ <mat-menu #menu2="matMenu">
+        <button mat-menu-item [routerLink]="'/videojuego-admin'" [routerLinkActive]="'active-link'">Videojuegos</button>
+ </mat-menu> 
+ <mat-menu #menu4="matMenu">
+  <button mat-menu-item [routerLink]="'/reportVideojuego'" [routerLinkActive]="'active-link'">Videojuegos x Genero</button>
+  
+  <button mat-menu-item [routerLink]="'/reportOrden'" [routerLinkActive]="'active-link'">Ordenes agrupadas x Mes</button>
+  <button mat-menu-item [routerLink]="'reportMes/2'" [routerLinkActive]="'active-link'">Videojuegos vendidos x Mes</button>
+</mat-menu>
+ <div class="example-spacer"></div>
+ <div class="example-spacer">
+   <button mat-icon-button matBadgeColor="accent" 
+   class="small-text number-cart" [matBadge]="qtyItems"
+   [routerLink]="'/orden'"  
+   [routerLinkActive]="'active-link'">
+     <mat-icon>shopping_cart</mat-icon>
+   </button>
+   <!-- Menu de Usuario-->
+   <span class="small-text" >emailtest@gmail</span>
+   <button mat-icon-button [matMenuTriggerFor]="menu3">
+     <mat-icon >person</mat-icon>
+   </button>
+   <mat-menu #menu3="matMenu">
+     <button mat-menu-item>
+       <mat-icon>person_add</mat-icon>
+       <span>Login</span>
+     </button>
+   </mat-menu>
+ </div>
+  </mat-toolbar>

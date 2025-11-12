@@ -1,4 +1,4 @@
-import { Component, inject, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,21 +8,35 @@ import { Router } from '@angular/router';
   styleUrl: './header.css',
 })
 export class Header {
+  //currentUser=this.authService.currentUserSignal
 
-  //private authService = inject(AuthenticationService);
-  //isAuthenticated = this.authService.isAuthenticatedSignal;
-  //currentUser = this.authService.currentUserSignal;
-
-  constructor(private router: Router) {}
-  menuOpen = false;
-
-  toggleMenu() {
-    this.menuOpen = !this.menuOpen;
+  qtyItems =1;
+  constructor(private router: Router,
+    
+  ) {
+   /*  this.isAuntenticated = false;
+    this.currentUser = {
+      email: 'isw@prueba.com',
+    }; */
   }
-  /*
+  //Solo acepta ADMIN
+  // public isAdmin=computed(()=>{
+  //   const user=this.authService.currentUserSignal()
+  //   console.log('User: ',user?.role.toString())
+  //   return user?.role.toString() =='ADMIN'
+  // })
+  //Solo acepta USER
+
+  //Acepta ADMIN y USER
+
+  ngOnInit(): void {
+  }
+ /*  login() {
+    this.router.navigate(['usuario/login']);
+  }
   logout() {
+    //
     this.authService.logout();
     this.router.navigate(['inicio']);
-    //console.log(this.isAuthenticated);
-  }*/
+  } */
 }

@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Header } from './header/header';
-import { Footer } from './footer/footer';
 import { RouterModule } from '@angular/router';
 
 import {MatIconModule} from '@angular/material/icon';
@@ -17,7 +16,6 @@ import { DomSanitizer } from '@angular/platform-browser';
 @NgModule({
   declarations: [
     Header,
-    Footer,
     
   ],
   imports: [
@@ -31,7 +29,6 @@ import { DomSanitizer } from '@angular/platform-browser';
   ],
   exports: [
     Header,
-    Footer
   ]
 })
 export class CoreModule { }
