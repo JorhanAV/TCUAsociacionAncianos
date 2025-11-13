@@ -1,20 +1,16 @@
+// home/home.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
+import { RouterModule } from '@angular/router';
+import { MaterialModule } from '../share/material.module';
 import { HomeRoutingModule } from './home-routing-module';
-import { Inicio } from './inicio/inicio';
-import { AcercaDe } from './acerca-de/acerca-de';
-import {MatCardModule} from '@angular/material/card';
+import { InicioComponent } from './inicio/inicio.component';
+// importa también tus otros componentes: AcercaDeComponent, ContactoComponent, etc.
 
 @NgModule({
   declarations: [
-    Inicio,
-    AcercaDe
+    InicioComponent,
   ],
-  imports: [
-    CommonModule,
-    HomeRoutingModule,
-    MatCardModule
-  ]
+  imports: [CommonModule, RouterModule, MaterialModule, HomeRoutingModule],
 })
-export class HomeModule { }
+export class HomeModule {}

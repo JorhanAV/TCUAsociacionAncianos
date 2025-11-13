@@ -1,0 +1,29 @@
+<section class="header">
+  <h2>{{ clientes().length }} Clientes</h2>
+</section>
+
+<section class="grid">
+  @for (c of clientes(); track c.email) {
+    <mat-card class="cliente" matRipple>
+      <div class="row">
+        @if (c.avatar) {
+          <img [src]="c.avatar" alt="{{ c.nombre }}" class="avatar" />
+        } @else {
+          <div class="avatar initials">{{ c.initials }}</div>
+        }
+        <div class="info">
+          <div class="nombre">{{ c.nombre }}</div>
+          <div class="email">{{ c.email }}</div>
+          <div class="tel">{{ c.tel }}</div>
+        </div>
+      </div>
+      <div class="ver"><mat-icon>visibility</mat-icon></div>
+    </mat-card>
+  } @empty {
+    <p>No hay clientes registrados</p>
+  }
+</section>
+
+<div class="actions">
+  <button mat-raised-button color="accent">Cargar más</button>
+</div>

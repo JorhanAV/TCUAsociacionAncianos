@@ -1,34 +1,15 @@
+// core/core.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Header } from './header/header';
+import { MaterialModule } from '../share/material.module';
 import { RouterModule } from '@angular/router';
-
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatBadgeModule} from '@angular/material/badge'
-
-import { MatIconRegistry } from '@angular/material/icon';
-import { DomSanitizer } from '@angular/platform-browser';
-
+import { HeaderComponent } from './header/header.component';
+import { SidenavComponent } from './sidenav/sidenav.component';
+import { ShellComponent } from './layout/shell.component';
 
 @NgModule({
-  declarations: [
-    Header,
-    
-  ],
-  imports: [
-    CommonModule,
-    RouterModule,
-    MatIconModule,
-    MatButtonModule,
-    MatToolbarModule,
-    MatMenuModule,
-    MatBadgeModule
-  ],
-  exports: [
-    Header,
-  ]
+  declarations: [HeaderComponent, SidenavComponent, ShellComponent],
+  imports: [CommonModule, MaterialModule, RouterModule],
+  exports: [HeaderComponent, SidenavComponent, ShellComponent]
 })
-export class CoreModule { }
+export class CoreModule {}

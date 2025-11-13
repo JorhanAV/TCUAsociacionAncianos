@@ -1,0 +1,10 @@
+.header { margin-bottom: 16px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.cliente { display:flex; justify-content:space-between; align-items:center; }
+.row { display:flex; gap:12px; align-items:center; }
+.avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; }
+.initials { display:grid; place-items:center; background:var(--mat-sys-secondary-container); color:var(--mat-sys-on-secondary-container); font-weight:600; }
+.info .nombre { font-weight:600; }
+.info .email, .info .tel { opacity:.7; font-size:.9rem; }
+.ver { opacity:.6; }
+.actions { display:flex; justify-content:center; margin-top:16px; }
