@@ -1,5 +1,5 @@
 import { ActividadModel } from "./actividadModel";
-import { PerfilModel } from "./perfilModel";
+import { PerfilModel } from "./PerfilModel";
 
 export interface ActividadPerfilModel {
   id?: number;
