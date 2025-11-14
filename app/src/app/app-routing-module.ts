@@ -10,14 +10,26 @@ const routes: Routes = [
     component: ShellComponent,
     children: [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+
+      // HOME (lazy)
       {
         path: '',
         loadChildren: () =>
-          import('./home/home-module').then(m => m.HomeModule),
+          import('./home/home-module').then((m) => m.HomeModule),
       },
-      { path: '**', component: PageNotFound },
+
+      // PERFILES (lazy)
+      {
+        path: 'perfiles',
+        loadChildren: () =>
+          import('./perfil/perfil-module').then((m) => m.PerfilModule),
+        data: { title: 'Perfiles' },
+      },
     ],
   },
+
+  // ⚠️ EL WILDCARD SIEMPRE AL FINAL Y FUERA DEL CHILDREN
+  { path: '**', component: PageNotFound },
 ];
 
 @NgModule({

@@ -1,0 +1,43 @@
+<h2>{{ title }}</h2>
+
+<form [formGroup]="form" class="form">
+  <mat-form-field appearance="outline">
+    <mat-label>Nombre</mat-label>
+    <input matInput formControlName="nombre" />
+    @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+      <mat-error>Nombre requerido (3+ caracteres)</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Correo</mat-label>
+    <input matInput type="email" formControlName="email" />
+    @if (form.controls.email.touched && form.controls.email.invalid) {
+      <mat-error>Correo inválido</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Teléfono</mat-label>
+    <input matInput formControlName="telefono" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Rol</mat-label>
+    <mat-select formControlName="rol">
+      @for (r of roles; track r) { <mat-option [value]="r">{{ r }}</mat-option> }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select formControlName="estado">
+      @for (e of estados; track e) { <mat-option [value]="e">{{ e }}</mat-option> }
+    </mat-select>
+  </mat-form-field>
+
+  <div class="actions">
+    <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+    <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Guardar</button>
+  </div>
+</form>
