@@ -1,7 +1,7 @@
 import { ECategoria } from "./categoriaModel";
 import { EEstado } from "./estadoModel";
 import { HistorialInventarioModel } from "./historialInventarioModel";
-import { inventarioActividadModel } from "./inventarioActividadModel";
+import { InventarioActividadModel } from "./inventarioActividadModel";
 
 export interface InventarioModel {
   id?: number;
@@ -13,7 +13,7 @@ export interface InventarioModel {
 
   // Relaciones
   historial?: HistorialInventarioModel[];
-  actividades?: inventarioActividadModel[];
+  actividades?: InventarioActividadModel[];
 
   createdAt?: string | Date;
   updatedAt?: string | Date;
