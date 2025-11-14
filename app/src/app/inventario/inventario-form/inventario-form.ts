@@ -1,7 +1,6 @@
 // src/app/home/inventario/inventario-form/inventario-form.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 
 import { InventarioModel } from '../../share/models/inventarioModel';
 import { ECategoria } from '../../share/models/categoriaModel';
@@ -15,22 +14,23 @@ import { InventarioService } from '../../share/services/inventario.service';
   styleUrls: ['./inventario-form.css'],
 })
 export class InventarioForm implements OnInit {
+  @Input() inventario: InventarioModel | null = null;
+  @Input() modo: 'crear' | 'editar' = 'crear';
+  @Output() cerrar = new EventEmitter<boolean>(); // true => guardó, false => solo cerró
+
   form!: FormGroup;
 
   titulo = 'Nuevo producto de inventario';
-  modo: 'crear' | 'editar' = 'crear';
 
   categorias = Object.values(ECategoria);
   estados = Object.values(EEstado);
 
   cargandoDatos = false;
   guardando = false;
-  idInventario?: number;
+  private idInventario?: number;
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
     private inventarioService: InventarioService
   ) {}
 
@@ -43,37 +43,22 @@ export class InventarioForm implements OnInit {
       estado: [EEstado.ACTIVO, [Validators.required]],
     });
 
-    const idParam = this.route.snapshot.paramMap.get('id');
-
-    if (idParam) {
+    if (this.inventario) {
       this.modo = 'editar';
       this.titulo = 'Editar producto de inventario';
-      this.idInventario = Number(idParam);
-      this.cargarInventario(this.idInventario);
+      this.idInventario = this.inventario.id;
+
+      this.form.patchValue({
+        Nombre: this.inventario.Nombre,
+        descripcion: this.inventario.descripcion,
+        idCategoria: this.inventario.idCategoria,
+        stock: this.inventario.stock,
+        estado: this.inventario.estado,
+      });
+    } else {
+      this.modo = 'crear';
+      this.titulo = 'Nuevo producto de inventario';
     }
-  }
-
-  cargarInventario(id: number): void {
-    this.cargandoDatos = true;
-
-    this.inventarioService.getById(id).subscribe({
-      next: (data) => {
-        this.form.patchValue({
-          Nombre: data.Nombre,
-          descripcion: data.descripcion,
-          idCategoria: data.idCategoria,
-          stock: data.stock,
-          estado: data.estado,
-        });
-        this.cargandoDatos = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.cargandoDatos = false;
-        // si falla, puedes llevar al usuario de nuevo al listado
-        this.volver();
-      },
-    });
   }
 
   guardar(): void {
@@ -92,23 +77,25 @@ export class InventarioForm implements OnInit {
     const peticion$ =
       this.modo === 'crear'
         ? this.inventarioService.create(payload)
-        : this.inventarioService.update(payload); // ⚠️ usa BaseAPI.update(item)
+        : this.inventarioService.update(payload); // BaseAPI.update(item)
 
     peticion$.subscribe({
       next: () => {
         this.guardando = false;
-        this.volver();
+        // avisamos al padre que se guardó OK
+        this.cerrar.emit(true);
       },
       error: (err) => {
         console.error(err);
         this.guardando = false;
-        // aquí podrías mostrar un snackbar/toast
+        // podrías mostrar un snackbar aquí
       },
     });
   }
 
   volver(): void {
-    this.router.navigate(['/inventario']);
+    // Volver / Cancelar => cerrar sin recargar
+    this.cerrar.emit(false);
   }
 
   campoInvalido(campo: string): boolean {

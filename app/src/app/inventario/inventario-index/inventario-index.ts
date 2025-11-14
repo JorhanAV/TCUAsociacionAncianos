@@ -8,7 +8,7 @@ import { EEstado } from '../../share/models/estadoModel';
 import { ECategoria } from '../../share/models/categoriaModel';
 
 import { InventarioService } from '../../share/services/inventario.service';
-//import { InventarioFormDialogComponent } from '../inventario-form/inventario-form-dialog.component';
+import { InventarioForm } from '../inventario-form/inventario-form';
 
 @Component({
   selector: 'app-inventario-index',
@@ -23,6 +23,10 @@ export class InventarioIndex implements OnInit {
   cargando = false;
   error: string | null = null;
   terminoBusqueda = '';
+
+  mostrarForm = false;
+  modoForm: 'crear' | 'editar' = 'crear';
+  inventarioSeleccionado: InventarioModel | null = null;
 
   constructor(private inventarioService: InventarioService, private dialog: MatDialog) {}
 
@@ -67,39 +71,31 @@ export class InventarioIndex implements OnInit {
     return 'stock-ok';
   }
 
-  /* abrirDialogoNuevo(): void {
-    const dialogRef = this.dialog.open(InventarioFormDialogComponent, {
-      width: '480px',
-      data: {
-        titulo: 'Nuevo producto de inventario',
-        inventario: null,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((resultado) => {
-      if (resultado?.recargar) {
-        this.cargarInventario();
-      }
-    });
-  }
-
-  abrirDialogoEditar(item: InventarioModel): void {
-    const dialogRef = this.dialog.open(InventarioFormDialogComponent, {
-      width: '480px',
-      data: {
-        titulo: 'Editar producto de inventario',
-        inventario: item,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((resultado) => {
-      if (resultado?.recargar) {
-        this.cargarInventario();
-      }
-    });
-  } */
 
   trackById(index: number, item: InventarioModel): number | undefined {
     return item.id;
+  }
+
+  abrirFormCrear(): void {
+    this.modoForm = 'crear';
+    this.inventarioSeleccionado = null;
+    this.mostrarForm = true;
+  }
+
+  // 🔹 Abrir en modo EDITAR
+  abrirFormEditar(item: InventarioModel): void {
+    this.modoForm = 'editar';
+    this.inventarioSeleccionado = item;
+    this.mostrarForm = true;
+  }
+
+  // 🔹 Cerrar form (recargar si se guardó)
+  onCerrarForm(recargar: boolean): void {
+    this.mostrarForm = false;
+    this.inventarioSeleccionado = null;
+
+    if (recargar) {
+      this.cargarInventario();
+    }
   }
 }

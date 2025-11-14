@@ -168,3 +168,20 @@
   text-align: left !important;
 }
 
+/* Overlay del formulario (modal) */
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor que limita el ancho del formulario */
+.form-dialog-wrapper {
+  width: 100%;
+  max-width: 520px;
+  padding: 1rem;
+}
