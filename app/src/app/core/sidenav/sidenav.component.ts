@@ -12,7 +12,7 @@ export class SidenavComponent {
   @Output() navigate = new EventEmitter<void>();
 
   items: NavItem[] = [
-    { icon:'person',           label:'Perfil',          path:'/perfil' },
+    { icon:'person',           label:'Perfil',          path:'/perfiles' },
     { icon:'receipt',          label:'Planes',          path:'/planes' },
     { icon:'groups',           label:'Clientes',        path:'/inicio' }, // ajusta si tienes /clientes
     { icon:'fitness_center',   label:'Rutinas',         path:'/rutinas' },

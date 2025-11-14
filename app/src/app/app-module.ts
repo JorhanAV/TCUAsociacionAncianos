@@ -6,12 +6,13 @@ import { MaterialModule } from './share/material.module';
 import { CoreModule } from './core/core-module';
 import { AppRoutingModule } from './app-routing-module';
 import { HomeModule } from './home/home-module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [App],
   imports: [
     BrowserModule,
-    MaterialModule, CoreModule, HomeModule, AppRoutingModule
+    MaterialModule, CoreModule, HomeModule, AppRoutingModule, HttpClientModule
   ],
   bootstrap: [App]
 })
