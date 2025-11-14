@@ -1,0 +1,49 @@
+<!-- core/header/header.component.html -->
+<mat-toolbar color="primary" class="toolbar">
+  <button mat-icon-button (click)="menuClick.emit()" aria-label="Abrir menú">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span class="brand">2TRAIN</span>
+  <span class="spacer"></span>
+
+  <button mat-icon-button
+          [matBadge]="unreadCount()"
+          [matBadgeHidden]="!unreadCount()"
+          matBadgeColor="accent"
+          [matMenuTriggerFor]="menuNotificaciones"
+          aria-label="Notificaciones">
+    <mat-icon>notifications</mat-icon>
+  </button>
+
+  <button mat-button class="avatar" matTooltip="Mi perfil">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-menu #menuNotificaciones="matMenu" class="menu-noti">
+  <div class="menu-head">
+    <span>Notificaciones</span>
+    <button mat-button (click)="marcarTodasLeidas()">Leer todos</button>
+  </div>
+  <mat-divider></mat-divider>
+
+  @for (n of notis(); track n.id) {
+    <button mat-menu-item>
+      <mat-icon [ngClass]="n.tipo">
+        @switch (n.tipo) {
+          @case ('success') { check_circle }
+          @case ('warning') { error }
+          @case ('error')   { cancel }
+          @default          { info }
+        }
+      </mat-icon>
+      <span [class.leido]="n.leido">{{ n.texto }}</span>
+    </button>
+  } @empty {
+    <button mat-menu-item disabled>Sin notificaciones</button>
+  }
+
+  <mat-divider></mat-divider>
+  <button mat-menu-item>Recargar</button>
+</mat-menu>

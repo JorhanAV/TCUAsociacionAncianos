@@ -1,32 +1,19 @@
-import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
+// app.module.ts
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
+import { MaterialModule } from './share/material.module';
 import { CoreModule } from './core/core-module';
-import { ShareModule } from './share/share-module';
+import { AppRoutingModule } from './app-routing-module';
 import { HomeModule } from './home/home-module';
-import { UserModule } from './user/user-module';
-import { PerfilModule } from './perfil/perfil-module';
-import { InventarioModule } from './inventario/inventario-module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [
-    App
-  ],
+  declarations: [App],
   imports: [
     BrowserModule,
-    CoreModule,
-    ShareModule,
-    HomeModule,
-    UserModule,
-    PerfilModule,
-    InventarioModule,
-    AppRoutingModule,
-  ],
-  providers: [
-    provideBrowserGlobalErrorListeners()
+    MaterialModule, CoreModule, HomeModule, AppRoutingModule, HttpClientModule
   ],
   bootstrap: [App]
 })
-export class AppModule { }
+export class AppModule {}

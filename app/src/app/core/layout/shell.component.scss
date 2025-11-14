@@ -1,0 +1,4 @@
+.shell { height: 100dvh; background: var(--mat-sys-surface); }
+.sidenav { width: 260px; border: 0; }
+.content { padding: 16px; }
+@media (max-width: 959px) { .sidenav { width: 240px; } }
