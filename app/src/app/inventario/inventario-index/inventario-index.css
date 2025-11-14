@@ -1,0 +1,170 @@
+.inventario-container {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+.inventario-header {
+  margin-bottom: 1rem;
+}
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.btn-volver {
+  min-width: auto;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.header-title {
+  flex: 1 1 auto;
+  text-align: center;
+}
+.header-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.header-title .subtitulo {
+  display: block;
+  font-size: 0.9rem;
+  color: #757575;
+}
+
+.header-search {
+  flex: 0 0 260px;
+}
+
+.campo-busqueda {
+  width: 100%;
+}
+.titulo h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.subtitulo {
+  display: block;
+  color: #757575;
+  font-size: 0.9rem;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.campo-busqueda {
+  min-width: 250px;
+  max-width: 340px;
+}
+
+.estado-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.estado-card.cargando span {
+  font-size: 0.9rem;
+}
+
+.estado-card.error {
+  color: #b71c1c;
+}
+
+/* Tabla */
+
+.tabla-inventario {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.col-stock {
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Colores según stock */
+
+.stock-ok {
+  color: #2e7d32;
+}
+
+.stock-bajo {
+  color: #ff8f00;
+}
+
+.stock-critico {
+  color: #c62828;
+}
+
+/* Badges estado */
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.badge-activo {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-inactivo {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.nombre-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.nombre-cell .nombre {
+  font-weight: 600;
+}
+
+.nombre-cell .descripcion-pequena {
+  font-size: 0.8rem;
+  color: #757575;
+}
+
+.col-acciones {
+  text-align: center;
+}
+
+.sin-datos {
+  text-align: center;
+  padding: 1rem;
+  color: #757575;
+}
+
+/* Centrar headers y columnas */
+.tabla-inventario th,
+.tabla-inventario td {
+  text-align: center !important;
+}
+
+/* Mantener el nombre alineado a la izquierda */
+.tabla-inventario .col-nombre {
+  text-align: left !important;
+}
+.tabla-inventario .col-nombre td {
+  text-align: left !important;
+}
+

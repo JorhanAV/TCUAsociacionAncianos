@@ -1,0 +1,105 @@
+// src/app/inventario/inventario-index/inventario-index.ts
+import { Component, OnInit } from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+
+import { InventarioModel } from '../../share/models/inventarioModel';
+import { EEstado } from '../../share/models/estadoModel';
+import { ECategoria } from '../../share/models/categoriaModel';
+
+import { InventarioService } from '../../share/services/inventario.service';
+//import { InventarioFormDialogComponent } from '../inventario-form/inventario-form-dialog.component';
+
+@Component({
+  selector: 'app-inventario-index',
+  templateUrl: './inventario-index.html',
+  standalone: false,
+  styleUrls: ['./inventario-index.css'],
+})
+export class InventarioIndex implements OnInit {
+  displayedColumns: string[] = ['Nombre', 'stock', 'estado', 'createdAt', 'updatedAt', 'acciones'];
+
+  dataSource = new MatTableDataSource<InventarioModel>([]);
+  cargando = false;
+  error: string | null = null;
+  terminoBusqueda = '';
+
+  constructor(private inventarioService: InventarioService, private dialog: MatDialog) {}
+
+  ngOnInit(): void {
+    this.cargarInventario();
+  }
+
+  cargarInventario(): void {
+    this.cargando = true;
+    this.error = null;
+
+    this.inventarioService.get().subscribe({
+      next: (data) => {
+        this.dataSource.data = data;
+        this.aplicarFiltro(this.terminoBusqueda);
+        this.cargando = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.error = 'Ocurrió un error al cargar el inventario.';
+        this.cargando = false;
+      },
+    });
+  }
+
+  aplicarFiltro(valor: string): void {
+    this.terminoBusqueda = valor;
+    this.dataSource.filterPredicate = (item: InventarioModel, filter: string) => {
+      const term = filter.trim().toLowerCase();
+      return (
+        item.nombre.toLowerCase().includes(term) ||
+        (item.descripcion?.toLowerCase().includes(term) ?? false) ||
+        String(item.stock).includes(term)
+      );
+    };
+    this.dataSource.filter = valor.trim().toLowerCase();
+  }
+
+  obtenerClaseStock(stock: number): string {
+    if (stock <= 5) return 'stock-critico';
+    if (stock <= 10) return 'stock-bajo';
+    return 'stock-ok';
+  }
+
+  /* abrirDialogoNuevo(): void {
+    const dialogRef = this.dialog.open(InventarioFormDialogComponent, {
+      width: '480px',
+      data: {
+        titulo: 'Nuevo producto de inventario',
+        inventario: null,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((resultado) => {
+      if (resultado?.recargar) {
+        this.cargarInventario();
+      }
+    });
+  }
+
+  abrirDialogoEditar(item: InventarioModel): void {
+    const dialogRef = this.dialog.open(InventarioFormDialogComponent, {
+      width: '480px',
+      data: {
+        titulo: 'Editar producto de inventario',
+        inventario: item,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((resultado) => {
+      if (resultado?.recargar) {
+        this.cargarInventario();
+      }
+    });
+  } */
+
+  trackById(index: number, item: InventarioModel): number | undefined {
+    return item.id;
+  }
+}
