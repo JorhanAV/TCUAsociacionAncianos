@@ -1,13 +1,13 @@
-import { ActaPerfil } from "./actaPerfilModel";
-import { Usuario } from "./usuarioModel";
+import { ActaPerfilModel } from "./actaPerfilModel";
+import { UsuarioModel } from "./usuarioModel";
 
-export interface Acta {
+export interface ActaModel {
   id?: number;
   URL: string;
   idUsuario: number;
   fecha: string | Date;
 
   // Relaciones
-  usuario?: Usuario;
-  perfiles?: ActaPerfil[];
+  usuario?: UsuarioModel;
+  perfiles?: ActaPerfilModel[];
 }

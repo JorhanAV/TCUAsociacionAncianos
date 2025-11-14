@@ -1,9 +1,9 @@
-import { ActaPerfil } from "./actaPerfilModel";
-import { ActividadPerfil } from "./actividadPerfilModel";
+import { ActaPerfilModel } from "./actaPerfilModel";
+import { ActividadPerfilModel } from "./actividadPerfilModel";
 import { EEstado } from "./estadoModel";
 import { ERol } from "./rolModel";
 
-export interface Perfil {
+export interface PerfilModel {
   id?: number;
   nombre: string;
   fechaNacimiento: string | Date;
@@ -16,6 +16,6 @@ export interface Perfil {
   estado: EEstado;
 
   // Relaciones
-  actividades?: ActividadPerfil[];
-  actas?: ActaPerfil[];
+  actividades?: ActividadPerfilModel[];
+  actas?: ActaPerfilModel[];
 }

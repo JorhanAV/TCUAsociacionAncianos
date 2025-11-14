@@ -1,8 +1,8 @@
-import { ActividadPerfil } from "./actividadPerfilModel";
-import { InventarioActividad } from "./inventarioActividadModel";
+import { ActividadPerfilModel } from "./actividadPerfilModel";
+import { InventarioActividadModel } from "./inventarioActividadModel";
 import { ETipoActividad } from "./tipoActividadModel";
 
-export interface Actividad {
+export interface ActividadModel {
   id?: number;
   nombre: string;
   fechaActividad: string | Date;
@@ -11,8 +11,8 @@ export interface Actividad {
   tipoActividad: ETipoActividad;
 
   // Relaciones
-  perfiles?: ActividadPerfil[];
-  inventarios?: InventarioActividad[];
+  perfiles?: ActividadPerfilModel[];
+  inventarios?: InventarioActividadModel[];
 
   createdAt?: string | Date;
   updatedAt?: string | Date;

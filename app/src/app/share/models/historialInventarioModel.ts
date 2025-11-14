@@ -1,8 +1,8 @@
-import { Inventario } from "./inventarioModel";
+import { InventarioModel } from "./inventarioModel";
 import { EMovimientoInventario } from "./movimientoInventarioModel";
-import { Usuario } from "./usuarioModel";
+import { UsuarioModel } from "./usuarioModel";
 
-export interface HistorialInventario {
+export interface HistorialInventarioModel {
   id?: number;
   idInventario: number;
   idUsuario: number;
@@ -11,6 +11,6 @@ export interface HistorialInventario {
   tipoMovimiento: EMovimientoInventario;
 
   // Relaciones
-  inventario?: Inventario;
-  usuario?: Usuario;
+  inventario?: InventarioModel;
+  usuario?: UsuarioModel;
 }

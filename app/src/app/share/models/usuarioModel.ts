@@ -1,7 +1,7 @@
-import { Acta } from "./actaModel";
-import { HistorialInventario } from "./historialInventarioModel";
+import { ActaModel } from "./actaModel";
+import { HistorialInventarioModel } from "./historialInventarioModel";
 
-export interface Usuario {
+export interface UsuarioModel {
   id?: number;
   nombre_usuario: string;
   correo: string;
@@ -9,6 +9,6 @@ export interface Usuario {
   ultimo_inicio_sesion?: string | Date;
 
   // Relaciones
-  historialInventario?: HistorialInventario[];
-  actas?: Acta[];
+  historialInventario?: HistorialInventarioModel[];
+  actas?: ActaModel[];
 }

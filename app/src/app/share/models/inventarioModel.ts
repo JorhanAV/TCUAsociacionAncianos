@@ -1,19 +1,19 @@
-import { ECategoria } from "./CategoriaModel";
+import { ECategoria } from "./categoriaModel";
 import { EEstado } from "./estadoModel";
-import { HistorialInventario } from "./historialInventarioModel";
-import { InventarioActividad } from "./inventarioActividadModel";
+import { HistorialInventarioModel } from "./historialInventarioModel";
+import { inventarioActividadModel } from "./inventarioActividadModel";
 
-export interface Inventario {
+export interface InventarioModel {
   id?: number;
   idCategoria: ECategoria;
-  Nombre: string;
+  nombre: string;
   descripcion?: string;
   stock: number;
   estado: EEstado;
 
   // Relaciones
-  historial?: HistorialInventario[];
-  actividades?: InventarioActividad[];
+  historial?: HistorialInventarioModel[];
+  actividades?: inventarioActividadModel[];
 
   createdAt?: string | Date;
   updatedAt?: string | Date;

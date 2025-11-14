@@ -1,11 +1,11 @@
-import { Actividad } from "./actividadModel";
-import { Inventario } from "./inventarioModel";
+import { ActividadModel } from "./actividadModel";
+import { InventarioModel } from "./inventarioModel";
 
-export interface InventarioActividad {
+export interface InventarioActividadModel {
   id?: number;
   idInventario: number;
   idActividad: number;
 
-  inventario?: Inventario;
-  actividad?: Actividad;
+  inventario?: InventarioModel;
+  actividad?: ActividadModel;
 }

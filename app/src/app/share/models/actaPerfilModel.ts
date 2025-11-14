@@ -1,11 +1,11 @@
-import { Acta } from "./actaModel";
-import { Perfil } from "./perfilModel";
+import { ActaModel } from "./actaModel";
+import { PerfilModel } from "./perfilModel";
 
-export interface ActaPerfil {
+export interface ActaPerfilModel {
   id?: number;
   idActa: number;
   idPerfiles: number;
 
-  acta?: Acta;
-  perfil?: Perfil;
+  acta?: ActaModel;
+  perfil?: PerfilModel;
 }

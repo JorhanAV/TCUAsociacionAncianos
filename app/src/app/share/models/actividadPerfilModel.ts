@@ -1,11 +1,11 @@
-import { Actividad } from "./actividadModel";
-import { Perfil } from "./perfilModel";
+import { ActividadModel } from "./actividadModel";
+import { PerfilModel } from "./perfilModel";
 
-export interface ActividadPerfil {
+export interface ActividadPerfilModel {
   id?: number;
   idPerfil: number;
   idActividad: number;
 
-  perfil?: Perfil;
-  actividad?: Actividad;
+  perfil?: PerfilModel;
+  actividad?: ActividadModel;
 }
