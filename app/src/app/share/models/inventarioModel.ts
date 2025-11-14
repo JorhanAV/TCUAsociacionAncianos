@@ -6,7 +6,7 @@ import { InventarioActividadModel } from "./inventarioActividadModel";
 export interface InventarioModel {
   id?: number;
   idCategoria: ECategoria;
-  nombre: string;
+  Nombre: string;
   descripcion?: string;
   stock: number;
   estado: EEstado;

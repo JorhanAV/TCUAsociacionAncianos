@@ -1,1 +1,126 @@
-<p>inventario-form works!</p>
+<div class="inventario-form-container">
+  <div class="header-row">
+    <button mat-button color="primary" (click)="volver()">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Volver</span>
+    </button>
+
+    <div class="header-title">
+      <h1>{{ titulo }}</h1>
+      <span class="subtitulo">
+        {{ modo === 'crear' ? 'Crear nuevo producto' : 'Editar producto existente' }}
+      </span>
+    </div>
+
+    <div class="header-placeholder"></div>
+  </div>
+
+  <mat-card class="form-card">
+    
+    @if (cargandoDatos) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+
+      <!-- Nombre -->
+      <div class="fila">
+        <mat-form-field appearance="outline" class="campo full">
+          <mat-label>Nombre</mat-label>
+          <input matInput formControlName="Nombre" />
+
+          @if (campoInvalido('Nombre')) {
+            <mat-error> El nombre es obligatorio. </mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Descripción -->
+      <div class="fila">
+        <mat-form-field appearance="outline" class="campo full">
+          <mat-label>Descripción</mat-label>
+          <textarea
+            matInput
+            rows="3"
+            formControlName="descripcion"
+          ></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Categoría + Stock -->
+      <div class="fila">
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Categoría</mat-label>
+          <mat-select formControlName="idCategoria">
+            @for (cat of categorias; track cat) {
+              <mat-option [value]="cat">{{ cat }}</mat-option>
+            }
+          </mat-select>
+
+          @if (campoInvalido('idCategoria')) {
+            <mat-error> La categoría es obligatoria. </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Stock</mat-label>
+          <input matInput type="number" formControlName="stock" />
+
+          @if (campoInvalido('stock')) {
+            <mat-error>
+              El stock debe ser mayor o igual a 0.
+            </mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Estado -->
+      <div class="fila">
+        <mat-form-field appearance="outline" class="campo">
+          <mat-label>Estado</mat-label>
+          <mat-select formControlName="estado">
+            @for (est of estados; track est) {
+              <mat-option [value]="est">{{ est }}</mat-option>
+            }
+          </mat-select>
+
+          @if (campoInvalido('estado')) {
+            <mat-error> El estado es obligatorio. </mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Acciones -->
+      <div class="acciones-form">
+        <button
+          mat-button
+          type="button"
+          (click)="volver()"
+          [disabled]="guardando"
+        >
+          Cancelar
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="guardando"
+        >
+          @if (guardando) {
+            <mat-progress-spinner
+              [diameter]="18"
+              mode="indeterminate"
+            ></mat-progress-spinner>
+          }
+
+          @else {
+            <span>
+              {{ modo === 'crear' ? 'Crear' : 'Guardar cambios' }}
+            </span>
+          }
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>

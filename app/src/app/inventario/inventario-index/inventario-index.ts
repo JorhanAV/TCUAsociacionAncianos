@@ -53,7 +53,7 @@ export class InventarioIndex implements OnInit {
     this.dataSource.filterPredicate = (item: InventarioModel, filter: string) => {
       const term = filter.trim().toLowerCase();
       return (
-        item.nombre.toLowerCase().includes(term) ||
+        item.Nombre.toLowerCase().includes(term) ||
         (item.descripcion?.toLowerCase().includes(term) ?? false) ||
         String(item.stock).includes(term)
       );
