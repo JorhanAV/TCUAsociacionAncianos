@@ -53,21 +53,3 @@ export interface PerfilModel {
   _count?: { actividades: number; actas: number };
   actividades?: ActividadPerfilModel[]; // cuando se cargan vía /:id/actividades o include
 }
-
-
-
-
-/* id?: number;
-  nombre: string;
-  fechaNacimiento: string | Date;
-  cedula: string;
-  rol: ERol;
-  fotoURL?: string;
-  telefonoContacto?: string;
-  numeroCelular?: string;
-  direccion?: string;
-  estado: EEstado;
-
-  // Relaciones
-  actividades?: ActividadPerfil[];
-  actas?: ActaPerfil[]; */
