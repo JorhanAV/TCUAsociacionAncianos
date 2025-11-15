@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { InventarioRoutingModule } from './inventario-routing-module';
-import { InventarioIndex } from './inventario-index/inventario-index';
-import { InventarioForm } from './inventario-form/inventario-form';
-import { InventarioDetail } from './inventario-detail/inventario-detail';
+import { InventarioIndex } from './screens/inventario-index/inventario-index';
+import { InventarioForm } from './screens/inventario-form/inventario-form';
+import { InventarioDetail } from './screens/inventario-detail/inventario-detail';
 import { MaterialModule } from "../share/material.module";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
@@ -28,20 +28,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   ],
   imports: [
     CommonModule,
-    FormsModule,
     ReactiveFormsModule,
     InventarioRoutingModule,
     MatTableModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
-    MatSelectModule,
-    MatCardModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule,
     MaterialModule
 ]
 })

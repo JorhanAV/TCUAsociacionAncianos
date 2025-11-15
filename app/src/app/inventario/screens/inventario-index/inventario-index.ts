@@ -3,11 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 
-import { InventarioModel } from '../../share/models/inventarioModel';
-import { EEstado } from '../../share/models/estadoModel';
-import { ECategoria } from '../../share/models/categoriaModel';
+import { InventarioModel } from '../../../share/models/inventarioModel';
+import { EEstado } from '../../../share/models/estadoModel';
+import { ECategoria } from '../../../share/models/categoriaModel';
 
-import { InventarioService } from '../../share/services/inventario.service';
+import { InventarioService } from '../../../share/services/inventario.service';
 import { InventarioForm } from '../inventario-form/inventario-form';
 
 @Component({

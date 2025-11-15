@@ -1,2 +1,28 @@
-.form { display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px; max-width:900px; }
+.form {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.campo-full {
+  grid-column: 1 / -1;
+}
+
 .actions { display:flex; gap:12px; justify-content:flex-end; grid-column:1/-1; margin-top:8px; }
+
+.form-dialog-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 600px;
+  max-width: 95%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.3);
+  animation: dialogFade .25s ease-out;
+}
+
+@keyframes dialogFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

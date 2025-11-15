@@ -1,21 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { InventarioIndex } from './inventario-index/inventario-index';
-import { InventarioForm } from './inventario-form/inventario-form';
+import { InventarioIndex } from './screens/inventario-index/inventario-index';
+import { InventarioForm } from './screens/inventario-form/inventario-form';
 
 const routes: Routes = [
   {
-    path: 'inventario',
+    path: '',
     component: InventarioIndex
   },
   {
-    path: 'inventario/create',
+    path: 'create',
     component: InventarioForm
   },
   {
-    path: 'inventario/update/:id',
+    path: 'update/:id',
     component: InventarioForm
   },
+  
 
 
 ];
