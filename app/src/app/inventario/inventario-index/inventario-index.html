@@ -2,7 +2,7 @@
   <div class="inventario-header">
     <div class="header-row">
       <!-- Volver -->
-      <button mat-button color="primary" class="btn-volver" routerLink="/home">
+      <button mat-button color="primary" class="btn-volver" routerLink="/">
         <mat-icon>arrow_back</mat-icon>
         <span>Volver</span>
       </button>
@@ -17,6 +17,11 @@
       <button mat-flat-button color="primary" (click)="abrirFormCrear()">
         <mat-icon>add</mat-icon>
         Nuevo
+      </button>
+
+      <button mat-flat-button color="accent" routerLink="/inventario-historial">
+        <mat-icon>history</mat-icon>
+        Historial
       </button>
     </div>
   </div>

@@ -14,14 +14,14 @@ import { HistorialInventarioModule } from './historial-inventario/historial-inve
   declarations: [App],
   imports: [
     BrowserModule,
-    MaterialModule, 
-    CoreModule, 
+    MaterialModule,
+    CoreModule,
     HomeModule,
-    InventarioModule, 
-    AppRoutingModule, 
-    HttpClientModule, HistorialInventarioModule,
-    
+    InventarioModule,
+    HistorialInventarioModule,
+    AppRoutingModule,
+    HttpClientModule,
   ],
-  bootstrap: [App]
+  bootstrap: [App],
 })
 export class AppModule {}
