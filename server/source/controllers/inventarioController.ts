@@ -16,6 +16,7 @@ export class InventarioController {
         select: {
           id: true,
           Nombre: true,
+          idCategoria: true,
           descripcion: true,
           stock: true,
           estado: true,
@@ -56,6 +57,7 @@ export class InventarioController {
           id: true,
           Nombre: true,
           descripcion: true,
+          idCategoria: true,
           stock: true,
           estado: true,
           createdAt: true,

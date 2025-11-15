@@ -86,6 +86,7 @@ export class InventarioIndex implements OnInit {
   abrirFormEditar(item: InventarioModel): void {
     this.modoForm = 'editar';
     this.inventarioSeleccionado = item;
+    console.log(this.inventarioSeleccionado);
     this.mostrarForm = true;
   }
 
