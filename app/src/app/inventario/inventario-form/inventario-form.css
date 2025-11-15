@@ -1,0 +1,127 @@
+.inventario-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Header */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.header-title {
+  flex: 1 1 auto;
+  text-align: center;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.header-title .subtitulo {
+  font-size: 0.9rem;
+  color: #757575;
+}
+
+.header-placeholder {
+  width: 88px; /* ancho aprox del botón Volver para centrar el título */
+}
+
+/* Card del formulario */
+.form-card {
+  padding: 1rem 1.25rem 1.5rem;
+}
+
+/* Layout de campos */
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.campo {
+  flex: 1 1 200px;
+}
+
+.campo.full {
+  flex: 1 1 100%;
+}
+
+/* Acciones */
+.acciones-form {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+mat-progress-spinner {
+  margin-right: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-title {
+    text-align: left;
+  }
+
+  .header-placeholder {
+    display: none;
+  }
+}
+/* HEADER del modal */
+.form-header {
+  background: #fff; /* Fondo sólido */
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-volver {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-weight: 500;
+  min-width: auto;
+}
+
+.title-wrapper {
+  text-align: center;
+  flex: 1 1 auto;
+}
+
+.title-wrapper h2 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.title-wrapper .subtitulo {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.placeholder {
+  width: 80px; /* igual al ancho del botón Volver para centrar título */
+}
+
+/* Unimos el header con el card */
+.form-card {
+  margin-top: 0;
+  border-radius: 0 0 12px 12px !important;
+}

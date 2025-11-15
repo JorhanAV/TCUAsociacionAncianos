@@ -13,7 +13,7 @@ export class SidenavComponent {
 
   items: NavItem[] = [
     { icon:'person',           label:'Perfil',          path:'/perfiles' },
-    { icon:'receipt',          label:'Planes',          path:'/planes' },
+    { icon:'receipt',          label:'Inventario',      path:'/inventario' },
     { icon:'groups',           label:'Clientes',        path:'/inicio' }, // ajusta si tienes /clientes
     { icon:'fitness_center',   label:'Rutinas',         path:'/rutinas' },
     { icon:'restaurant',       label:'Platillos',       path:'/platillos' },

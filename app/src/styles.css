@@ -5,3 +5,67 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* Base genérica del snackbar */
+.mat-mdc-snack-bar-container {
+  border-radius: 12px;
+  padding: 0; /* lo maneja la superficie interna */
+}
+
+/* Superficie interna: aquí es donde está el fondo oscuro por defecto */
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* Texto */
+.mat-mdc-snack-bar-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* Botón */
+.mat-mdc-snack-bar-actions .mdc-button__label {
+  font-weight: 700;
+}
+
+/* ✅ ÉXITO */
+.mat-mdc-snack-bar-container.snackbar-success .mdc-snackbar__surface {
+  background-color: #e8f5e9 !important; /* verde claro */
+}
+
+.mat-mdc-snack-bar-container.snackbar-success .mat-mdc-snack-bar-label,
+.mat-mdc-snack-bar-container.snackbar-success .mdc-button__label {
+  color: #1b5e20 !important; /* verde oscuro */
+}
+
+/* ❌ ERROR */
+.mat-mdc-snack-bar-container.snackbar-error .mdc-snackbar__surface {
+  background-color: #ffebee !important; /* rojo claro */
+}
+
+.mat-mdc-snack-bar-container.snackbar-error .mat-mdc-snack-bar-label,
+.mat-mdc-snack-bar-container.snackbar-error .mdc-button__label {
+  color: #b71c1c !important;
+}
+
+/* Icono para éxito */
+.mat-mdc-snack-bar-container.snackbar-success
+  .mat-mdc-snack-bar-label{
+  content: '✔';
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+/* Icono para error */
+.mat-mdc-snack-bar-container.snackbar-error
+  .mat-mdc-snack-bar-label {
+  content: '⚠';
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+
