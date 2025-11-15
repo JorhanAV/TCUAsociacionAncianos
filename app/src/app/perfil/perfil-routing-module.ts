@@ -5,8 +5,8 @@ import { PerfilFormComponent } from './screens/perfil-form/perfil-form.component
 
 const routes: Routes = [
   { path: '', component: PerfilIndexComponent },
-  { path: 'nuevo', component: PerfilFormComponent },
-  { path: ':id/editar', component: PerfilFormComponent },
+  { path: 'create', component: PerfilFormComponent },
+  { path: 'update/:id', component: PerfilFormComponent },
 ];
 
 @NgModule({

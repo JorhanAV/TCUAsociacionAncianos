@@ -25,6 +25,23 @@ const routes: Routes = [
           import('./perfil/perfil-module').then((m) => m.PerfilModule),
         data: { title: 'Perfiles' },
       },
+      
+      // INVENTARIO (lazy)
+      {
+        path: 'inventario',
+        loadChildren: () =>
+          import('./inventario/inventario-module').then((m) => m.InventarioModule),
+        data: { title: 'Inventario' },
+      },
+      
+      // INVENTARIO-HISTORIAL (lazy)
+       {
+        path: 'inventario-historial',
+        loadChildren: () =>
+          import('./historial-inventario/historial-inventario-module')
+            .then((m) => m.HistorialInventarioModule),
+        data: { title: 'Historial inventario' },
+      },
     ],
   },
 

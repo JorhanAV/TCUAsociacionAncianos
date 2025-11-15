@@ -2,13 +2,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { InventarioModel } from '../../share/models/inventarioModel';
-import { ECategoria } from '../../share/models/categoriaModel';
-import { EEstado } from '../../share/models/estadoModel';
-import { InventarioService } from '../../share/services/inventario.service';
+import { InventarioModel } from '../../../share/models/inventarioModel';
+import { ECategoria } from '../../../share/models/categoriaModel';
+import { EEstado } from '../../../share/models/estadoModel';
+import { InventarioService } from '../../../share/services/inventario.service';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NotificationService } from '../../share/notification-service';
+import { NotificationService } from '../../../share/notification-service';
 
 @Component({
   selector: 'app-inventario-form',

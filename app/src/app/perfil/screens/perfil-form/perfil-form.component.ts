@@ -1,74 +1,156 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
 import { PerfilService } from '../../../share/services/perfil.service';
 import { ERol, EEstado, PerfilModel } from '../../../share/models/PerfilModel';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from '../../../share/notification-service';
+
+export interface PerfilDialogData {
+  modo: 'crear' | 'editar';
+  perfil: PerfilModel | null;
+}
 
 @Component({
   selector: 'app-perfil-form',
   templateUrl: './perfil-form.component.html',
   styleUrl: './perfil-form.component.scss',
-  standalone:false
+  standalone: false,
 })
 export class PerfilFormComponent implements OnInit {
-  // inyección moderna
   private fb = inject(FormBuilder);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private svc = inject(PerfilService);
+  private snackBar = inject(MatSnackBar);
+  private noti = inject(NotificationService);
 
-  id?: number;
   title = 'Nuevo perfil';
-
   roles = Object.values(ERol);
   estados = Object.values(EEstado);
 
-  // ahora sí podemos usar fb sin error
   form = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
-    email: ['', [Validators.email]],
-    telefono: [''],
+    fechaNacimiento: [null as Date | null, [Validators.required]],
+    cedula: ['', [Validators.required]],
+    telefonoContacto: [''],
+    numeroCelular: [''],
+    direccion: [''],
     rol: [ERol.Voluntario as ERol, Validators.required],
     estado: [EEstado.ACTIVO as EEstado, Validators.required],
   });
 
-  ngOnInit(): void {
-    const param = this.route.snapshot.paramMap.get('id');
-    if (param) {
-      this.id = Number(param);
-      this.title = 'Editar perfil';
+  modo: 'crear' | 'editar' = 'crear';
+  private idPerfil?: number;
+  guardando = false;
 
-      this.svc.getById(this.id).subscribe((p: PerfilModel) => {
-        this.form.patchValue({
-          nombre: (p as any).nombre ?? '',
-          email: (p as any).email ?? '',
-          telefono: (p as any).telefono ?? '',
-          rol: p.rol as ERol,
-          estado: p.estado as EEstado,
-        });
+  constructor(
+    private dialogRef: MatDialogRef<PerfilFormComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: PerfilDialogData
+  ) {}
+
+  ngOnInit(): void {
+    this.modo = this.data?.modo ?? 'crear';
+
+    if (this.data?.perfil) {
+      const p = this.data.perfil;
+      this.modo = 'editar';
+      this.title = 'Editar perfil';
+      this.idPerfil = p.id;
+
+      this.form.patchValue({
+        nombre: p.nombre ?? '',
+        fechaNacimiento: p.fechaNacimiento ? new Date(p.fechaNacimiento) : null,
+        cedula: p.cedula ?? '',
+        telefonoContacto: p.telefonoContacto ?? '',
+        numeroCelular: p.numeroCelular ?? '',
+        direccion: p.direccion ?? '',
+        rol: p.rol as ERol,
+        estado: p.estado as EEstado,
       });
+    } else {
+      this.modo = 'crear';
+      this.title = 'Nuevo perfil';
     }
   }
 
   save() {
-    if (this.form.invalid) return;
-
-    const payload = this.form.value as any;
-
-    if (this.id) {
-      // ver punto 2: update()
-      const body: PerfilModel = { ...payload, id: this.id } as PerfilModel;
-      this.svc.update(body).subscribe(() => {
-        this.router.navigate(['../'], { relativeTo: this.route });
-      });
-    } else {
-      this.svc.create(payload).subscribe(() => {
-        this.router.navigate(['../'], { relativeTo: this.route });
-      });
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.mostrarToastError('Revisa los campos del formulario.');
+      return;
     }
+
+    const raw = this.form.value;
+    const fecha = raw.fechaNacimiento as Date | null;
+
+    const payload: PerfilModel = {
+      ...(this.idPerfil ? { id: this.idPerfil } : ({} as any)),
+
+      nombre: raw.nombre ?? '',
+      fechaNacimiento: fecha ? fecha.toISOString() : new Date().toISOString(),
+      cedula: raw.cedula ?? '',
+      rol: raw.rol as ERol,
+      estado: raw.estado as EEstado,
+
+      telefonoContacto: raw.telefonoContacto || null,
+      numeroCelular: raw.numeroCelular || null,
+      direccion: raw.direccion || null,
+
+      // no tocamos imagen todavía
+      fotoURL: this.data?.perfil?.fotoURL ?? null,
+    };
+
+    this.guardando = true;
+
+    const peticion$ =
+      this.modo === 'crear'
+        ? this.svc.create(payload)
+        : this.svc.update(payload);
+
+    peticion$.subscribe({
+      next: () => {
+        this.guardando = false;
+
+        const mensaje =
+          this.modo === 'crear'
+            ? '✔ Perfil creado correctamente.'
+            : '✔ Perfil actualizado correctamente.';
+
+        this.mostrarToastExito(mensaje);
+
+        this.dialogRef.close(true); // recargar lista
+      },
+      error: (err) => {
+        console.error('Error guardando perfil', err);
+        this.guardando = false;
+        this.mostrarToastError('Ocurrió un error al guardar el perfil.');
+        this.dialogRef.close(false);
+      },
+    });
   }
 
   cancel() {
-    this.router.navigate(['../'], { relativeTo: this.route });
+    this.dialogRef.close(false);
+  }
+
+  // helpers igual que en Inventario
+  private mostrarToastExito(mensaje: string): void {
+    this.snackBar.open(mensaje, 'OK', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-success'],
+    });
+    // si tu NotificationService hace algo extra, puedes llamarlo también
+    // this.noti.success(mensaje);
+  }
+
+  private mostrarToastError(mensaje: string): void {
+    this.snackBar.open(mensaje, 'Cerrar', {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-error'],
+    });
+    // this.noti.error(mensaje);
   }
 }

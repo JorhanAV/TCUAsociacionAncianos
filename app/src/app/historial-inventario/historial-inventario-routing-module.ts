@@ -5,7 +5,7 @@ import { HistorialIndex } from './historial-index/historial-index';
 const routes: Routes = [
 
   {
-    path: 'inventario-historial',
+    path: '',
     component: HistorialIndex
   }
 

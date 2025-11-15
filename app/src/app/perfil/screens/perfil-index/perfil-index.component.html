@@ -6,102 +6,71 @@
   </button>
 </section>
 
-<section class="filters">
-  <mat-form-field appearance="outline">
-    <mat-label>Buscar</mat-label>
-    <input matInput [formControl]="filtros.controls.q" placeholder="Buscar..." />
-    <button mat-icon-button matSuffix (click)="filtros.controls.q.setValue('')">
-      <mat-icon>close</mat-icon>
-    </button>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Rol</mat-label>
-    <mat-select [formControl]="filtros.controls.rol">
-      <mat-option [value]="''">Todos</mat-option>
-      @for (r of roles; track r) { <mat-option [value]="r">{{ r }}</mat-option> }
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline">
-    <mat-label>Estado</mat-label>
-    <mat-select [formControl]="filtros.controls.estado">
-      <mat-option [value]="''">Todos</mat-option>
-      @for (e of estados; track e) { <mat-option [value]="e">{{ e }}</mat-option> }
-    </mat-select>
-  </mat-form-field>
-</section>
 
 @if (loading()) {
-<div class="loading"><mat-spinner diameter="48"></mat-spinner></div>
+  <div class="loading"><mat-spinner diameter="48"></mat-spinner></div>
 } @else {
-<section class="grid">
-  @for (c of items(); track c.id) {
-  <mat-card class="perfil" matRipple>
-    <div class="row">
-      <!-- FOTO -->
-      @if (c.fotoURL) {
-      <div class="foto-container">
-        <img class="foto-base" [src]="c.fotoURL" alt="foto perfil" />
+  <section class="grid">
+    @for (c of items(); track c.id) {
+      <mat-card class="perfil" matRipple>
+        <div class="row">
+          @if (c.fotoURL) {
+            <div class="foto-container">
+              <img class="foto-base" [src]="c.fotoURL" alt="foto perfil" />
+              <img class="foto-hover" [src]="c.fotoURL" alt="foto perfil" />
+            </div>
+          } @else {
+            <div class="avatar initials">
+              {{ 'P' + c.id }}
+            </div>
+          }
 
-        <img class="foto-hover" [src]="c.fotoURL" alt="foto perfil" />
-      </div>
-
-      } @else {
-      <div class="avatar initials">
-        {{ 'P' + c.id }}
-      </div>
-      }
-
-      <!-- INFO -->
-      <div class="info">
-        <div class="nombre">Perfil #{{ c.id }}</div>
-        <div class="sub">Rol: {{ c.rol }}</div>
-        <div class="estado" [class.ok]="c.estado === 'ACTIVO'">
-          {{ c.estado }}
+          <div class="info">
+            <div class="nombre">{{ c.nombre }}</div>
+            <div class="sub">Rol: {{ c.rol }}</div>
+            <div class="estado" [class.ok]="c.estado === 'ACTIVO'">
+              {{ c.estado }}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- ACCIONES -->
-    <div class="actions">
-      <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon>more_vert</mat-icon>
+        <div class="actions">
+          <button mat-icon-button [matMenuTriggerFor]="menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="editar(c)">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+
+            <button mat-menu-item (click)="toggleEstado(c)">
+              <mat-icon>toggle_on</mat-icon>
+              {{ c.estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+            </button>
+
+            <mat-divider></mat-divider>
+
+            <button mat-menu-item (click)="eliminar(c)">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card>
+    } @empty {
+      <p class="empty">No hay perfiles</p>
+    }
+  </section>
+
+  @if (paginas() > 1) {
+    <section class="paginator">
+      <button mat-stroked-button (click)="prevPage()" [disabled]="pagina() === 1">Anterior</button>
+      <span>{{ pagina() }} / {{ paginas() }}</span>
+      <button mat-stroked-button (click)="nextPage()" [disabled]="pagina() === paginas()">
+        Siguiente
       </button>
-
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="editar(c)">
-          <mat-icon>edit</mat-icon>
-          Editar
-        </button>
-
-        <button mat-menu-item (click)="toggleEstado(c)">
-          <mat-icon>toggle_on</mat-icon>
-          {{ c.estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
-        </button>
-
-        <mat-divider></mat-divider>
-
-        <button mat-menu-item (click)="eliminar(c)">
-          <mat-icon>delete</mat-icon>
-          Eliminar
-        </button>
-      </mat-menu>
-    </div>
-  </mat-card>
-  } @empty {
-  <p class="empty">No hay perfiles</p>
+    </section>
   }
-</section>
-
-@if (paginas() > 1) {
-<section class="paginator">
-  <button mat-stroked-button (click)="prevPage()" [disabled]="pagina() === 1">Anterior</button>
-
-  <span>{{ pagina() }} / {{ paginas() }}</span>
-
-  <button mat-stroked-button (click)="nextPage()" [disabled]="pagina() === paginas()">
-    Siguiente
-  </button>
-</section>
-} }
+}

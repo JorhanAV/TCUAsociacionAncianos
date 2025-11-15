@@ -1,43 +1,91 @@
-<h2>{{ title }}</h2>
+<h2 mat-dialog-title>{{ title }}</h2>
 
-<form [formGroup]="form" class="form">
-  <mat-form-field appearance="outline">
-    <mat-label>Nombre</mat-label>
-    <input matInput formControlName="nombre" />
-    @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-      <mat-error>Nombre requerido (3+ caracteres)</mat-error>
-    }
-  </mat-form-field>
+<mat-dialog-content>
+  <form [formGroup]="form" class="form">
 
-  <mat-form-field appearance="outline">
-    <mat-label>Correo</mat-label>
-    <input matInput type="email" formControlName="email" />
-    @if (form.controls.email.touched && form.controls.email.invalid) {
-      <mat-error>Correo inválido</mat-error>
-    }
-  </mat-form-field>
+    <!-- Nombre -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" />
+      @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+        <mat-error>Nombre requerido (3+ caracteres)</mat-error>
+      }
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Teléfono</mat-label>
-    <input matInput formControlName="telefono" />
-  </mat-form-field>
+    <!-- Fecha de nacimiento -->
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha de nacimiento</mat-label>
+      <input
+        matInput
+        [matDatepicker]="pickerFecha"
+        formControlName="fechaNacimiento"
+      />
+      <mat-datepicker-toggle matSuffix [for]="pickerFecha"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFecha></mat-datepicker>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Rol</mat-label>
-    <mat-select formControlName="rol">
-      @for (r of roles; track r) { <mat-option [value]="r">{{ r }}</mat-option> }
-    </mat-select>
-  </mat-form-field>
+      @if (form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.invalid) {
+        <mat-error>La fecha de nacimiento es obligatoria</mat-error>
+      }
+    </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>Estado</mat-label>
-    <mat-select formControlName="estado">
-      @for (e of estados; track e) { <mat-option [value]="e">{{ e }}</mat-option> }
-    </mat-select>
-  </mat-form-field>
+    <!-- Cédula -->
+    <mat-form-field appearance="outline">
+      <mat-label>Cédula</mat-label>
+      <input matInput formControlName="cedula" />
+      @if (form.controls.cedula.touched && form.controls.cedula.invalid) {
+        <mat-error>La cédula es obligatoria</mat-error>
+      }
+    </mat-form-field>
 
-  <div class="actions">
-    <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
-    <button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">Guardar</button>
-  </div>
-</form>
+    <!-- Teléfono de contacto -->
+    <mat-form-field appearance="outline">
+      <mat-label>Teléfono de contacto</mat-label>
+      <input matInput formControlName="telefonoContacto" />
+    </mat-form-field>
+
+    <!-- Número celular -->
+    <mat-form-field appearance="outline">
+      <mat-label>Número celular</mat-label>
+      <input matInput formControlName="numeroCelular" />
+    </mat-form-field>
+
+    <!-- Dirección -->
+    <mat-form-field appearance="outline" class="campo-full">
+      <mat-label>Dirección</mat-label>
+      <textarea matInput rows="2" formControlName="direccion"></textarea>
+    </mat-form-field>
+
+    <!-- Rol -->
+    <mat-form-field appearance="outline">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="rol">
+        @for (r of roles; track r) {
+          <mat-option [value]="r">{{ r }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Estado -->
+    <mat-form-field appearance="outline">
+      <mat-label>Estado</mat-label>
+      <mat-select formControlName="estado">
+        @for (e of estados; track e) {
+          <mat-option [value]="e">{{ e }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+  <button mat-raised-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || guardando">
+  @if (guardando) {
+    <mat-progress-spinner [diameter]="18" mode="indeterminate"></mat-progress-spinner>
+  } @else {
+    Guardar
+  }
+</button>
+
+</mat-dialog-actions>
