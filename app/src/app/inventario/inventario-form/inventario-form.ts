@@ -7,6 +7,9 @@ import { ECategoria } from '../../share/models/categoriaModel';
 import { EEstado } from '../../share/models/estadoModel';
 import { InventarioService } from '../../share/services/inventario.service';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NotificationService } from '../../share/notification-service';
+
 @Component({
   selector: 'app-inventario-form',
   templateUrl: './inventario-form.html',
@@ -31,7 +34,9 @@ export class InventarioForm implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private inventarioService: InventarioService
+    private inventarioService: InventarioService,
+    private snackBar: MatSnackBar,
+    private noti: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -82,13 +87,21 @@ export class InventarioForm implements OnInit {
     peticion$.subscribe({
       next: () => {
         this.guardando = false;
+
+        const mensaje =
+          this.modo === 'crear'
+            ? '✔ Producto creado correctamente.'
+            : '✔ Producto actualizado correctamente.';
+
+        this.mostrarToastExito(mensaje);
+
         // avisamos al padre que se guardó OK
         this.cerrar.emit(true);
       },
       error: (err) => {
         console.error(err);
         this.guardando = false;
-        // podrías mostrar un snackbar aquí
+        this.mostrarToastError('Error al guardar el producto.');
       },
     });
   }
@@ -101,5 +114,23 @@ export class InventarioForm implements OnInit {
   campoInvalido(campo: string): boolean {
     const control = this.form.get(campo);
     return !!control && control.invalid && control.touched;
+  }
+
+  private mostrarToastExito(mensaje: string): void {
+    this.snackBar.open(mensaje, 'OK', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-success'],
+    });
+  }
+
+  private mostrarToastError(mensaje: string): void {
+    this.snackBar.open(mensaje, 'Cerrar', {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top',
+      panelClass: ['snackbar-error'],
+    });
   }
 }
