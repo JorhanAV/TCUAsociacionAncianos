@@ -13,27 +13,7 @@
         <span class="subtitulo">Listado de todos los productos</span>
       </div>
 
-      <!-- Buscador -->
-      <div class="header-search">
-        <mat-form-field appearance="outline" class="campo-busqueda">
-          <mat-label>Buscar</mat-label>
-          <input
-            matInput
-            type="text"
-            placeholder="Nombre, descripción o stock..."
-            [ngModel]="terminoBusqueda"
-            (ngModelChange)="aplicarFiltro($event)"
-          />
-
-          @if (terminoBusqueda) {
-          <button matSuffix mat-icon-button aria-label="Limpiar" (click)="aplicarFiltro('')">
-            <mat-icon>close</mat-icon>
-          </button>
-          }
-
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-      </div>
+      <!-- Nuevo -->
       <button mat-flat-button color="primary" (click)="abrirFormCrear()">
         <mat-icon>add</mat-icon>
         Nuevo

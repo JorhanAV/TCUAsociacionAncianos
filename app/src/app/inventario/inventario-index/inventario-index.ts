@@ -41,7 +41,6 @@ export class InventarioIndex implements OnInit {
     this.inventarioService.get().subscribe({
       next: (data) => {
         this.dataSource.data = data;
-        this.aplicarFiltro(this.terminoBusqueda);
         this.cargando = false;
       },
       error: (err) => {
@@ -50,19 +49,6 @@ export class InventarioIndex implements OnInit {
         this.cargando = false;
       },
     });
-  }
-
-  aplicarFiltro(valor: string): void {
-    this.terminoBusqueda = valor;
-    this.dataSource.filterPredicate = (item: InventarioModel, filter: string) => {
-      const term = filter.trim().toLowerCase();
-      return (
-        item.Nombre.toLowerCase().includes(term) ||
-        (item.descripcion?.toLowerCase().includes(term) ?? false) ||
-        String(item.stock).includes(term)
-      );
-    };
-    this.dataSource.filter = valor.trim().toLowerCase();
   }
 
   obtenerClaseStock(stock: number): string {

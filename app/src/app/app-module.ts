@@ -8,6 +8,7 @@ import { AppRoutingModule } from './app-routing-module';
 import { HomeModule } from './home/home-module';
 import { HttpClientModule } from '@angular/common/http';
 import { InventarioModule } from './inventario/inventario-module';
+import { HistorialInventarioModule } from './historial-inventario/historial-inventario-module';
 
 @NgModule({
   declarations: [App],
@@ -18,7 +19,7 @@ import { InventarioModule } from './inventario/inventario-module';
     HomeModule,
     InventarioModule, 
     AppRoutingModule, 
-    HttpClientModule,
+    HttpClientModule, HistorialInventarioModule,
     
   ],
   bootstrap: [App]
