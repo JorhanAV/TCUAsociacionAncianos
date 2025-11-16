@@ -1,23 +1,95 @@
 <div class="inventario-container mat-elevation-z2">
-  <div class="inventario-header">
-    <div class="header-row">
-      
+  <div class="header-container">
+    <div class="header-top">
+      <!-- Volver -->
+      <button mat-button color="primary" class="btn-volver" routerLink="/">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Volver</span>
+      </button>
+
       <!-- Título centrado -->
       <div class="header-title">
         <h1>Inventario</h1>
         <span class="subtitulo">Listado de todos los productos</span>
       </div>
 
-      <!-- Nuevo -->
-      <button mat-flat-button color="primary" (click)="abrirFormCrear()">
-        <mat-icon>add</mat-icon>
-        Nuevo
-      </button>
+      <!-- Buscar -->
+      <mat-form-field appearance="outline" class="campo-busqueda">
+        <mat-label>Buscar</mat-label>
 
-      <button mat-flat-button color="accent" routerLink="/inventario-historial">
-        <mat-icon>history</mat-icon>
-        Historial
-      </button>
+        <input
+          matInput
+          type="text"
+          placeholder="Nombre, descripción o stock..."
+          [ngModel]="terminoBusqueda"
+          (ngModelChange)="onBuscar($event)"
+        />
+
+        @if (terminoBusqueda) {
+        <button matSuffix mat-icon-button aria-label="Limpiar" (click)="onBuscar('')">
+          <mat-icon>close</mat-icon>
+        </button>
+        }
+
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="header-bottom">
+      <!-- Filtro Estado -->
+      <mat-form-field appearance="outline" class="filtro-campo">
+        <mat-label>Estado</mat-label>
+        <mat-select [value]="filtroEstado" (valueChange)="onCambiarEstado($event)">
+          <mat-option value="TODOS">Todos</mat-option>
+          <mat-option [value]="estados.ACTIVO">Activo</mat-option>
+          <mat-option [value]="estados.INACTIVO">Inactivo</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Filtro Categoría -->
+      <mat-form-field appearance="outline" class="filtro-campo">
+        <mat-label>Categoría</mat-label>
+        <mat-select [value]="filtroCategoria" (valueChange)="onCambiarCategoria($event)">
+          <mat-option value="TODAS">Todas</mat-option>
+          <mat-option [value]="categorias.Medicinas">Medicinas</mat-option>
+          <mat-option [value]="categorias.Materiales">Materiales</mat-option>
+          <mat-option [value]="categorias.ActivosFijos">Activos fijos</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Filtro Stock -->
+      <mat-form-field appearance="outline" class="filtro-campo">
+        <mat-label>Stock</mat-label>
+        <mat-select [value]="filtroStock" (valueChange)="onCambiarFiltroStock($event)">
+          <mat-option value="TODOS">Todos</mat-option>
+          <mat-option value="CRITICO">Crítico (≤ 5)</mat-option>
+          <mat-option value="BAJO">Bajo (6–10)</mat-option>
+          <mat-option value="OK">OK (> 10)</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Botones alineados a la derecha -->
+      <div class="acciones-derecha">
+        <button
+          mat-stroked-button
+          color="accent"
+          class="btn-accion"
+          routerLink="/inventario-historial"
+        >
+          <mat-icon>history</mat-icon>
+          <span>Historial</span>
+        </button>
+
+        <button
+          mat-flat-button
+          color="primary"
+          class="btn-accion btn-nuevo"
+          (click)="abrirFormCrear()"
+        >
+          <mat-icon>add</mat-icon>
+          <span>Nuevo</span>
+        </button>
+      </div>
     </div>
   </div>
 
