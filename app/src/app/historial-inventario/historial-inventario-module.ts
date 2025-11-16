@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { HistorialIndex } from './historial-index/historial-index';
+import { MaterialModule } from '../share/material.module';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { HistorialIndex } from './historial-index/historial-index';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MaterialModule
   ]
 })
 export class HistorialInventarioModule { }

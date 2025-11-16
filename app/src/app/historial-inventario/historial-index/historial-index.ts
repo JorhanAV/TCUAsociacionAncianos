@@ -24,11 +24,19 @@ export class HistorialIndex implements OnInit {
   dataSource = new MatTableDataSource<HistorialInventarioModel>([]);
   cargando = false;
   error: string | null = null;
+
+  // 🔎 Filtro de texto
   terminoBusqueda = '';
+
+  // 🎯 Filtros adicionales
+  filtroMovimiento: 'TODOS' | 'ADD' | 'DELETE' = 'TODOS';
+  filtroUsuario: 'TODOS' | string = 'TODOS';
+  usuariosDisponibles: string[] = [];
 
   constructor(private historialService: HistorialInventarioService) {}
 
   ngOnInit(): void {
+    this.configurarFiltroTabla();
     this.cargarHistorial();
   }
 
@@ -38,14 +46,15 @@ export class HistorialIndex implements OnInit {
 
     this.historialService.get().subscribe({
       next: (data) => {
-        // si quieres ordenar del más reciente al más antiguo:
-        this.dataSource.data = [...data].sort((a, b) => {
-          return (
+        const ordenado = [...data].sort(
+          (a, b) =>
             new Date(b.fecha as any).getTime() -
             new Date(a.fecha as any).getTime()
-          );
-        });
-        this.aplicarFiltro(this.terminoBusqueda);
+        );
+
+        this.dataSource.data = ordenado;
+        this.actualizarUsuariosDisponibles(ordenado);
+        this.aplicarFiltros();
         this.cargando = false;
       },
       error: (err) => {
@@ -56,24 +65,80 @@ export class HistorialIndex implements OnInit {
     });
   }
 
-  aplicarFiltro(valor: string): void {
-    this.terminoBusqueda = valor;
+  private actualizarUsuariosDisponibles(
+    data: HistorialInventarioModel[]
+  ): void {
+    const set = new Set<string>();
+    for (const item of data) {
+      const nombre = item.usuario?.nombre_usuario;
+      if (nombre) set.add(nombre);
+    }
+    this.usuariosDisponibles = Array.from(set).sort((a, b) =>
+      a.localeCompare(b)
+    );
+  }
 
+  private configurarFiltroTabla(): void {
     this.dataSource.filterPredicate = (
       item: HistorialInventarioModel,
-      filter: string
+      filtroJson: string
     ) => {
-      const term = filter.trim().toLowerCase();
+      if (!filtroJson) return true;
 
-      return (
+      const filtro = JSON.parse(filtroJson) as {
+        termino: string;
+        movimiento: 'TODOS' | 'ADD' | 'DELETE';
+        usuario: 'TODOS' | string;
+      };
+
+      const term = filtro.termino.trim().toLowerCase();
+
+      // 🔎 Texto: producto, descripción, usuario, tipo
+      const coincideTexto =
+        !term ||
         (item.inventario?.Nombre || '').toLowerCase().includes(term) ||
         (item.descripcion || '').toLowerCase().includes(term) ||
         (item.usuario?.nombre_usuario || '').toLowerCase().includes(term) ||
-        (item.tipoMovimiento || '').toLowerCase().includes(term)
-      );
+        (item.tipoMovimiento || '').toLowerCase().includes(term);
+
+      // 🎯 Tipo de movimiento
+      const coincideMovimiento =
+        filtro.movimiento === 'TODOS' ||
+        item.tipoMovimiento === filtro.movimiento;
+
+      // 🎯 Usuario
+      const coincideUsuario =
+        filtro.usuario === 'TODOS' ||
+        item.usuario?.nombre_usuario === filtro.usuario;
+
+      return coincideTexto && coincideMovimiento && coincideUsuario;
+    };
+  }
+
+  private aplicarFiltros(): void {
+    const filtro = {
+      termino: this.terminoBusqueda,
+      movimiento: this.filtroMovimiento,
+      usuario: this.filtroUsuario,
     };
 
-    this.dataSource.filter = valor.trim().toLowerCase();
+    this.dataSource.filter = JSON.stringify(filtro);
+  }
+
+  // Eventos desde la UI
+  onBuscar(valor: string): void {
+    this.terminoBusqueda = valor;
+    this.aplicarFiltros();
+  }
+
+  onCambiarMovimiento(valor: 'TODOS' | 'ADD' | 'DELETE'): void {
+    this.filtroMovimiento = valor;
+    this.aplicarFiltros();
+  }
+
+  onCambiarUsuario(valor: 'TODOS' | string): void {
+    this.filtroUsuario = valor;
+    this.aplicarFiltros();
   }
 
   getClaseMovimiento(tipo: EMovimientoInventario | string): string {
