@@ -3,13 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { BaseAPI } from '../base-api';
-import { PerfilModel, ERol, EEstado, ActividadPerfilModel } from '../models/PerfilModel';
+import { perfilModel, ERol, EEstado, ActividadPerfilModel } from '../models/perfilModel';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PerfilService extends BaseAPI<PerfilModel> {
+export class PerfilService extends BaseAPI<perfilModel> {
   constructor(http: HttpClient) {
     // endpoint = 'perfiles' (o environment.endPointPerfil si lo tienes)
     super(http, environment.endPointPerfiles ?? 'perfiles');
@@ -30,7 +30,7 @@ export class PerfilService extends BaseAPI<PerfilModel> {
     limite: number;
     total: number;
     paginas: number;
-    items: PerfilModel[];
+    items: perfilModel[];
   }> {
     let params = new HttpParams();
 
@@ -55,7 +55,7 @@ export class PerfilService extends BaseAPI<PerfilModel> {
       limite: number;
       total: number;
       paginas: number;
-      items: PerfilModel[];
+      items: perfilModel[];
     }>(`${this.urlAPI}/${this.endpoint}`, { params });
   }
 
@@ -63,8 +63,8 @@ export class PerfilService extends BaseAPI<PerfilModel> {
    * Cambiar estado (ACTIVO / INACTIVO)
    * PATCH /api/perfiles/:id/estado
    */
-  setEstado(id: number, estado: EEstado): Observable<PerfilModel> {
-    return this.http.patch<PerfilModel>(
+  setEstado(id: number, estado: EEstado): Observable<perfilModel> {
+    return this.http.patch<perfilModel>(
       `${this.urlAPI}/${this.endpoint}/${id}/estado`,
       { estado }
     );

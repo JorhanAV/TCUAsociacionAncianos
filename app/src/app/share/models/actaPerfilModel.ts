@@ -1,5 +1,5 @@
 import { ActaModel } from "./actaModel";
-import { PerfilModel } from "./PerfilModel";
+import { perfilModel } from "./perfilModel";
 
 export interface ActaPerfilModel {
   id?: number;
@@ -7,5 +7,5 @@ export interface ActaPerfilModel {
   idPerfiles: number;
 
   acta?: ActaModel;
-  perfil?: PerfilModel;
+  perfil?: perfilModel;
 }

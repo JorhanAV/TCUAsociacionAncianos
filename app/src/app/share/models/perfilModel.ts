@@ -37,7 +37,7 @@ export interface ActividadPerfilModel {
 }
 
 // Perfil principal (match con selects del controller)
-export interface PerfilModel {
+export interface perfilModel {
   id: number;
   nombre: string;
   fechaNacimiento: string; // ISO
