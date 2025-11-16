@@ -1,14 +1,14 @@
 import { Component, OnInit, inject, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { PerfilService } from '../../../share/services/perfil.service';
-import { ERol, EEstado, PerfilModel } from '../../../share/models/PerfilModel';
+import { ERol, EEstado, perfilModel } from '../../../share/models/perfilModel';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NotificationService } from '../../../share/notification-service';
 
 export interface PerfilDialogData {
   modo: 'crear' | 'editar';
-  perfil: PerfilModel | null;
+  perfil: perfilModel | null;
 }
 
 @Component({
@@ -82,7 +82,7 @@ export class PerfilFormComponent implements OnInit {
     const raw = this.form.value;
     const fecha = raw.fechaNacimiento as Date | null;
 
-    const payload: PerfilModel = {
+    const payload: perfilModel = {
       ...(this.idPerfil ? { id: this.idPerfil } : ({} as any)),
 
       nombre: raw.nombre ?? '',

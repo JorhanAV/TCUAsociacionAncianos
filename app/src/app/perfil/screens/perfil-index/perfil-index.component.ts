@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
 import { PerfilService } from '../../../share/services/perfil.service';
-import { PerfilModel, ERol, EEstado } from '../../../share/models/PerfilModel';
+import { perfilModel, ERol, EEstado } from '../../../share/models/perfilModel';
 import { PerfilFormComponent } from '../perfil-form/perfil-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDeleteDialog } from '../../../share/confirm-delete.dialog';
@@ -26,7 +26,7 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
 private snackBar = inject(MatSnackBar);
 
   loading = signal(false);
-  items = signal<PerfilModel[]>([]);
+  items = signal<perfilModel[]>([]);
   pagina = signal(1);
   limite = signal(8);
   total = signal(0);
@@ -65,7 +65,7 @@ private snackBar = inject(MatSnackBar);
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          let items: PerfilModel[] = [];
+          let items: perfilModel[] = [];
           let total = 0;
           let paginas = 1;
 
@@ -108,7 +108,7 @@ private snackBar = inject(MatSnackBar);
     }
   }
 
-  toggleEstado(item: PerfilModel) {
+  toggleEstado(item: perfilModel) {
   const nuevo = item.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
   this.svc.setEstado(Number(item.id), nuevo as EEstado).subscribe({
     next: () => {
@@ -156,7 +156,7 @@ private snackBar = inject(MatSnackBar);
   }
 
   // 🔹 EDITAR en MatDialog
-  editar(it: PerfilModel) {
+  editar(it: perfilModel) {
     const ref = this.dialog.open(PerfilFormComponent, {
       width: '750px',
       maxHeight: '100vh',
@@ -171,7 +171,7 @@ private snackBar = inject(MatSnackBar);
     });
   }
 
-  eliminar(it: PerfilModel) {
+  eliminar(it: perfilModel) {
     const ref = this.dialog.open(ConfirmDeleteDialog, {
       width: '400px',
       disableClose: true,
