@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatChipListbox, MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   exports: [
@@ -30,7 +31,8 @@ import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker
     MatCardModule,
     MatRippleModule,
     MatTooltipModule,
-
+    MatChipsModule,      // <--- IMPORTANTE para los filtros de bolitas
+    MatFormFieldModule,  // <--- Para la barra de búsqueda,
     // 👇 necesarios para Perfiles + diálogo
     MatDialogModule,
     MatFormFieldModule,

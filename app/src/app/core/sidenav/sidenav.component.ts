@@ -15,10 +15,12 @@ interface NavItem {
 export class SidenavComponent {
   @Output() navigate = new EventEmitter<void>();
 
+  // Iconos actualizados para dar mejor contexto
   items: NavItem[] = [
-    { icon: 'home', label: 'Inicio', path: '/inicio' },
-    { icon: 'person', label: 'Perfil', path: '/perfiles' },
-    { icon: 'receipt', label: 'Inventario', path: '/inventario' },
+    { icon: 'dashboard', label: 'Inicio', path: '/inicio' }, // Dashboard es más pro que Home
+    { icon: 'groups', label: 'Perfiles', path: '/perfiles' }, // Groups para comunidad
+    { icon: 'inventory_2', label: 'Inventario', path: '/inventario' }, // Icono caja
+    { icon: 'event', label: 'Actividades', path: '/actividades' }, // Agregado basado en doc
     { icon: 'settings', label: 'Configuración', path: '/configuracion' },
   ];
 }

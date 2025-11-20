@@ -1,10 +1,195 @@
-.header { margin-bottom: 16px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
-.cliente { display:flex; justify-content:space-between; align-items:center; }
-.row { display:flex; gap:12px; align-items:center; }
-.avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; }
-.initials { display:grid; place-items:center; background:var(--mat-sys-secondary-container); color:var(--mat-sys-on-secondary-container); font-weight:600; }
-.info .nombre { font-weight:600; }
-.info .email, .info .tel { opacity:.7; font-size:.9rem; }
-.ver { opacity:.6; }
-.actions { display:flex; justify-content:center; margin-top:16px; }
+// Variables basadas en el Logo (Morado y Dorado)
+$primary-color: #5E2C5F; // Morado oscuro del logo
+$accent-color: #F4B459;  // Dorado/Amarillo del logo
+$bg-light: #f8f9fa;
+
+:host {
+  display: block;
+  padding: 24px;
+  background-color: $bg-light;
+  min-height: 100vh;
+}
+
+// 1. Dashboard Header
+.dashboard-header {
+  margin-bottom: 32px;
+  
+  .welcome-text {
+    margin-bottom: 24px;
+    h1 { margin: 0; font-size: 1.8rem; color: $primary-color; font-weight: 700; }
+    .subtitle { color: #666; margin: 4px 0 0; }
+  }
+
+  .stats-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    
+    .stat-card {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      
+      &.highlight { border-left: 4px solid $accent-color; }
+      &.warning { border-left: 4px solid #f44336; }
+
+      .stat-icon {
+        background: rgba($primary-color, 0.1);
+        color: $primary-color;
+        padding: 10px;
+        border-radius: 12px;
+        width: 48px;
+        height: 48px;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 16px;
+      }
+
+      .stat-info {
+        display: flex;
+        flex-direction: column;
+        .label { font-size: 0.85rem; color: #666; font-weight: 500; }
+        .value { font-size: 1.5rem; font-weight: 800; color: #333; }
+      }
+    }
+  }
+}
+
+// 2. Toolbar y Búsqueda
+.toolbar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: center;
+  
+  .search-bar {
+    flex: 1;
+    max-width: 400px;
+    font-size: 14px;
+    
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; } // Ocultar espacio extra
+  }
+  
+  .add-btn { margin-left: auto; background-color: $primary-color; color: white; }
+}
+
+// 3. Grid de Tarjetas
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); // Un poco más ancho para mejor lectura
+  gap: 24px;
+}
+
+.cliente-card {
+  border-radius: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+  position: relative;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+
+  // Punto de estado (Activo/Inactivo)
+  .status-indicator {
+    position: absolute;
+    top: 16px;
+    right: 16px; // Ajustado para no chocar con el menú si fuera necesario
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+    &.active { background-color: #4caf50; } // Verde
+    &.inactive { background-color: #9e9e9e; } // Gris
+  }
+
+  .card-header {
+    padding: 20px 20px 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    .avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px; // Cuadrado redondeado es más moderno
+      object-fit: cover;
+      &.initials {
+        background: linear-gradient(135deg, $primary-color, lighten($primary-color, 20%));
+        color: white;
+        font-size: 1.2rem;
+        display: grid;
+        place-items: center;
+      }
+    }
+
+    .info {
+      flex: 1;
+      .nombre { 
+        margin: 0; 
+        font-size: 1.1rem; 
+        font-weight: 600; 
+        color: #2c3e50; 
+        line-height: 1.2;
+      }
+      .chip-id {
+        font-size: 0.75rem;
+        background: #eee;
+        padding: 2px 8px;
+        border-radius: 12px;
+        color: #666;
+        margin-top: 4px;
+        display: inline-block;
+      }
+    }
+  }
+
+  .card-body {
+    padding: 12px 20px;
+    background-color: rgba($bg-light, 0.5);
+    
+    .data-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+      color: #555;
+      font-size: 0.9rem;
+      
+      .mini-icon { font-size: 18px; width: 18px; height: 18px; opacity: 0.6; }
+      .text-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    }
+  }
+
+  .card-actions {
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    
+    button, a {
+        border-radius: 8px;
+    }
+  }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px;
+  opacity: 0.5;
+  
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; }
+}

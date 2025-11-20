@@ -1,28 +1,96 @@
-// 👇 SOLO UNA VEZ y al inicio del archivo
+// SOLO UNA VEZ
 @use '@angular/material' as mat;
 
-// Define el tema de Material para toda la app
+// ======================
+// 1. Colores de marca
+// ======================
+$am-primary:         #633371; // morado
+$am-primary-dark:    #5C2B69;
+$am-secondary:       #EEA630; // dorado
+$am-neutral:         #87867D;
+
+// ======================
+// 2. Tema Angular Material M3
+// ======================
 html {
   @include mat.theme((
     color: (
-      primary: mat.$magenta-palette,
-      tertiary: mat.$violet-palette,
+      primary: mat.$violet-palette,
+      secondary: mat.$orange-palette,
+      tertiary: mat.$magenta-palette,
     ),
-    typography: Roboto,
+    typography: (
+      brand-family: 'Poppins, Roboto, system-ui, -apple-system, sans-serif',
+      plain-family: 'Roboto, system-ui, -apple-system, sans-serif',
+      bold-weight: 600,
+    ),
     density: 0,
   ));
+
+  // ⬇ Aquí forzamos fondo blanco y superficies blancas
+  --mat-sys-background:          #FFFFFF;
+  --mat-sys-on-background:       #2D2330;
+
+  --mat-sys-surface:             #FFFFFF;
+  --mat-sys-surface-bright:      #FFFFFF;
+  --mat-sys-surface-dim:         #F3F3F3;
+
+  --mat-sys-surface-container-lowest: #FFFFFF;
+  --mat-sys-surface-container-low:    #FFFFFF;
+  --mat-sys-surface-container:        #FFFFFF;
+  --mat-sys-surface-container-high:   #FFFFFF;
+  --mat-sys-surface-container-highest:#FFFFFF;
+
+  // Primario (morado)
+  --mat-sys-primary:            #{$am-primary};
+  --mat-sys-on-primary:         #FFFFFF;
+  --mat-sys-primary-container:  #F2E1FF;
+  --mat-sys-on-primary-container: #331639;
+
+  // Secundario (dorado)
+  --mat-sys-secondary:          #{$am-secondary};
+  --mat-sys-on-secondary:       #3D2200;
+  --mat-sys-secondary-container:#FFE4B0;
+
+  // Bordes suaves
+  --mat-sys-outline:            #D9D9D9;
+  --mat-sys-outline-variant:    #E6E6E6;
 }
 
+// ======================
+// 3. Globales base
+// ======================
 body {
-  // Default the application to a light color theme. 
-  // Cambia a `dark` o `light dark` según lo que necesites.
+  margin: 0;
   color-scheme: light;
 
-  // Variables del sistema de Angular Material
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
+  background-color: #FFFFFF !important;
+  color: var(--mat-sys-on-background);
   font: var(--mat-sys-body-medium);
+}
 
-  // Quitar margen del navegador
-  margin: 0;
+// ======================
+// 4. Menú / Navbar SIEMPRE blanco
+// (toolbar, sidenav, etc.)
+// ======================
+.mdc-top-app-bar,
+.mat-mdc-toolbar {
+  background: #FFFFFF !important;
+  color: var(--mat-sys-primary) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.mat-drawer-container {
+  background: #FFFFFF !important;
+}
+
+.mat-drawer {
+  background: #FFFFFF !important;
+  border-right: 1px solid #E6E6E6;
+}
+
+// Para ítems del menú
+.mat-mdc-button,
+.mat-mdc-list-item {
+  color: #633371 !important; // morado suave para contraste
 }

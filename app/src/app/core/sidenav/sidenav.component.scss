@@ -1,2 +1,108 @@
-:host { display: block; height: 100%; }
-a.active { background: var(--mat-sys-secondary-container); }
+// Variables (Mismas del Header para consistencia)
+$primary: #5e2c5f;
+$text-inactive: #5f6368; // Gris estándar de Material para inactivos
+$bg-hover: rgba(0, 0, 0, 0.04);
+$bg-active: rgba($primary, 0.1); // Morado muy suave para el fondo activo
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // 🔹 CRÍTICO: Asegura 100% de la altura del contenedor padre
+  overflow: hidden; // Fallback
+  background-color: #ffffff;
+}
+.sidenav-logo {
+  height: 64px; // Altura estándar del toolbar
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08); // Separador sutil
+  margin-bottom: 8px; // Espacio antes de la navegación
+  
+  .logo-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: $primary; // Ícono Morado
+    margin-right: 8px;
+  }
+
+  .logo-brand {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: $primary; // Texto Morado
+    letter-spacing: 0.5px;
+
+    // Detalle con el color secundario (Dorado)
+    &::after {
+      content: '.';
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+  }
+}
+
+mat-nav-list {
+  padding-top: 16px; // Un poco de aire arriba
+}
+.nav-list-main {
+  flex-grow: 1; // 🔹 FUERZA a que esta lista empuje el footer hacia abajo
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 8px 12px;
+}
+// Estilizando el item de la lista (el <a>)
+.nav-item {
+  margin: 4px 0; // Márgenes laterales para efecto "flotante"
+  border-radius: 8px; // Bordes redondeados modernos
+  color: $text-inactive;
+  transition: all 0.2s ease-in-out;
+  height: 48px; // Altura cómoda para click
+
+  // Estado Hover (Pasar el mouse)
+  &:hover {
+    background-color: $bg-hover;
+    color: #333;
+  }
+
+  // Estado ACTIVO (Ruta actual)
+  &.active {
+    background-color: $bg-active; // Fondo morado pastel
+    color: $primary; // Texto Morado Fuerte
+    font-weight: 600; // Un poco más grueso para resaltar
+
+    // Forzamos el color del ícono también
+    ::ng-deep .mat-icon {
+      color: $primary;
+      font-variation-settings: 'FILL' 1; // Rellena el ícono si usas Material Symbols (opcional)
+    }
+  }
+
+  // Ajuste fino de los iconos
+  mat-icon {
+    margin-right: 12px;
+    color: inherit; // Hereda el color del padre (gris o morado)
+  }
+}
+// ----------------------------------------------------
+// FOOTER LOGO (Fijo en el fondo)
+// ----------------------------------------------------
+.sidenav-footer-logo {
+  height: 150px; // Altura fija
+  display: flex;
+  align-items: center;
+  justify-content: center; // Centramos el logo horizontalmente
+  padding: 0 0;
+
+  // Línea sutil que separa el logo del último ítem de menú
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  .logo-image {
+    max-height: 156px;
+    width: 100%;
+    object-fit: contain;
+
+    // Opcional: Para darle un tono de "marca secundaria"
+    opacity: 0.8;
+  }
+}

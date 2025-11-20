@@ -1,8 +1,21 @@
-<mat-nav-list>
+<div class="sidenav-logo">
+  <mat-icon class="logo-icon">volunteer_activism</mat-icon>
+  <span class="logo-brand">AAMSA</span>
+</div>
+<mat-nav-list class="nav-list-main">
   @for (it of items; track it.path) {
-    <a mat-list-item [routerLink]="it.path" routerLinkActive="active" (click)="navigate.emit()">
+    <a mat-list-item 
+       [routerLink]="it.path" 
+       routerLinkActive="active" 
+       class="nav-item"
+       (click)="navigate.emit()">
       <mat-icon matListItemIcon>{{ it.icon }}</mat-icon>
-      <div matListItemTitle>{{ it.label }}</div>
+      <span matListItemTitle>{{ it.label }}</span>
     </a>
   }
 </mat-nav-list>
+
+<div class="sidenav-footer-logo">
+  <img src="/logo.png?v=1" alt="Logo de AAMSA" class="logo-image">
+  <span class="version-text">Sistema AAMSA v1.0</span>
+</div>

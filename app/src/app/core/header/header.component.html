@@ -1,49 +1,76 @@
-<!-- core/header/header.component.html -->
-<mat-toolbar color="primary" class="toolbar">
+<mat-toolbar class="toolbar">
   <button mat-icon-button (click)="menuClick.emit()" aria-label="Abrir menú">
     <mat-icon>menu</mat-icon>
   </button>
-
-  <span class="brand">AAMSA</span>
+  
   <span class="spacer"></span>
 
-  <button mat-icon-button
-          [matBadge]="unreadCount()"
-          [matBadgeHidden]="!unreadCount()"
-          matBadgeColor="accent"
-          [matMenuTriggerFor]="menuNotificaciones"
-          aria-label="Notificaciones">
-    <mat-icon>notifications</mat-icon>
-  </button>
+  <div class="actions-container">
+    <button mat-icon-button
+            [matBadge]="unreadCount()"
+            [matBadgeHidden]="!unreadCount()"
+            matBadgeColor="accent"
+            [matMenuTriggerFor]="menuNotificaciones">
+      <mat-icon>notifications</mat-icon>
+    </button>
 
-  <button mat-button class="avatar" matTooltip="Mi perfil">
-    <mat-icon>account_circle</mat-icon>
-  </button>
+   <button mat-button class="glass-profile" [matMenuTriggerFor]="menuUsuario">
+  <mat-icon>person</mat-icon>
+  <span class="glass-profileName">Administración</span>
+
+  <mat-icon>expand_more</mat-icon>
+</button>
+
+  </div>
 </mat-toolbar>
 
-<mat-menu #menuNotificaciones="matMenu" class="menu-noti">
+<mat-menu #menuNotificaciones="matMenu" class="menu-noti-panel" xPosition="before">
   <div class="menu-head">
     <span>Notificaciones</span>
-    <button mat-button (click)="marcarTodasLeidas()">Leer todos</button>
+    @if (unreadCount() > 0) {
+      <button mat-button (click)="marcarTodasLeidas($event)">Marcar leídas</button>
+    }
   </div>
-  <mat-divider></mat-divider>
-
+  
   @for (n of notis(); track n.id) {
-    <button mat-menu-item>
+    <button mat-menu-item class="noti-item">
       <mat-icon [ngClass]="n.tipo">
         @switch (n.tipo) {
           @case ('success') { check_circle }
-          @case ('warning') { error }
-          @case ('error')   { cancel }
+          @case ('warning') { warning }
+          @case ('error')   { error }
           @default          { info }
         }
       </mat-icon>
-      <span [class.leido]="n.leido">{{ n.texto }}</span>
+      <span class="noti-text" [class.unread]="!n.leido" [class.read]="n.leido">
+        {{ n.texto }}
+      </span>
     </button>
   } @empty {
-    <button mat-menu-item disabled>Sin notificaciones</button>
+    <div style="padding: 20px; text-align: center; color: #999;">
+      <mat-icon>notifications_off</mat-icon>
+      <p style="margin:0; font-size: 0.9rem;">Sin novedades</p>
+    </div>
   }
 
   <mat-divider></mat-divider>
-  <button mat-menu-item>Recargar</button>
+  <button mat-menu-item style="justify-content: center; text-align: center; font-size: 0.9rem; color: #666;">
+    Ver todo el historial
+  </button>
+</mat-menu>
+
+<mat-menu #menuUsuario="matMenu" xPosition="before">
+  <button mat-menu-item>
+    <mat-icon>person</mat-icon>
+    <span>Mi Perfil</span>
+  </button>
+  <button mat-menu-item>
+    <mat-icon>settings</mat-icon>
+    <span>Configuración</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item>
+    <mat-icon color="warn">logout</mat-icon>
+    <span>Cerrar Sesión</span>
+  </button>
 </mat-menu>
