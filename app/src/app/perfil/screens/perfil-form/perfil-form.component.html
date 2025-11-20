@@ -1,9 +1,9 @@
 <h2 mat-dialog-title>{{ title }}</h2>
-
+<br>
 <mat-dialog-content>
   <form [formGroup]="form" class="form">
+    <!-- CAMPOS DEL PERFIL -->
 
-    <!-- Nombre -->
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="nombre" />
@@ -12,7 +12,6 @@
       }
     </mat-form-field>
 
-    <!-- Fecha de nacimiento -->
     <mat-form-field appearance="outline">
       <mat-label>Fecha de nacimiento</mat-label>
       <input
@@ -22,13 +21,11 @@
       />
       <mat-datepicker-toggle matSuffix [for]="pickerFecha"></mat-datepicker-toggle>
       <mat-datepicker #pickerFecha></mat-datepicker>
-
       @if (form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.invalid) {
         <mat-error>La fecha de nacimiento es obligatoria</mat-error>
       }
     </mat-form-field>
 
-    <!-- Cédula -->
     <mat-form-field appearance="outline">
       <mat-label>Cédula</mat-label>
       <input matInput formControlName="cedula" />
@@ -37,25 +34,21 @@
       }
     </mat-form-field>
 
-    <!-- Teléfono de contacto -->
     <mat-form-field appearance="outline">
       <mat-label>Teléfono de contacto</mat-label>
       <input matInput formControlName="telefonoContacto" />
     </mat-form-field>
 
-    <!-- Número celular -->
     <mat-form-field appearance="outline">
       <mat-label>Número celular</mat-label>
       <input matInput formControlName="numeroCelular" />
     </mat-form-field>
 
-    <!-- Dirección -->
     <mat-form-field appearance="outline" class="campo-full">
       <mat-label>Dirección</mat-label>
       <textarea matInput rows="2" formControlName="direccion"></textarea>
     </mat-form-field>
 
-    <!-- Rol -->
     <mat-form-field appearance="outline">
       <mat-label>Rol</mat-label>
       <mat-select formControlName="rol">
@@ -65,27 +58,70 @@
       </mat-select>
     </mat-form-field>
 
-    <!-- Estado -->
     <mat-form-field appearance="outline">
       <mat-label>Estado</mat-label>
       <mat-select formControlName="estado">
         @for (e of estados; track e) {
-          <mat-option [value]="e">{{ e }}</mat-option>
-        }
+          <mat-option [value]="e">{{ e }}</mat-option> }
       </mat-select>
     </mat-form-field>
+<!-- FOTO DE PERFIL -->
+    <div class="foto-section">
+  <div class="preview">
+    @if (fotoPreviewUrl) {
+      <img [src]="fotoPreviewUrl" alt="Foto del perfil" />
+    } @else {
+      <div class="avatar-placeholder">
+        {{ form.controls.nombre.value?.[0] || 'P' }}
+      </div>
+    }
+  </div>
+
+  <div class="controls">
+    <button
+      mat-stroked-button
+      color="primary"
+      type="button"
+      (click)="fileInput.click()"
+      [disabled]="subiendoFoto"
+    >
+      <mat-icon>upload</mat-icon>
+      @if (subiendoFoto) { Subiendo... } @else { Cambiar foto }
+    </button>
+
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      (change)="onFileSelected($event)"
+      hidden
+    />
+
+    <small class="hint">
+      Formatos: JPG/PNG. Máx 2MB.
+    </small>
+  </div>
+</div>
 
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
-  <button mat-raised-button color="primary" type="button" (click)="save()" [disabled]="form.invalid || guardando">
-  @if (guardando) {
-    <mat-progress-spinner [diameter]="18" mode="indeterminate"></mat-progress-spinner>
-  } @else {
-    Guardar
-  }
-</button>
+  <button mat-stroked-button type="button" (click)="cancel()" [disabled]="guardando">
+    Cancelar
+  </button>
 
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    (click)="save()"
+    [disabled]="form.invalid || guardando"
+  >
+    @if (guardando) {
+      <mat-progress-spinner [diameter]="18" mode="indeterminate"></mat-progress-spinner>
+    } @else {
+      Guardar
+    }
+  </button>
 </mat-dialog-actions>
