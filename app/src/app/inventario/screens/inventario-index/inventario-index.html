@@ -1,135 +1,145 @@
-<div class="inventario-container mat-elevation-z2">
-  <div class="inventario-header">
-    <div class="header-row">
-      
-      <!-- Título centrado -->
-      <div class="header-title">
-        <h1>Inventario</h1>
-        <span class="subtitulo">Listado de todos los productos</span>
+<div class="inventario-container">
+  <div class="header-section">
+    <div class="title-row">
+      <div>
+        <h1>Inventario General</h1>
+        <span class="subtitle">Gestión de suministros y activos fijos</span>
+      </div>
+      <button mat-stroked-button color="accent" routerLink="/inventario-historial">
+        <mat-icon>history</mat-icon> Ver Movimientos
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card info">
+        <mat-icon>inventory_2</mat-icon>
+        <div class="stat-content">
+          <span class="value">{{ dataSource.data.length || 0 }}</span>
+          <span class="label">Total Items</span>
+        </div>
       </div>
 
-      <!-- Nuevo -->
-      <button mat-flat-button color="primary" (click)="abrirFormCrear()">
-        <mat-icon>add</mat-icon>
-        Nuevo
-      </button>
+      <div class="stat-card alert">
+        <mat-icon>warning</mat-icon>
+        <div class="stat-content">
+          <span class="value">{{ stockCritico }}</span>
+          <span class="label">Stock Crítico</span>
+        </div>
+      </div>
 
-      <button mat-flat-button color="accent" routerLink="/inventario-historial">
-        <mat-icon>history</mat-icon>
-        Historial
-      </button>
+      <div class="stat-card ok">
+        <mat-icon>check_circle</mat-icon>
+        <div class="stat-content">
+          <span class="value">{{ porcentajeDisponibilidad }}%</span>
+          <span class="label">Nivel de Abastecimiento</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Estado de carga -->
-  @if (cargando) {
-  <mat-card class="estado-card cargando">
-    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    <span>Cargando inventario..</span>
-  </mat-card>
-  }
+  <div class="data-section mat-elevation-z2" style="border-radius: 16px">
+    <div class="table-toolbar">
+      <mat-form-field appearance="outline" density="compact" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          (keyup)="applyFilter($event)"
+          placeholder="Buscar suministro, medicina o activo..."
+        />
+      </mat-form-field>
 
-  <!-- Estado de error -->
-  @if (error) {
-  <mat-card class="estado-card error">
-    <mat-icon color="warn">error</mat-icon>
-    <span>{{ error }}</span>
-  </mat-card>
-  }
+      <div class="actions">
+        <button mat-flat-button color="primary" (click)="abrirFormCrear()">
+          <mat-icon>add</mat-icon> Nuevo Producto
+        </button>
+      </div>
+    </div>
 
-  <!-- Tabla -->
-  @if (!cargando && !error) {
-  <div>
-    <table mat-table [dataSource]="dataSource" class="tabla-inventario mat-elevation-z1">
-      <!-- Nombre -->
-      <ng-container matColumnDef="Nombre">
-        <th mat-header-cell *matHeaderCellDef class="col-nombre">Nombre</th>
-        <td mat-cell *matCellDef="let element" class="col-nombre">
-          <div class="nombre-cell">
-            <span class="nombre">{{ element.Nombre }}</span>
-            @if (element.descripcion) {
-            <span class="descripcion-pequena">
-              {{ element.descripcion }}
+    <div class="table-container">
+      @if (cargando) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Actualizando inventario...</p>
+      </div>
+      } @else if (error) {
+      <div class="error-state">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ error }}</p>
+      </div>
+      } @else {
+      <table mat-table [dataSource]="dataSource">
+        <ng-container matColumnDef="Nombre">
+          <th mat-header-cell *matHeaderCellDef>Producto / Descripción</th>
+          <td mat-cell *matCellDef="let element" class="col-nombre">
+            <span class="main-text">{{ element.Nombre }}</span>
+            <span class="sub-text">{{ element.descripcion || 'Sin descripción adicional' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="stock">
+          <th mat-header-cell *matHeaderCellDef style="text-align: center">Disponibilidad</th>
+          <td mat-cell *matCellDef="let element" style="text-align: center">
+            <span
+              class="stock-badge"
+              [class.low]="element.stock < 10"
+              [class.medium]="element.stock >= 10 && element.stock < 50"
+              [class.high]="element.stock >= 50"
+            >
+              {{ element.stock }} Unid.
             </span>
-            }
-          </div>
-        </td>
-      </ng-container>
+          </td>
+        </ng-container>
 
-      <!-- Stock -->
-      <ng-container matColumnDef="stock">
-        <th mat-header-cell *matHeaderCellDef>Stock</th>
-        <td
-          mat-cell
-          *matCellDef="let element"
-          [ngClass]="obtenerClaseStock(element.stock)"
-          class="col-stock"
-        >
-          {{ element.stock }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let element">
+            <div
+              class="status-dot"
+              [class.activo]="element.estado === 'ACTIVO'"
+              [class.inactivo]="element.estado !== 'ACTIVO'"
+            >
+              {{ element.estado | titlecase }}
+            </div>
+          </td>
+        </ng-container>
 
-      <!-- Estado -->
-      <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef>Estado</th>
-        <td mat-cell *matCellDef="let element">
-          <span
-            class="badge"
-            [ngClass]="{
-              'badge-activo': element.estado === 'ACTIVO',
-              'badge-inactivo': element.estado === 'INACTIVO'
-            }"
-          >
-            {{ element.estado }}
-          </span>
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef>Último Mov.</th>
+          <td mat-cell *matCellDef="let element" style="color: #888; font-size: 0.85rem">
+            {{ element.updatedAt | date : 'dd MMM, HH:mm' }}
+          </td>
+        </ng-container>
 
-      <!-- Creado -->
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef>Creado</th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.createdAt | date : 'short' }}
-        </td>
-      </ng-container>
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef style="text-align: right"></th>
+          <td mat-cell *matCellDef="let element" style="text-align: right">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="abrirFormEditar(element)"
+              matTooltip="Editar Inventario"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
 
-      <!-- Actualizado -->
-      <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef>Actualizado</th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.updatedAt | date : 'short' }}
-        </td>
-      </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-      <!-- Acciones -->
-      <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef class="col-acciones">Acciones</th>
-        <td mat-cell *matCellDef="let element" class="col-acciones">
-          <button
-            mat-icon-button
-            color="primary"
-            aria-label="Editar"
-            (click)="abrirFormEditar(element)"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-          <!-- Aquí podrías agregar eliminar -->
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns; trackBy: trackById"></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell sin-datos" [attr.colspan]="displayedColumns.length">
-          No se encontraron registros de inventario.
-        </td>
-      </tr>
-    </table>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-row" colspan="100%">
+            No se encontraron productos que coincidan con la búsqueda.
+          </td>
+        </tr>
+      </table>
+      }
+    </div>
   </div>
-  } @if (mostrarForm) {
-  <div class="form-overlay">
-    <div class="form-dialog-wrapper">
+
+  @if (mostrarForm) {
+  <div class="form-overlay" (click)="onCerrarForm(false)">
+    <div class="form-dialog-wrapper" (click)="$event.stopPropagation()">
       <app-inventario-form
         [inventario]="inventarioSeleccionado"
         [modo]="modoForm"

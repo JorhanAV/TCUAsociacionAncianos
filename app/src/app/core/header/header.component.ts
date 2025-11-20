@@ -37,7 +37,9 @@ export class HeaderComponent {
     this.unreadCount.set(count);
   }
 
-  marcarTodasLeidas() {
+  marcarTodasLeidas(event?: Event) {
+    if(event) event.stopPropagation(); // Evita que el menú se cierre al hacer click
+    
     this.notis.update(arr => arr.map(n => ({ ...n, leido: true })));
     this.updateUnread();
   }
