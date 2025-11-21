@@ -164,6 +164,7 @@ model InventarioActividad {
   id           Int        @id @default(autoincrement())
   idInventario Int
   idActividad  Int
+  cantidadxPersona Int
 
   inventario   Inventario @relation(fields: [idInventario], references: [id], onDelete: Cascade)
   actividad    Actividad  @relation(fields: [idActividad], references: [id], onDelete: Cascade)

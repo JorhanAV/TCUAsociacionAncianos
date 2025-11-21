@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE `Usuario` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre_usuario` VARCHAR(191) NOT NULL,
     `correo` VARCHAR(191) NOT NULL,
     `contrasenia` VARCHAR(191) NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE `Usuario` (
 
 -- CreateTable
 CREATE TABLE `Perfiles` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(191) NOT NULL,
     `fechaNacimiento` DATETIME(3) NOT NULL,
     `cedula` VARCHAR(191) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE `Perfiles` (
 
 -- CreateTable
 CREATE TABLE `Actividad` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `nombre` VARCHAR(191) NOT NULL,
     `fechaActividad` DATETIME(3) NOT NULL,
     `horaInicio` DATETIME(3) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE `Actividad` (
 
 -- CreateTable
 CREATE TABLE `Inventario` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `idCategoria` ENUM('Medicinas', 'Materiales', 'ActivosFijos') NOT NULL,
     `Nombre` VARCHAR(191) NOT NULL,
     `descripcion` VARCHAR(191) NULL,
@@ -65,9 +65,9 @@ CREATE TABLE `Inventario` (
 
 -- CreateTable
 CREATE TABLE `HistorialInventario` (
-    `id` VARCHAR(191) NOT NULL,
-    `idInventario` VARCHAR(191) NOT NULL,
-    `idUsuario` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idInventario` INTEGER NOT NULL,
+    `idUsuario` INTEGER NOT NULL,
     `fecha` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `descripcion` VARCHAR(191) NULL,
     `tipoMovimiento` ENUM('ADD', 'DELETE') NOT NULL,
@@ -79,9 +79,9 @@ CREATE TABLE `HistorialInventario` (
 
 -- CreateTable
 CREATE TABLE `Actas` (
-    `id` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
     `URL` VARCHAR(191) NOT NULL,
-    `idUsuario` VARCHAR(191) NOT NULL,
+    `idUsuario` INTEGER NOT NULL,
     `fecha` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     INDEX `Actas_fecha_idx`(`fecha`),
@@ -90,9 +90,9 @@ CREATE TABLE `Actas` (
 
 -- CreateTable
 CREATE TABLE `ActividadPerfil` (
-    `id` VARCHAR(191) NOT NULL,
-    `idPerfil` VARCHAR(191) NOT NULL,
-    `idActividad` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idPerfil` INTEGER NOT NULL,
+    `idActividad` INTEGER NOT NULL,
 
     INDEX `ActividadPerfil_idActividad_idx`(`idActividad`),
     UNIQUE INDEX `ActividadPerfil_idPerfil_idActividad_key`(`idPerfil`, `idActividad`),
@@ -101,9 +101,10 @@ CREATE TABLE `ActividadPerfil` (
 
 -- CreateTable
 CREATE TABLE `InventarioActividad` (
-    `id` VARCHAR(191) NOT NULL,
-    `idInventario` VARCHAR(191) NOT NULL,
-    `idActividad` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idInventario` INTEGER NOT NULL,
+    `idActividad` INTEGER NOT NULL,
+    `cantidadxPersona` INTEGER NOT NULL,
 
     INDEX `InventarioActividad_idActividad_idx`(`idActividad`),
     UNIQUE INDEX `InventarioActividad_idInventario_idActividad_key`(`idInventario`, `idActividad`),
@@ -112,9 +113,9 @@ CREATE TABLE `InventarioActividad` (
 
 -- CreateTable
 CREATE TABLE `ActaPerfil` (
-    `id` VARCHAR(191) NOT NULL,
-    `idActa` VARCHAR(191) NOT NULL,
-    `idPerfiles` VARCHAR(191) NOT NULL,
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `idActa` INTEGER NOT NULL,
+    `idPerfiles` INTEGER NOT NULL,
 
     INDEX `ActaPerfil_idPerfiles_idx`(`idPerfiles`),
     UNIQUE INDEX `ActaPerfil_idActa_idPerfiles_key`(`idActa`, `idPerfiles`),
