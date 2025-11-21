@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 
 
 
+import { MatChipListbox, MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   exports: [
@@ -37,7 +38,8 @@ import { MatTableModule } from '@angular/material/table';
     MatCardModule,
     MatRippleModule,
     MatTooltipModule,
-
+    MatChipsModule,      // <--- IMPORTANTE para los filtros de bolitas
+    MatFormFieldModule,  // <--- Para la barra de búsqueda,
     // 👇 necesarios para Perfiles + diálogo
     MatDialogModule,
     MatFormFieldModule,

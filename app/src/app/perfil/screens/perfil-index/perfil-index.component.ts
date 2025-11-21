@@ -9,6 +9,7 @@ import { perfilModel, ERol, EEstado } from '../../../share/models/perfilModel';
 import { PerfilFormComponent } from '../perfil-form/perfil-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDeleteDialog } from '../../../share/confirm-delete.dialog';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-perfil-index',
@@ -23,8 +24,7 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
   private svc = inject(PerfilService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
-private snackBar = inject(MatSnackBar);
-
+  private snackBar = inject(MatSnackBar);
   loading = signal(false);
   items = signal<perfilModel[]>([]);
   pagina = signal(1);
@@ -44,10 +44,16 @@ private snackBar = inject(MatSnackBar);
   ngOnInit(): void {
     this.load();
 
-    this.filtros.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      this.pagina.set(1);
-      this.load();
-    });
+    this.filtros.valueChanges
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(500), // <--- Espera 500ms a que el usuario termine de escribir
+        distinctUntilChanged() // <--- Evita recargar si el valor es el mismo
+      )
+      .subscribe(() => {
+        this.pagina.set(1);
+        this.load();
+      });
   }
 
   load(): void {
@@ -107,33 +113,35 @@ private snackBar = inject(MatSnackBar);
       this.load();
     }
   }
-
+  limpiarFiltros() {
+    this.filtros.reset();
+  }
   toggleEstado(item: perfilModel) {
-  const nuevo = item.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
-  this.svc.setEstado(Number(item.id), nuevo as EEstado).subscribe({
-    next: () => {
-      const msg =
-        nuevo === 'ACTIVO'
-          ? 'Perfil activado correctamente.'
-          : 'Perfil desactivado correctamente.';
-      this.snackBar.open(msg, 'OK', {
-        duration: 2500,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['snackbar-success'],
-      });
-      this.load();
-    },
-    error: (err) => {
-      console.error('Error cambiando estado', err);
-      this.snackBar.open('Error al cambiar el estado del perfil.', 'Cerrar', {
-        duration: 4000,
-        horizontalPosition: 'right',
-        verticalPosition: 'top',
-        panelClass: ['snackbar-error'],
-      });
-    },
-  });
+    const nuevo = item.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+    this.svc.setEstado(Number(item.id), nuevo as EEstado).subscribe({
+      next: () => {
+        const msg =
+          nuevo === 'ACTIVO'
+            ? 'Perfil activado correctamente.'
+            : 'Perfil desactivado correctamente.';
+        this.snackBar.open(msg, 'OK', {
+          duration: 2500,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['snackbar-success'],
+        });
+        this.load();
+      },
+      error: (err) => {
+        console.error('Error cambiando estado', err);
+        this.snackBar.open('Error al cambiar el estado del perfil.', 'Cerrar', {
+          duration: 4000,
+          horizontalPosition: 'right',
+          verticalPosition: 'top',
+          panelClass: ['snackbar-error'],
+        });
+      },
+    });
   }
   // 🔹 CREAR en MatDialog
   crear() {

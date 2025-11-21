@@ -1,54 +1,72 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
 
 import { InventarioModel } from '../../../share/models/inventarioModel';
-import { EEstado } from '../../../share/models/estadoModel';
-import { ECategoria } from '../../../share/models/categoriaModel';
 import { InventarioService } from '../../../share/services/inventario.service';
 
 @Component({
   selector: 'app-inventario-index',
   templateUrl: './inventario-index.html',
   standalone: false,
-  styleUrls: ['./inventario-index.css'],
+  styleUrls: ['./inventario-index.scss'], // O .scss si lo cambiaste
 })
 export class InventarioIndex implements OnInit {
-  displayedColumns: string[] = [
-    'Nombre',
-    'stock',
-    'estado',
-    'createdAt',
-    'updatedAt',
-    'acciones',
-  ];
+  displayedColumns: string[] = ['Nombre', 'stock', 'estado', 'updatedAt', 'acciones']; // Ajusté columnas para que coincidan con el diseño limpio
 
   dataSource = new MatTableDataSource<InventarioModel>([]);
   cargando = false;
   error: string | null = null;
 
-  // 🔎 Filtro de texto
-  terminoBusqueda = '';
-
-  // 🎯 Filtros adicionales
-  filtroEstado: 'TODOS' | EEstado = 'TODOS';
-  filtroCategoria: 'TODAS' | ECategoria = 'TODAS';
-  filtroStock: 'TODOS' | 'CRITICO' | 'BAJO' | 'OK' = 'TODOS';
-
-  // 🧩 para el modal de formulario (lo que ya tenías)
   mostrarForm = false;
   modoForm: 'crear' | 'editar' = 'crear';
   inventarioSeleccionado: InventarioModel | null = null;
 
-  // enums a mano para el template
-  estados = EEstado;
-  categorias = ECategoria;
-
-  constructor(private inventarioService: InventarioService) {}
+  constructor(private inventarioService: InventarioService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.cargarInventario();
-    this.configurarFiltroTabla();
+
+    // Configuración opcional: Define qué columnas usa el filtro (por defecto busca en todas)
+    this.dataSource.filterPredicate = (data: InventarioModel, filter: string) => {
+      const dataStr = (data.Nombre + data.descripcion + data.estado).toLowerCase();
+      return dataStr.includes(filter);
+    };
   }
+
+  // 🔹 LÓGICA DE FILTRADO (Lo que faltaba)
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  // 🔹 ESTADÍSTICAS (Para las tarjetas del Dashboard)
+  get totalItems(): number {
+    return this.dataSource.data.length;
+  }
+
+  get stockCritico(): number {
+    // Cuenta cuántos productos tienen stock <= 5 (umbral crítico)
+    return this.dataSource.data.filter((item) => item.stock <= 5).length;
+  }
+  // ... (dentro de la clase InventarioIndex)
+
+  get porcentajeDisponibilidad(): string {
+    const total = this.totalItems;
+
+    // Evitar división por cero si no hay datos aún
+    if (total === 0) return '0';
+
+    // Disponibilidad = (Items NO críticos / Total) * 100
+    // Es decir, el porcentaje de productos que NO requieren atención urgente.
+    const itemsSanos = total - this.stockCritico;
+    const porcentaje = (itemsSanos / total) * 100;
+
+    // Retornamos fijo a 0 decimales (ej: "95") o 1 decimal (ej: "95.5")
+    return porcentaje.toFixed(0);
+  }
+
+  // ... (resto del código)
 
   cargarInventario(): void {
     this.cargando = true;
@@ -57,7 +75,6 @@ export class InventarioIndex implements OnInit {
     this.inventarioService.get().subscribe({
       next: (data) => {
         this.dataSource.data = data;
-        this.aplicarFiltros();
         this.cargando = false;
       },
       error: (err) => {
@@ -68,87 +85,7 @@ export class InventarioIndex implements OnInit {
     });
   }
 
-  // 📌 Configuramos el filterPredicate una sola vez
-  configurarFiltroTabla(): void {
-    this.dataSource.filterPredicate = (
-      item: InventarioModel,
-      filtroJson: string
-    ) => {
-      if (!filtroJson) return true;
-
-      const filtro = JSON.parse(filtroJson) as {
-        termino: string;
-        estado: 'TODOS' | EEstado;
-        categoria: 'TODAS' | ECategoria;
-        stock: 'TODOS' | 'CRITICO' | 'BAJO' | 'OK';
-      };
-
-      const term = filtro.termino.trim().toLowerCase();
-
-      // 🔎 filtro de texto: nombre, descripción, stock
-      const coincideTexto =
-        !term ||
-        item.Nombre.toLowerCase().includes(term) ||
-        (item.descripcion?.toLowerCase().includes(term) ?? false) ||
-        String(item.stock).includes(term);
-
-      // 🎯 filtro de estado
-      const coincideEstado =
-        filtro.estado === 'TODOS' || item.estado === filtro.estado;
-
-      // 🎯 filtro de categoría
-      const coincideCategoria =
-        filtro.categoria === 'TODAS' ||
-        item.idCategoria === filtro.categoria;
-
-      // 🎯 filtro de nivel de stock
-      let coincideStock = true;
-      if (filtro.stock === 'CRITICO') {
-        coincideStock = item.stock <= 5;
-      } else if (filtro.stock === 'BAJO') {
-        coincideStock = item.stock > 5 && item.stock <= 10;
-      } else if (filtro.stock === 'OK') {
-        coincideStock = item.stock > 10;
-      }
-
-      return coincideTexto && coincideEstado && coincideCategoria && coincideStock;
-    };
-  }
-
-  // 🚀 Ejecutar filtros (se llama al cambiar cualquier filtro)
-  aplicarFiltros(): void {
-    const filtro = {
-      termino: this.terminoBusqueda,
-      estado: this.filtroEstado,
-      categoria: this.filtroCategoria,
-      stock: this.filtroStock,
-    };
-
-    // importante: Angular compara string, así que mandamos JSON
-    this.dataSource.filter = JSON.stringify(filtro);
-  }
-
-  // Cambios desde el template
-  onBuscar(valor: string): void {
-    this.terminoBusqueda = valor;
-    this.aplicarFiltros();
-  }
-
-  onCambiarEstado(valor: 'TODOS' | EEstado): void {
-    this.filtroEstado = valor;
-    this.aplicarFiltros();
-  }
-
-  onCambiarCategoria(valor: 'TODAS' | ECategoria): void {
-    this.filtroCategoria = valor;
-    this.aplicarFiltros();
-  }
-
-  onCambiarFiltroStock(valor: 'TODOS' | 'CRITICO' | 'BAJO' | 'OK'): void {
-    this.filtroStock = valor;
-    this.aplicarFiltros();
-  }
-
+  // Lógica visual para clases CSS
   obtenerClaseStock(stock: number): string {
     if (stock <= 5) return 'stock-critico';
     if (stock <= 10) return 'stock-bajo';
@@ -159,7 +96,7 @@ export class InventarioIndex implements OnInit {
     return item.id;
   }
 
-  // ✅ Modal form (lo que ya tenías)
+  // 🔹 MODALES Y FORMULARIOS
   abrirFormCrear(): void {
     this.modoForm = 'crear';
     this.inventarioSeleccionado = null;
@@ -168,7 +105,8 @@ export class InventarioIndex implements OnInit {
 
   abrirFormEditar(item: InventarioModel): void {
     this.modoForm = 'editar';
-    this.inventarioSeleccionado = item;
+    // Clonamos el objeto para no modificar la tabla en tiempo real antes de guardar
+    this.inventarioSeleccionado = { ...item };
     this.mostrarForm = true;
   }
 
