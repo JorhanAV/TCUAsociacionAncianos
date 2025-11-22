@@ -1,1 +1,109 @@
-<p>actividad-form works!</p>
+<div class="card mat-elevation-z3">
+
+  <h2>{{ modo === 'crear' ? 'Nueva Actividad' : 'Editar Actividad' }}</h2>
+
+  <form [formGroup]="form">
+
+    <!-- SECCIÓN BÁSICA -->
+    <div class="section">
+      <h3>Información General</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre de la actividad</mat-label>
+        <input matInput formControlName="nombre" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Fecha</mat-label>
+        <input matInput type="date" formControlName="fechaActividad" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hora de inicio</mat-label>
+        <input matInput type="time" formControlName="horaInicio" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Duración (min)</mat-label>
+        <input matInput type="number" formControlName="duracion" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo Actividad</mat-label>
+        <mat-select formControlName="tipoActividad">
+          <mat-option value="Pintar">Pintar</mat-option>
+          <mat-option value="Cognitivo">Cognitivo</mat-option>
+          <mat-option value="Baile">Baile</mat-option>
+          <mat-option value="Quiting">Quiting</mat-option>
+          <mat-option value="Generales">Generales</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- PARTICIPANTES -->
+    <div class="section">
+      <h3>Participantes</h3>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Participantes (Adultos, Admin, Socios)</mat-label>
+        <mat-select formControlName="idsPerfiles" multiple>
+          <mat-option *ngFor="let p of listaPersonas" [value]="p.id">
+            {{ p.nombre }} — {{ p.rol }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Voluntario Encargado</mat-label>
+        <mat-select formControlName="idVoluntarioEncargado">
+          <mat-option *ngFor="let v of listaVoluntarios" [value]="v.id">
+            {{ v.nombre }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- INVENTARIO -->
+    <div class="section">
+      <h3>Materiales Necesarios</h3>
+
+      <button mat-button color="primary" type="button" (click)="agregarInventario()">
+        <mat-icon>add</mat-icon> Añadir Material
+      </button>
+
+      <div class="inv-row" *ngFor="let inv of inventariosArr.controls; let i = index" [formGroup]="inv">
+
+        <mat-form-field appearance="outline">
+          <mat-label>Material</mat-label>
+          <mat-select formControlName="idInventario">
+            <mat-option *ngFor="let item of listaInventarios" [value]="item.id">
+              {{ item.Nombre }} ({{ item.stock }} unid.)
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Cant. por Persona</mat-label>
+          <input matInput type="number" formControlName="cantidadxPersona" />
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" (click)="eliminarInventario(i)">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- BOTONES -->
+    <div class="actions">
+      <button mat-flat-button color="primary" type="button" (click)="guardar()">
+        Guardar
+      </button>
+
+      <button mat-stroked-button color="accent" type="button" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+
+  </form>
+</div>
