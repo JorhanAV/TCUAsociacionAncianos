@@ -23,6 +23,7 @@ app.use(
     extended: true,
   })
 );
+const __basedir = path.resolve();
 
 //---- Registro de rutas ----
 app.use(AppRoutes.routes)
@@ -31,8 +32,10 @@ app.use(AppRoutes.routes)
 app.use(ErrorMiddleware.handleError);
 
 //Acceso a las imágenes
-app.use("/imagenes",express.static(
-  path.join(path.resolve(),"assets/uploads")))
+app.use(
+  '/assets/uploads', 
+  express.static(path.join(__basedir, 'assets', 'uploads'))
+);
 
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);

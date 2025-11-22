@@ -3,6 +3,6 @@ export const environment = {
   endPointPerfiles: 'perfiles',
   endPointInventario: 'inventario',
   endPointHistInventario: 'historial',
-  imageBaseUrl: 'http://localhost:3000/imagenes/',
+  imageBaseUrl: 'http://localhost:3000/assets/uploads/',
 
 };

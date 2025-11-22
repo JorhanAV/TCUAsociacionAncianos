@@ -10,6 +10,7 @@ import { PerfilFormComponent } from '../perfil-form/perfil-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDeleteDialog } from '../../../share/confirm-delete.dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-perfil-index',
@@ -31,6 +32,8 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
   limite = signal(8);
   total = signal(0);
   paginas = signal(0);
+
+  private imageBaseUrl = environment.imageBaseUrl; 
 
   filtros = this.fb.group({
     q: [''],
@@ -56,6 +59,14 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
       });
   }
 
+
+    getFotoUrl(fileName: string | null | undefined): string {
+      if (!fileName) {
+        // Devuelve una imagen placeholder si no hay foto
+        return 'assets/images/default-avatar.png'; 
+      }
+      return `${this.imageBaseUrl}${fileName}`;
+    }
   load(): void {
     this.loading.set(true);
     const { q, rol, estado } = this.filtros.value;

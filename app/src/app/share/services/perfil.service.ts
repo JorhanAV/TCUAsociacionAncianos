@@ -14,7 +14,20 @@ export class PerfilService extends BaseAPI<perfilModel> {
     // endpoint = 'perfiles' (o environment.endPointPerfil si lo tienes)
     super(http, environment.endPointPerfiles ?? 'perfiles');
   }
-
+  saveWithPhoto(
+    data: FormData,
+    modo: 'crear' | 'editar',
+    idPerfil: number | undefined
+  ): Observable<perfilModel> {
+    if (modo === 'crear') {
+      // POST para crear
+      return this.http.post<perfilModel>(this.urlAPI, data);
+    } else if (modo === 'editar' && idPerfil) {
+      // PUT para actualizar
+      return this.http.put<perfilModel>(`${this.urlAPI}/${this.endpoint}/${idPerfil}`, data);
+    }
+    throw new Error('Modo o ID de perfil inválido para la operación de guardado.');
+  }
   /**
    * Listado con filtros/paginación:
    * GET /api/perfiles?pagina=&limite=&rol=&estado=&q=
@@ -64,10 +77,7 @@ export class PerfilService extends BaseAPI<perfilModel> {
    * PATCH /api/perfiles/:id/estado
    */
   setEstado(id: number, estado: EEstado): Observable<perfilModel> {
-    return this.http.patch<perfilModel>(
-      `${this.urlAPI}/${this.endpoint}/${id}/estado`,
-      { estado }
-    );
+    return this.http.patch<perfilModel>(`${this.urlAPI}/${this.endpoint}/${id}/estado`, { estado });
   }
 
   // ---------- Actividades <-> Perfil ----------
@@ -87,10 +97,9 @@ export class PerfilService extends BaseAPI<perfilModel> {
    * POST /api/perfiles/:id/actividades  { idActividad }
    */
   vincularActividad(idPerfil: number, idActividad: number): Observable<any> {
-    return this.http.post(
-      `${this.urlAPI}/${this.endpoint}/${idPerfil}/actividades`,
-      { idActividad }
-    );
+    return this.http.post(`${this.urlAPI}/${this.endpoint}/${idPerfil}/actividades`, {
+      idActividad,
+    });
   }
 
   /**

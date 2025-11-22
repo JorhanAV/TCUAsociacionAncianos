@@ -78,29 +78,41 @@
   </div>
 
   <div class="controls">
+  <button
+    mat-stroked-button
+    color="primary"
+    type="button"
+    (click)="fileInput.click()"
+    [disabled]="guardando"
+  >
+    <mat-icon>upload</mat-icon>
+    @if (guardando) { Guardando... } @else { Cambiar foto } 
+  </button>
+
+  <input
+    #fileInput
+    type="file"
+    accept="image/*"
+    (change)="onFileSelected($event)"
+    hidden
+  />
+  
+  @if (fotoPreviewUrl) {
     <button
-      mat-stroked-button
-      color="primary"
+      mat-button
+      color="warn"
       type="button"
-      (click)="fileInput.click()"
-      [disabled]="subiendoFoto"
+      (click)="removePhoto()"
+      [disabled]="guardando"
     >
-      <mat-icon>upload</mat-icon>
-      @if (subiendoFoto) { Subiendo... } @else { Cambiar foto }
+      <mat-icon>delete</mat-icon> Quitar foto
     </button>
+  }
 
-    <input
-      #fileInput
-      type="file"
-      accept="image/*"
-      (change)="onFileSelected($event)"
-      hidden
-    />
-
-    <small class="hint">
-      Formatos: JPG/PNG. Máx 2MB.
-    </small>
-  </div>
+  <small class="hint">
+    Formatos: JPG/PNG. Máx 2MB.
+  </small>
+</div>
 </div>
 
   </form>
