@@ -1,0 +1,161 @@
+2025-11-21 22:10:08.156 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividad.update()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:227:40
+
+  224 }
+  225 
+  226 const actualizada = await this.prisma.$transaction(async (tx) => {
+→ 227   const act = await tx.actividad.update({
+          where: {
+            id: 5
+          },
+          data: {
+            nombre: "Taller de Memoria",
+            fechaActividad: new Date("2025-11-10T00:00:00.000Z"),
+            horaInicio: new Date("Invalid Date"),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+            duracion: 60,
+            tipoActividad: "Cognitivo"
+          }
+        })
+
+Invalid value for argument `horaInicio`: Provided Date object is invalid. Expected Date.
+2025-11-21 22:10:09.100 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividad.update()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:227:40
+
+  224 }
+  225 
+  226 const actualizada = await this.prisma.$transaction(async (tx) => {
+→ 227   const act = await tx.actividad.update({
+          where: {
+            id: 5
+          },
+          data: {
+            nombre: "Taller de Memoria",
+            fechaActividad: new Date("2025-11-10T00:00:00.000Z"),
+            horaInicio: new Date("Invalid Date"),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+            duracion: 60,
+            tipoActividad: "Cognitivo"
+          }
+        })
+
+Invalid value for argument `horaInicio`: Provided Date object is invalid. Expected Date.
+2025-11-21 22:10:09.447 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividad.update()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:227:40
+
+  224 }
+  225 
+  226 const actualizada = await this.prisma.$transaction(async (tx) => {
+→ 227   const act = await tx.actividad.update({
+          where: {
+            id: 5
+          },
+          data: {
+            nombre: "Taller de Memoria",
+            fechaActividad: new Date("2025-11-10T00:00:00.000Z"),
+            horaInicio: new Date("Invalid Date"),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+            duracion: 60,
+            tipoActividad: "Cognitivo"
+          }
+        })
+
+Invalid value for argument `horaInicio`: Provided Date object is invalid. Expected Date.
+2025-11-21 22:10:09.584 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividad.update()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:227:40
+
+  224 }
+  225 
+  226 const actualizada = await this.prisma.$transaction(async (tx) => {
+→ 227   const act = await tx.actividad.update({
+          where: {
+            id: 5
+          },
+          data: {
+            nombre: "Taller de Memoria",
+            fechaActividad: new Date("2025-11-10T00:00:00.000Z"),
+            horaInicio: new Date("Invalid Date"),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+            duracion: 60,
+            tipoActividad: "Cognitivo"
+          }
+        })
+
+Invalid value for argument `horaInicio`: Provided Date object is invalid. Expected Date.
+2025-11-21 22:11:55.360 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividad.create()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:163:42
+
+  160 }
+  161 
+  162 const actividad = await this.prisma.$transaction(async (tx) => {
+→ 163   const nueva = await tx.actividad.create({
+          data: {
+            nombre: "test",
+            fechaActividad: new Date("2025-12-01T00:00:00.000Z"),
+            horaInicio: new Date("Invalid Date"),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+            duracion: 30,
+            tipoActividad: "Baile"
+          }
+        })
+
+Invalid value for argument `horaInicio`: Provided Date object is invalid. Expected Date.
+2025-11-21 22:15:00.048 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividad.update()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:227:40
+
+  224 }
+  225 
+  226 const actualizada = await this.prisma.$transaction(async (tx) => {
+→ 227   const act = await tx.actividad.update({
+          where: {
+            id: 5
+          },
+          data: {
+            nombre: "Taller de Memoria",
+            fechaActividad: new Date("2025-11-10T00:00:00.000Z"),
+            horaInicio: new Date("Invalid Date"),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+            duracion: 50,
+            tipoActividad: "Cognitivo"
+          }
+        })
+
+Invalid value for argument `horaInicio`: Provided Date object is invalid. Expected Date.
+2025-11-21 22:30:57.459 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividadPerfil.create()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:176:38
+
+  173 // --- Perfiles asociados ---
+  174 if (Array.isArray(idsPerfiles) && idsPerfiles.length > 0) {
+  175   for (const idPerfil of idsPerfiles) {
+→ 176     await tx.actividadPerfil.create({
+            data: {
+              idPerfil: "",
+                        ~~
+              idActividad: 7
+            }
+          })
+
+Argument `idPerfil`: Invalid value provided. Expected Int, provided String.
+2025-11-21 22:40:10.575 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividadPerfil.create()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:176:38
+
+  173 // --- Perfiles asociados ---
+  174 if (Array.isArray(idsPerfiles) && idsPerfiles.length > 0) {
+  175   for (const idPerfil of idsPerfiles) {
+→ 176     await tx.actividadPerfil.create({
+            data: {
+              idPerfil: "",
+                        ~~
+              idActividad: 10
+            }
+          })
+
+Argument `idPerfil`: Invalid value provided. Expected Int, provided String.

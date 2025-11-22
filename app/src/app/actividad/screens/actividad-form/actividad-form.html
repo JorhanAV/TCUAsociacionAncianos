@@ -2,30 +2,54 @@
   <h2>{{ modo === 'crear' ? 'Nueva Actividad' : 'Editar Actividad' }}</h2>
 
   <form [formGroup]="form">
-    <!-- SECCIÓN BÁSICA -->
+    <!-- =============================
+         SECCIÓN: INFORMACIÓN GENERAL
+    ===============================-->
     <div class="section">
       <h3>Información General</h3>
 
+      <!-- Nombre -->
       <mat-form-field appearance="outline">
         <mat-label>Nombre de la actividad</mat-label>
         <input matInput formControlName="nombre" />
+        @if (form.get('nombre')?.hasError('required')) {
+        <mat-error>El nombre es obligatorio.</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Fecha -->
       <mat-form-field appearance="outline">
         <mat-label>Fecha</mat-label>
         <input matInput type="date" formControlName="fechaActividad" />
+
+        @if (form.get('fechaActividad')?.hasError('required')) {
+        <mat-error>La fecha es obligatoria.</mat-error>
+        } @if (form.get('fechaActividad')?.hasError('fechaPasada')) {
+        <mat-error>No puedes seleccionar una fecha anterior a hoy.</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Hora -->
       <mat-form-field appearance="outline">
         <mat-label>Hora de inicio</mat-label>
         <input matInput type="time" formControlName="horaInicio" />
+        @if (form.get('horaInicio')?.hasError('required')) {
+        <mat-error>La hora de inicio es obligatoria.</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Duración -->
       <mat-form-field appearance="outline">
         <mat-label>Duración (min)</mat-label>
         <input matInput type="number" formControlName="duracion" />
+        @if (form.get('duracion')?.hasError('required')) {
+        <mat-error>La duración es obligatoria.</mat-error>
+        } @if (form.get('duracion')?.hasError('min')) {
+        <mat-error>La duración debe ser mayor a 0 minutos.</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Tipo Actividad -->
       <mat-form-field appearance="outline">
         <mat-label>Tipo Actividad</mat-label>
         <mat-select formControlName="tipoActividad">
@@ -35,60 +59,101 @@
           <mat-option value="Quiting">Quiting</mat-option>
           <mat-option value="Generales">Generales</mat-option>
         </mat-select>
+
+        @if (form.get('tipoActividad')?.hasError('required')) {
+        <mat-error>Debes seleccionar un tipo de actividad.</mat-error>
+        }
       </mat-form-field>
     </div>
 
-    <!-- PARTICIPANTES -->
+    <!-- =============================
+         SECCIÓN: PARTICIPANTES
+    ===============================-->
     <div class="section">
       <h3>Participantes</h3>
 
+      <!-- Participantes -->
       <mat-form-field appearance="outline">
         <mat-label>Participantes (Adultos, Admin, Socios)</mat-label>
         <mat-select formControlName="idsPerfiles" multiple>
-          <mat-option *ngFor="let p of listaPersonas" [value]="p.id">
-            {{ p.nombre }} — {{ p.rol }}
-          </mat-option>
+          @for (p of listaPersonas; track p.id) {
+          <mat-option [value]="p.id"> {{ p.nombre }} — {{ p.rol }} </mat-option>
+          } @empty {
+          <mat-option disabled>No hay participantes disponibles</mat-option>
+          }
         </mat-select>
+
+        @if (form.get('idsPerfiles')?.hasError('required')) {
+        <mat-error>Selecciona al menos un participante.</mat-error>
+        }
       </mat-form-field>
 
+      <!-- Voluntario -->
       <mat-form-field appearance="outline">
         <mat-label>Voluntario Encargado</mat-label>
         <mat-select formControlName="idVoluntarioEncargado">
-          <mat-option *ngFor="let v of listaVoluntarios" [value]="v.id">
+          @for (v of listaVoluntarios; track v.id) {
+          <mat-option [value]="v.id">
             {{ v.nombre }}
           </mat-option>
+          } @empty {
+          <mat-option disabled>No hay voluntarios registrados</mat-option>
+          }
         </mat-select>
+
+        @if (form.get('idVoluntarioEncargado')?.hasError('required')) {
+        <mat-error>Debes seleccionar un voluntario encargado.</mat-error>
+        }
       </mat-form-field>
     </div>
 
-    <!-- INVENTARIO -->
+    <!-- =============================
+         SECCIÓN: MATERIALES
+    ===============================-->
     <h3 class="section-title">Materiales Necesarios</h3>
 
     <div class="material-list">
+      <!-- BOTÓN AGREGAR FILA -->
       <button mat-button color="primary" class="btn-add" (click)="agregarInventario()">
         <mat-icon>add</mat-icon>
         Añadir Material
       </button>
 
-      <div
-        class="material-row"
-        *ngFor="let inv of inventariosArr.controls; let i = index"
-        [formGroup]="inv"
-      >
+      <!-- FILAS DINÁMICAS -->
+      @for (inv of inventariosArr.controls; let i = $index; track i) {
+
+      <div class="material-row" [formGroup]="inv">
+        <!-- Material -->
         <mat-form-field appearance="outline" class="material-field">
           <mat-label>Material</mat-label>
           <mat-select formControlName="idInventario">
-            <mat-option *ngFor="let item of listaInventarios" [value]="item.id">
+            @for (item of listaInventarios; track item.id) {
+            <mat-option [value]="item.id">
               {{ item.Nombre }}
             </mat-option>
+            } @empty {
+            <mat-option disabled>No hay inventario disponible</mat-option>
+            }
           </mat-select>
+
+          @if (inv.get('idInventario')?.hasError('required')) {
+          <mat-error>Selecciona un material.</mat-error>
+          }
         </mat-form-field>
 
+        <!-- Cantidad -->
         <mat-form-field appearance="outline" class="cantidad-field">
           <mat-label>Cant. por Persona</mat-label>
-          <input matInput type="number" min="1" formControlName="cantidadxPersona" />
+          <input matInput type="number" formControlName="cantidadxPersona" />
+
+          @if (inv.get('cantidadxPersona')?.hasError('required')) {
+          <mat-error>La cantidad es obligatoria.</mat-error>
+          } @if (inv.get('cantidadxPersona')?.hasError('min')) {
+          <mat-error>La cantidad mínima es 1.</mat-error>
+          }
         </mat-form-field>
 
+        <!-- Eliminar fila -->
         <button
           mat-icon-button
           color="warn"
@@ -99,9 +164,15 @@
           <mat-icon>delete</mat-icon>
         </button>
       </div>
+
+      } @empty {
+      <p style="color: #666; font-style: italic">No hay materiales agregados.</p>
+      }
     </div>
 
-    <!-- BOTONES -->
+    <!-- =============================
+         BOTONES
+    ===============================-->
     <div class="actions">
       <button mat-flat-button color="primary" type="button" (click)="guardar()">Guardar</button>
 

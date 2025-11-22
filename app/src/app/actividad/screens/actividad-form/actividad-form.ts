@@ -35,7 +35,7 @@ export class ActividadForm implements OnInit {
   async ngOnInit() {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
-      fechaActividad: ['', Validators.required],
+      fechaActividad: ['', [Validators.required, this.fechaNoPasadaValidator]],
       horaInicio: ['', Validators.required],
       duracion: ['', [Validators.required, Validators.min(1)]],
       tipoActividad: ['', Validators.required],
@@ -211,4 +211,21 @@ export class ActividadForm implements OnInit {
   cancelar() {
     this.cerrar.emit(false);
   }
+
+  fechaNoPasadaValidator(control: any) {
+  const valor = control.value;
+  if (!valor) return null;
+
+  const fechaSeleccionada = new Date(valor);
+  const hoy = new Date();
+
+  // dejar solo fecha sin hora para comparación limpia
+  hoy.setHours(0, 0, 0, 0);
+  fechaSeleccionada.setHours(0, 0, 0, 0);
+
+  return fechaSeleccionada < hoy
+    ? { fechaPasada: true }
+    : null;
+}
+
 }
