@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>{{ title }}</h2>
-<br>
+<br />
 <mat-dialog-content>
   <form [formGroup]="form" class="form">
     <!-- CAMPOS DEL PERFIL -->
@@ -8,40 +8,56 @@
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="nombre" />
       @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-        <mat-error>Nombre requerido (3+ caracteres)</mat-error>
+      <mat-error>Nombre requerido (3+ caracteres)</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Fecha de nacimiento</mat-label>
-      <input
-        matInput
-        [matDatepicker]="pickerFecha"
-        formControlName="fechaNacimiento"
-      />
+      <input matInput [matDatepicker]="pickerFecha" formControlName="fechaNacimiento" />
       <mat-datepicker-toggle matSuffix [for]="pickerFecha"></mat-datepicker-toggle>
       <mat-datepicker #pickerFecha></mat-datepicker>
-      @if (form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.invalid) {
-        <mat-error>La fecha de nacimiento es obligatoria</mat-error>
-      }
+
+      @if (form.controls.fechaNacimiento.touched && form.controls.fechaNacimiento.invalid) { @if
+      (form.controls.fechaNacimiento.errors?.['required']) {
+      <mat-error>La fecha de nacimiento es obligatoria</mat-error>
+      } @if (form.controls.fechaNacimiento.errors?.['minAge']) {
+      <mat-error>Debe tener al menos 18 años</mat-error>
+      } }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Cédula</mat-label>
-      <input matInput formControlName="cedula" />
+      <input matInput formControlName="cedula" maxlength="11" (input)="formatCedula($event)" />
       @if (form.controls.cedula.touched && form.controls.cedula.invalid) {
-        <mat-error>La cédula es obligatoria</mat-error>
+      <mat-error>Formato inválido. Ej: 1-2345-6789</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Teléfono de contacto</mat-label>
-      <input matInput formControlName="telefonoContacto" />
+      <input
+        matInput
+        formControlName="telefonoContacto"
+        maxlength="9"
+        (input)="formatPhone($event, 'telefonoContacto')"
+      />
+      @if (form.controls.telefonoContacto.touched && form.controls.telefonoContacto.invalid) {
+      <mat-error>Debe iniciar en 2, 4 o 5. Ej: 2456-7890</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Número celular</mat-label>
-      <input matInput formControlName="numeroCelular" />
+      <input
+        matInput
+        formControlName="numeroCelular"
+        maxlength="9"
+        (input)="formatPhone($event, 'numeroCelular')"
+      />
+      @if (form.controls.numeroCelular.touched && form.controls.numeroCelular.invalid) {
+      <mat-error>Debe iniciar en 6, 7 o 8. Ej: 7123-4567</mat-error>
+      }
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="campo-full">
@@ -53,7 +69,7 @@
       <mat-label>Rol</mat-label>
       <mat-select formControlName="rol">
         @for (r of roles; track r) {
-          <mat-option [value]="r">{{ r }}</mat-option>
+        <mat-option [value]="r">{{ r }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -62,59 +78,50 @@
       <mat-label>Estado</mat-label>
       <mat-select formControlName="estado">
         @for (e of estados; track e) {
-          <mat-option [value]="e">{{ e }}</mat-option> }
+        <mat-option [value]="e">{{ e }}</mat-option> }
       </mat-select>
     </mat-form-field>
-<!-- FOTO DE PERFIL -->
+    <!-- FOTO DE PERFIL -->
     <div class="foto-section">
-  <div class="preview">
-    @if (fotoPreviewUrl) {
-      <img [src]="fotoPreviewUrl" alt="Foto del perfil" />
-    } @else {
-      <div class="avatar-placeholder">
-        {{ form.controls.nombre.value?.[0] || 'P' }}
+      <div class="preview">
+        @if (fotoPreviewUrl) {
+        <img [src]="fotoPreviewUrl" alt="Foto del perfil" />
+        } @else {
+        <div class="avatar-placeholder">
+          {{ form.controls.nombre.value?.[0] || 'P' }}
+        </div>
+        }
       </div>
-    }
-  </div>
 
-  <div class="controls">
-  <button
-    mat-stroked-button
-    color="primary"
-    type="button"
-    (click)="fileInput.click()"
-    [disabled]="guardando"
-  >
-    <mat-icon>upload</mat-icon>
-    @if (guardando) { Guardando... } @else { Cambiar foto } 
-  </button>
+      <div class="controls">
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="fileInput.click()"
+          [disabled]="guardando"
+        >
+          <mat-icon>upload</mat-icon>
+          @if (guardando) { Guardando... } @else { Cambiar foto }
+        </button>
 
-  <input
-    #fileInput
-    type="file"
-    accept="image/*"
-    (change)="onFileSelected($event)"
-    hidden
-  />
-  
-  @if (fotoPreviewUrl) {
-    <button
-      mat-button
-      color="warn"
-      type="button"
-      (click)="removePhoto()"
-      [disabled]="guardando"
-    >
-      <mat-icon>delete</mat-icon> Quitar foto
-    </button>
-  }
+        <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
 
-  <small class="hint">
-    Formatos: JPG/PNG. Máx 2MB.
-  </small>
-</div>
-</div>
+        @if (fotoPreviewUrl) {
+        <button
+          mat-button
+          color="warn"
+          type="button"
+          (click)="removePhoto()"
+          [disabled]="guardando"
+        >
+          <mat-icon>delete</mat-icon> Quitar foto
+        </button>
+        }
 
+        <small class="hint"> Formatos: JPG/PNG. Máx 2MB. </small>
+      </div>
+    </div>
   </form>
 </mat-dialog-content>
 
@@ -131,9 +138,7 @@
     [disabled]="form.invalid || guardando"
   >
     @if (guardando) {
-      <mat-progress-spinner [diameter]="18" mode="indeterminate"></mat-progress-spinner>
-    } @else {
-      Guardar
-    }
+    <mat-progress-spinner [diameter]="18" mode="indeterminate"></mat-progress-spinner>
+    } @else { Guardar }
   </button>
 </mat-dialog-actions>

@@ -38,14 +38,34 @@ export class PerfilFormComponent implements OnInit {
 
   form = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
-    fechaNacimiento: [null as Date | null, [Validators.required]],
-    cedula: ['', [Validators.required]],
-    telefonoContacto: [''],
-    numeroCelular: [''],
+    fechaNacimiento: [null as Date | null, [Validators.required, this.minAgeValidator(18)]],
+
+    cedula: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
+    telefonoContacto: ['', [Validators.pattern(/^[245][0-9]{7}$/)]],
+    numeroCelular: ['', [Validators.pattern(/^[678][0-9]{7}$/)]],
     direccion: [''],
     rol: [ERol.Voluntario as ERol, Validators.required],
     estado: [EEstado.ACTIVO as EEstado, Validators.required],
   });
+
+  private minAgeValidator(minAge: number) {
+    return (control: any) => {
+      const value = control.value;
+      if (!value) return null;
+
+      const birthDate = new Date(value);
+      const today = new Date();
+
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const hasBirthdayPassed =
+        today.getMonth() > birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+      const realAge = hasBirthdayPassed ? age : age - 1;
+
+      return realAge >= minAge ? null : { minAge: true };
+    };
+  }
 
   modo: 'crear' | 'editar' = 'crear';
   private idPerfil?: number;
@@ -93,11 +113,11 @@ export class PerfilFormComponent implements OnInit {
     }
   }
 
- private buildFotoUrl(fileName: string | null): string | null {
-  if (!fileName) return null;
-  const baseUrl = this.imageBaseUrl.endsWith('/') ? this.imageBaseUrl : this.imageBaseUrl + '/';
-  return `${baseUrl}${fileName}`; 
-}
+  private buildFotoUrl(fileName: string | null): string | null {
+    if (!fileName) return null;
+    const baseUrl = this.imageBaseUrl.endsWith('/') ? this.imageBaseUrl : this.imageBaseUrl + '/';
+    return `${baseUrl}${fileName}`;
+  }
 
   // Cuando se selecciona una imagen
   onFileSelected(event: Event) {
@@ -222,5 +242,44 @@ export class PerfilFormComponent implements OnInit {
       verticalPosition: 'top',
       panelClass: ['snackbar-error'],
     });
+  }
+
+  // ---- MÁSCARA SOLO NÚMEROS ----
+  onlyNumbers(e: any, controlName: string) {
+    const clean = e.target.value.replace(/\D/g, '');
+    const control = this.form.get(controlName);
+    if (control) {
+      control.setValue(clean, { emitEvent: false });
+    }
+  }
+
+  // ---- MÁSCARA PARA TELÉFONO (####-####) ----
+  formatPhone(e: any, controlName: string) {
+    let v = e.target.value.replace(/\D/g, '');
+
+    if (v.length > 4) {
+      v = v.replace(/^(\d{4})(\d+)/, '$1-$2');
+    }
+
+    const control = this.form.get(controlName);
+    if (control) {
+      control.setValue(v, { emitEvent: false });
+    }
+  }
+
+  // ---- MÁSCARA PARA CÉDULA CR (1-2345-6789) ----
+  formatCedula(e: any) {
+    let v = e.target.value.replace(/\D/g, '');
+
+    if (v.length > 1 && v.length <= 5) {
+      v = v.replace(/^(\d)(\d+)/, '$1-$2');
+    } else if (v.length > 5) {
+      v = v.replace(/^(\d)(\d{4})(\d+)/, '$1-$2-$3');
+    }
+
+    const control = this.form.get('cedula');
+    if (control) {
+      control.setValue(v, { emitEvent: false });
+    }
   }
 }
