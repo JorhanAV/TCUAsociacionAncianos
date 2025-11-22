@@ -5,6 +5,7 @@ import { ActividadModel } from '../../../share/models/actividadModel';
 import { ActividadService } from '../../../share/services/actividad.service';
 import { PerfilService } from '../../../share/services/perfil.service';
 import { InventarioService } from '../../../share/services/inventario.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-actividad-form',
@@ -29,7 +30,7 @@ export class ActividadForm implements OnInit {
   listaVoluntarios: any[] = [];
   listaInventarios: any[] = [];
 
-  ngOnInit() {
+  async ngOnInit() {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
       fechaActividad: ['', Validators.required],
@@ -44,7 +45,7 @@ export class ActividadForm implements OnInit {
       inventarios: this.fb.array([]),
     });
 
-    this.cargarListas();
+    await this.cargarListas();
 
     if (this.modo === 'editar' && this.actividad) {
       this.cargarDatosEdicion();
@@ -52,23 +53,22 @@ export class ActividadForm implements OnInit {
   }
 
   async cargarListas() {
-    const perfiles = await this.perfilService.get().toPromise();
-    const inventarios = await this.inventarioService.get().toPromise();
+    const perfiles = await firstValueFrom(this.perfilService.get());
+    const inventarios = await firstValueFrom(this.inventarioService.get());
 
-    this.listaPersonas = perfiles!.filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.rol));
+    this.listaPersonas = perfiles.filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.rol));
 
-    this.listaVoluntarios = perfiles!.filter((p: any) => p.rol === 'Voluntario');
+    this.listaVoluntarios = perfiles.filter((p: any) => p.rol === 'Voluntario');
 
-    this.listaInventarios = inventarios!;
+    this.listaInventarios = inventarios;
   }
 
   cargarDatosEdicion() {
     const a = this.actividad!;
 
-    // Convertir fecha a YYYY-MM-DD
-    const fecha = a.fechaActividad ? new Date(a.fechaActividad).toISOString().substring(0, 10) : '';
-
-    const hora = a.horaInicio ? new Date(a.horaInicio).toISOString().substring(11, 16) : '';
+    // ---> FECHA Y HORA
+    const fecha = new Date(a.fechaActividad).toISOString().substring(0, 10);
+    const hora = new Date(a.horaInicio).toISOString().substring(11, 16);
 
     this.form.patchValue({
       nombre: a.nombre,
@@ -78,21 +78,20 @@ export class ActividadForm implements OnInit {
       tipoActividad: a.tipoActividad,
     });
 
-    // Cargar perfiles
-    const ids = a
+    // ---> PERFILES SELECCIONADOS
+    const idsPerfiles = a
       .perfiles!.filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.perfil.rol))
       .map((p: any) => p.perfil.id);
 
-    this.form.patchValue({ idsPerfiles: ids });
+    this.form.patchValue({ idsPerfiles });
 
-    // Intentar detectar voluntario como encargado
-    const encargado = a.perfiles!.find((p: any) => p.perfil.rol === 'Voluntario');
-
-    if (encargado) {
-      this.form.patchValue({ idVoluntarioEncargado: encargado.perfil!.id });
+    // ---> VOLUNTARIO ENCARGADO
+    const voluntario = a.perfiles!.find((p: any) => p.perfil.rol === 'Voluntario');
+    if (voluntario) {
+      this.form.patchValue({ idVoluntarioEncargado: voluntario.perfil!.id });
     }
 
-    // Inventarios
+    // ---> INVENTARIOS (YA TENEMOS listaInventarios cargada!)
     a.inventarios!.forEach((i: any) => {
       this.agregarInventario(i.inventario.id, i.cantidadxPersona);
     });

@@ -85,10 +85,13 @@ export class ActividadIndex implements OnInit {
     this.mostrarForm = true;
   }
 
-  abrirFormEditar(actividad: ActividadModel): void {
+  abrirFormEditar(item: ActividadModel) {
     this.modoForm = 'editar';
-    this.actividadSeleccionada = { ...actividad };
-    this.mostrarForm = true;
+
+    this.actividadService.getById(item.id!).subscribe((data) => {
+      this.actividadSeleccionada = data;
+      this.mostrarForm = true;
+    });
   }
 
   onCerrarForm(recargar: boolean) {
