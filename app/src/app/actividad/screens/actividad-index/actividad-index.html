@@ -1,0 +1,137 @@
+<div class="inventario-container">
+  <div class="header-section">
+    <div class="title-row">
+      <div>
+        <h1>Actividades</h1>
+        <span class="subtitle">Gestión de talleres y actividades del centro</span>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card info">
+        <mat-icon>event</mat-icon>
+        <div class="stat-content">
+          <span class="value">{{ totalActividades }}</span>
+          <span class="label">Total Actividades</span>
+        </div>
+      </div>
+
+      <div class="stat-card ok">
+        <mat-icon>upcoming</mat-icon>
+        <div class="stat-content">
+          <span class="value">{{ actividadesProximas }}</span>
+          <span class="label">Próximas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="data-section mat-elevation-z2" style="border-radius: 16px">
+    <div class="table-toolbar">
+      <mat-form-field appearance="outline" density="compact" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Buscar actividad..." />
+      </mat-form-field>
+
+      <div class="actions">
+        <button mat-flat-button color="primary" (click)="abrirFormCrear()">
+          <mat-icon>add</mat-icon> Nueva Actividad
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      @if (cargando) {
+      <div class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Cargando actividades...</p>
+      </div>
+      } @else if (error) {
+      <div class="error-state">
+        <mat-icon color="warn">error_outline</mat-icon>
+        <p>{{ error }}</p>
+      </div>
+      } @else {
+
+      <table mat-table [dataSource]="dataSource">
+        <!-- Nombre -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Actividad</th>
+          <td mat-cell *matCellDef="let element" class="col-nombre">
+            <span class="main-text">{{ element.nombre }}</span>
+            <span class="sub-text">{{ element.tipoActividad }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Fecha -->
+        <ng-container matColumnDef="fechaActividad">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.fechaActividad | date : 'dd/MM/yyyy' }}
+          </td>
+        </ng-container>
+
+        <!-- Hora -->
+        <ng-container matColumnDef="horaInicio">
+          <th mat-header-cell *matHeaderCellDef>Hora</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.horaInicio | date : 'hh:mm a' }}
+          </td>
+        </ng-container>
+
+        <!-- Tipo -->
+        <ng-container matColumnDef="tipoActividad">
+          <th mat-header-cell *matHeaderCellDef>Categoría</th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.tipoActividad }}
+          </td>
+        </ng-container>
+
+        <!-- Duración -->
+        <ng-container matColumnDef="duracion">
+          <th mat-header-cell *matHeaderCellDef>Duración</th>
+          <td mat-cell *matCellDef="let element">{{ element.duracion }} min</td>
+        </ng-container>
+
+        <!-- Acciones -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef style="text-align: right"></th>
+          <td mat-cell *matCellDef="let element" style="text-align: right">
+            <button
+              mat-icon-button
+              color="primary"
+              matTooltip="Editar Actividad"
+              (click)="abrirFormEditar(element)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Filas obligatorias -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell empty-row" colspan="100%">
+            No se encontraron actividades con esa búsqueda.
+          </td>
+        </tr>
+      </table>
+
+      }
+    </div>
+  </div>
+
+  @if (mostrarForm) {
+  <div class="form-overlay" (click)="onCerrarForm(false)">
+    <div class="form-dialog-wrapper" (click)="$event.stopPropagation()">
+      <app-actividad-form
+        [actividad]="actividadSeleccionada"
+        [modo]="modoForm"
+        (cerrar)="onCerrarForm($event)"
+      ></app-actividad-form>
+    </div>
+  </div>
+  }
+</div>

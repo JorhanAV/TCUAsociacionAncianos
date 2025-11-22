@@ -1,0 +1,336 @@
+.inventario-container {
+  padding: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+.inventario-header {
+  margin-bottom: 1rem;
+}
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.btn-volver {
+  min-width: auto;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.header-title {
+  flex: 1 1 auto;
+  text-align: center;
+}
+.header-title h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+.header-title .subtitulo {
+  display: block;
+  font-size: 0.9rem;
+  color: #757575;
+}
+
+.header-search {
+  flex: 0 0 260px;
+}
+
+.campo-busqueda {
+  width: 100%;
+}
+.titulo h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.subtitulo {
+  display: block;
+  color: #757575;
+  font-size: 0.9rem;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.campo-busqueda {
+  min-width: 250px;
+  max-width: 340px;
+}
+
+.estado-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.estado-card.cargando span {
+  font-size: 0.9rem;
+}
+
+.estado-card.error {
+  color: #b71c1c;
+}
+
+/* Tabla */
+
+.tabla-inventario {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.col-stock {
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Colores según stock */
+
+.stock-ok {
+  color: #2e7d32;
+}
+
+.stock-bajo {
+  color: #ff8f00;
+}
+
+.stock-critico {
+  color: #c62828;
+}
+
+/* Badges estado */
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.badge-activo {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-inactivo {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.nombre-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.nombre-cell .nombre {
+  font-weight: 600;
+}
+
+.nombre-cell .descripcion-pequena {
+  font-size: 0.8rem;
+  color: #757575;
+}
+
+.col-acciones {
+  text-align: center;
+}
+
+.sin-datos {
+  text-align: center;
+  padding: 1rem;
+  color: #757575;
+}
+
+/* Centrar headers y columnas */
+.tabla-inventario th,
+.tabla-inventario td {
+  text-align: center !important;
+}
+
+/* Mantener el nombre alineado a la izquierda */
+.tabla-inventario .col-nombre {
+  text-align: left !important;
+}
+.tabla-inventario .col-nombre td {
+  text-align: left !important;
+}
+
+/* Overlay del formulario (modal) */
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Contenedor que limita el ancho del formulario */
+.form-dialog-wrapper {
+  width: 100%;
+  max-width: 520px;
+  padding: 1rem;
+}
+
+.filtros-row {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filtro-campo {
+  min-width: 180px;
+  max-width: 220px;
+}
+
+@media (max-width: 768px) {
+  .filtros-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+/* CONTENEDOR GENERAL DEL HEADER */
+.header-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* FILA SUPERIOR */
+.header-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* TÍTULO CENTRADO */
+.header-title {
+  text-align: center;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-weight: 700;
+}
+
+.header-title .subtitulo {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+/* BUSCADOR */
+.campo-busqueda {
+  width: 260px;
+}
+
+/* FILA INFERIOR: FILTROS + BOTONES */
+.header-bottom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Campos de filtro */
+.filtro-campo {
+  width: 200px;
+}
+
+/* Botones de Historial y Nuevo */
+.btn-accion {
+  height: 100%;
+  display: flex;
+  align-items: right;
+  gap: 6px;
+  font-weight: 500;
+
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .header-top {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .campo-busqueda {
+    width: 100%;
+  }
+
+  .header-bottom {
+    justify-content: center;
+  }
+}
+/* Fila inferior con filtros + botones */
+.header-bottom {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+/* Asegura que los filtros queden a la izquierda */
+.filtro-campo {
+  width: 200px;
+}
+
+/* Contenedor que empuja los botones hacia la derecha */
+.acciones-derecha {
+  margin-left: auto;
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Botones más anchos y consistentes */
+.btn-accion {
+  min-width: 130px;
+  height: 40px;
+  padding: 0 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 20px;
+}
+
+/* Botón de Nuevo más llamativo */
+.btn-nuevo {
+  min-width: 140px;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .header-bottom {
+    flex-wrap: wrap;
+  }
+
+  .acciones-derecha {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}

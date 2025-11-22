@@ -1,0 +1,11 @@
+2025-11-20 20:22:26.093 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `this.prisma.historialInventario.findMany()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\historialInventarioController.ts:14:63
+
+  11 
+  12 get = async (request: Request, response: Response, next: NextFunction) => {
+  13   try {
+→ 14     const historial = await this.prisma.historialInventario.findMany(
+Can't reach database server at `localhost:3306`
+
+Please make sure your database server is running at `localhost:3306`.

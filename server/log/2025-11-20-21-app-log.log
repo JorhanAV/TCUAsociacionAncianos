@@ -1,0 +1,9 @@
+2025-11-20 21:27:15.343 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.inventarioActividad.create()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:184:42
+
+  181 // --- Inventarios asociados (con cantidadxPersona) ---
+  182 if (Array.isArray(inventarios) && inventarios.length > 0) {
+  183   for (const inv of inventarios) {
+→ 184     await tx.inventarioActividad.create(
+Foreign key constraint violated on the fields: (`idInventario`)

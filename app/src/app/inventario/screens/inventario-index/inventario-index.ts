@@ -26,7 +26,7 @@ export class InventarioIndex implements OnInit {
 
   ngOnInit(): void {
     this.cargarInventario();
-    
+
     // Configuración opcional: Define qué columnas usa el filtro (por defecto busca en todas)
     this.dataSource.filterPredicate = (data: InventarioModel, filter: string) => {
       const dataStr = (data.Nombre + data.descripcion + data.estado).toLowerCase();
@@ -47,13 +47,13 @@ export class InventarioIndex implements OnInit {
 
   get stockCritico(): number {
     // Cuenta cuántos productos tienen stock <= 5 (umbral crítico)
-    return this.dataSource.data.filter(item => item.stock <= 5).length;
+    return this.dataSource.data.filter((item) => item.stock <= 5).length;
   }
   // ... (dentro de la clase InventarioIndex)
 
   get porcentajeDisponibilidad(): string {
     const total = this.totalItems;
-    
+
     // Evitar división por cero si no hay datos aún
     if (total === 0) return '0';
 
@@ -63,7 +63,7 @@ export class InventarioIndex implements OnInit {
     const porcentaje = (itemsSanos / total) * 100;
 
     // Retornamos fijo a 0 decimales (ej: "95") o 1 decimal (ej: "95.5")
-    return porcentaje.toFixed(0); 
+    return porcentaje.toFixed(0);
   }
 
   // ... (resto del código)
@@ -106,7 +106,7 @@ export class InventarioIndex implements OnInit {
   abrirFormEditar(item: InventarioModel): void {
     this.modoForm = 'editar';
     // Clonamos el objeto para no modificar la tabla en tiempo real antes de guardar
-    this.inventarioSeleccionado = { ...item }; 
+    this.inventarioSeleccionado = { ...item };
     this.mostrarForm = true;
   }
 

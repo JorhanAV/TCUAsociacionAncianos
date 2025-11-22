@@ -1,5 +1,5 @@
 <div class="historial-container mat-elevation-z2">
-  <div class="header-row">
+   <div class="header-row">
     <!-- Volver -->
     <button mat-button color="primary" class="btn-volver" routerLink="/inventario">
       <mat-icon>arrow_back</mat-icon>
@@ -12,7 +12,7 @@
       <span class="subtitulo">Movimientos de entrada y salida</span>
     </div>
 
-    <!-- Buscador -->
+    <!-- Buscar -->
     <div class="header-actions">
       <mat-form-field appearance="outline" class="campo-busqueda">
         <mat-label>Buscar</mat-label>
@@ -21,7 +21,7 @@
           type="text"
           placeholder="Producto, usuario, tipo, descripción..."
           [ngModel]="terminoBusqueda"
-          (ngModelChange)="aplicarFiltro($event)"
+          (ngModelChange)="onBuscar($event)"
         />
 
         @if (terminoBusqueda) {
@@ -29,7 +29,7 @@
             matSuffix
             mat-icon-button
             aria-label="Limpiar"
-            (click)="aplicarFiltro('')"
+            (click)="onBuscar('')"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -39,6 +39,38 @@
       </mat-form-field>
     </div>
   </div>
+
+  <!-- FILA 2: filtros adicionales -->
+  <div class="filtros-row">
+    <!-- Tipo de movimiento -->
+    <mat-form-field appearance="outline" class="filtro-campo">
+      <mat-label>Movimiento</mat-label>
+      <mat-select
+        [value]="filtroMovimiento"
+        (valueChange)="onCambiarMovimiento($event)"
+      >
+        <mat-option value="TODOS">Todos</mat-option>
+        <mat-option value="ADD">Ingreso</mat-option>
+        <mat-option value="DELETE">Salida</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Usuario -->
+    <mat-form-field appearance="outline" class="filtro-campo">
+      <mat-label>Usuario</mat-label>
+      <mat-select
+        [value]="filtroUsuario"
+        (valueChange)="onCambiarUsuario($event)"
+      >
+        <mat-option value="TODOS">Todos</mat-option>
+
+        @for (usuario of usuariosDisponibles; track usuario) {
+          <mat-option [value]="usuario">{{ usuario }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
 
   <!-- Estado de carga -->
   @if (cargando) {
