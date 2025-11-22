@@ -155,3 +155,44 @@
     text-align: left;
   }
 }
+.filtros-row {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.filtro-campo {
+  min-width: 200px;
+  max-width: 240px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .filtros-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+/* HEADER de la tabla del historial (igual que inventario) */
+.tabla-historial thead tr.mat-mdc-header-row,
+.tabla-historial tr.mat-mdc-header-row {
+  background-color: #faf0f4 !important; /* mismo color que inventario */
+}
+
+/* Celdas del encabezado */
+.tabla-historial th.mat-mdc-header-cell {
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  padding: 12px;
+  text-align: center;
+}
+
+/* Quita el gris viejo o cámbialo al mismo color */
+/* antes: background-color: #f5f5f5; */
+.tabla-historial th {
+  background-color: #faf0f4;
+  font-weight: 600;
+}

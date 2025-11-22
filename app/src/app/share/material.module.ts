@@ -16,6 +16,13 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+
+import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+
+
+
 import { MatChipListbox, MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
@@ -40,6 +47,9 @@ import { MatChipListbox, MatChipsModule } from '@angular/material/chips';
     MatSelectModule,
     MatProgressSpinnerModule,
     MatDatepickerModule,
+    MatButtonToggleModule,
+    MatTableModule,
+    FormsModule,
     MatNativeDateModule,
   ],
 })

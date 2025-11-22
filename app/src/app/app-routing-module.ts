@@ -42,6 +42,14 @@ const routes: Routes = [
             .then((m) => m.HistorialInventarioModule),
         data: { title: 'Historial inventario' },
       },
+      
+      // ACTIVIDADES (lazy)
+      {
+        path: 'actividades',
+        loadChildren: () =>
+          import('./actividad/actividad-module').then((m) => m.ActividadModule),
+        data: { title: 'Actividades' },
+      },
     ],
   },
 

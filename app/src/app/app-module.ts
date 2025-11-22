@@ -6,6 +6,7 @@ import { MaterialModule } from './share/material.module';
 import { CoreModule } from './core/core-module';
 import { AppRoutingModule } from './app-routing-module';
 import { HttpClientModule } from '@angular/common/http';
+import { ActividadModule } from './actividad/actividad-module';
 
 @NgModule({
   declarations: [App],
@@ -15,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
     CoreModule,
     AppRoutingModule,
     HttpClientModule,
+    ActividadModule,
   ],
   bootstrap: [App],
 })
