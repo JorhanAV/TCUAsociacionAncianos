@@ -1,108 +1,113 @@
 <section class="head">
   <div>
     <h2>Directorio de Perfiles</h2>
-    <small style="color: #666;">Gestión integral de adultos mayores y personal</small>
+    <small style="color: #666">Gestión integral de adultos mayores y personal</small>
   </div>
   <button mat-flat-button color="primary" (click)="crear()">
     <mat-icon>add</mat-icon> Nuevo Registro
   </button>
 </section>
 
-<section class="filters-bar" [formGroup]="filtros"> <mat-form-field appearance="outline" class="search-field" density="compact">
-    <mat-icon matPrefix>search</mat-icon>
-    <input matInput formControlName="q" placeholder="Buscar por nombre, cédula...">
-  </mat-form-field>
+<section class="filters-bar" [formGroup]="filtros">
+    <mat-form-field appearance="outline" class="search-field" density="compact">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput formControlName="q" placeholder="Buscar por nombre, cédula..." (keyup)="onSearchInput($event)" />
+    </mat-form-field>
 
-  <div class="filter-chips">
-    <mat-chip-listbox aria-label="Filtro de roles" formControlName="rol">
-      
-      <mat-chip-option [value]="''" selected>Todos</mat-chip-option>
-      
-      @for (r of roles; track r) {
-        <mat-chip-option [value]="r">{{ r }}</mat-chip-option>
-      }
-      
-    </mat-chip-listbox>
-  </div>
+    <div class="filter-chips">
+        <mat-chip-listbox aria-label="Filtro de roles" formControlName="rol" (change)="onRolChange($event)">
+            <mat-chip-option [value]="''" selected>Todos</mat-chip-option>
+
+            @for (r of roles; track r) {
+            <mat-chip-option [value]="r">{{ r }}</mat-chip-option>
+            }
+        </mat-chip-listbox>
+    </div>
 </section>
 
 @if (loading()) {
-  <div class="loading">
-    <mat-spinner diameter="50"></mat-spinner>
-    <p style="margin-top:16px">Cargando expedientes...</p>
-  </div>
+<div class="loading">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p style="margin-top: 16px">Cargando expedientes...</p>
+</div>
 } @else {
-  <section class="grid">
-    @for (c of items(); track c.id) {
-      <mat-card class="perfil-card">
-        <div class="card-top-stripe"></div>
+<section class="grid">
+  @for (c of items(); track c.id) {
+  <mat-card class="perfil-card">
+    <div class="card-top-stripe"></div>
 
-        <div class="card-content">
-          <div class="avatar-container">
-            @if (c.fotoURL) {
-              <img [src]="c.fotoURL" alt="{{ c.nombre }}" />
-            } @else {
-              <div class="initials">{{ c.nombre.charAt(0) }}</div>
-            }
-            <div class="status-dot" 
-                 [class.activo]="c.estado === 'ACTIVO'" 
-                 [class.inactivo]="c.estado !== 'ACTIVO'"
-                 matTooltip="Estado: {{c.estado}}">
-            </div>
-          </div>
-
-          <div class="info">
-            <div class="nombre">{{ c.nombre }}</div>
-            <span class="rol-badge">{{ c.rol }}</span>
-          </div>
-
-          <div class="meta-data">
-            <div class="data-row" title="Cédula de identidad">
-              <mat-icon>badge</mat-icon>
-              <span>{{ c.cedula || 'No registrada' }}</span>
-            </div>
-
-            <div class="data-row" title="Teléfono de contacto">
-              <mat-icon>call</mat-icon>
-              <span>{{ c.telefonoContacto || '---' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="actions">
-          <button mat-icon-button class="btn-icon" (click)="toggleEstado(c)" matTooltip="Cambiar estado">
-            <mat-icon>{{ c.estado === 'ACTIVO' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
-          </button>
-
-          <button mat-button class="btn-primary" (click)="editar(c)">
-            VER EXPEDIENTE
-          </button>
-
-          <button mat-icon-button class="btn-icon" [matMenuTriggerFor]="menu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="editar(c)">
-              <mat-icon>edit</mat-icon> Editar datos
-            </button>
-            <button mat-menu-item (click)="eliminar(c)">
-              <mat-icon color="warn">delete</mat-icon> Eliminar
-            </button>
-          </mat-menu>
-        </div>
-      </mat-card>
-    } @empty {
-      <div class="empty-state">
-        <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: #ccc;">
-          folder_off
-        </mat-icon>
-        <h3>No se encontraron perfiles</h3>
-        <p>Intenta ajustar los filtros o crea un nuevo registro.</p>
-        <button mat-stroked-button color="primary" (click)="crear()" style="margin-top:16px">
-          Crear Nuevo
-        </button>
+    <div class="card-content">
+      <div class="avatar-container">
+        @if (c.fotoURL) {
+        <img
+          [src]="getFotoUrl(c.fotoURL)"
+          alt="Foto de {{ c.nombre }}"
+          class="avatar-list"
+        />
+        } @else {
+        <div class="initials">{{ c.nombre.charAt(0) }}</div>
+        }
+        <div
+          class="status-dot"
+          [class.activo]="c.estado === 'ACTIVO'"
+          [class.inactivo]="c.estado !== 'ACTIVO'"
+          matTooltip="Estado: {{ c.estado }}"
+        ></div>
       </div>
-    }
-  </section>
+
+      <div class="info">
+        <div class="nombre">{{ c.nombre }}</div>
+        <span class="rol-badge">{{ c.rol }}</span>
+      </div>
+
+      <div class="meta-data">
+        <div class="data-row" title="Cédula de identidad">
+          <mat-icon>badge</mat-icon>
+          <span>{{ c.cedula || 'No registrada' }}</span>
+        </div>
+
+        <div class="data-row" title="Teléfono de contacto">
+          <mat-icon>call</mat-icon>
+          <span>{{ c.telefonoContacto || '---' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button
+        mat-icon-button
+        class="btn-icon"
+        (click)="toggleEstado(c)"
+        matTooltip="Cambiar estado"
+      >
+        <mat-icon>{{ c.estado === 'ACTIVO' ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+      </button>
+
+      <button mat-button class="btn-primary" (click)="editar(c)">VER EXPEDIENTE</button>
+
+      <button mat-icon-button class="btn-icon" [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="editar(c)"><mat-icon>edit</mat-icon> Editar datos</button>
+        <button mat-menu-item (click)="eliminar(c)">
+          <mat-icon color="warn">delete</mat-icon> Eliminar
+        </button>
+      </mat-menu>
+    </div>
+  </mat-card>
+  } @empty {
+  <div class="empty-state">
+    <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: #ccc">
+      folder_off
+    </mat-icon>
+    <h3>No se encontraron perfiles</h3>
+    <p>Intenta ajustar los filtros o crea un nuevo registro.</p>
+    <button mat-stroked-button color="primary" (click)="crear()" style="margin-top: 16px">
+      Crear Nuevo
+    </button>
+  </div>
+  }
+</section>
 }

@@ -10,6 +10,7 @@ import { PerfilFormComponent } from '../perfil-form/perfil-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDeleteDialog } from '../../../share/confirm-delete.dialog';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-perfil-index',
@@ -32,41 +33,69 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
   total = signal(0);
   paginas = signal(0);
 
+  private imageBaseUrl = environment.imageBaseUrl;
+
   filtros = this.fb.group({
     q: [''],
     rol: ['' as ERol | ''],
     estado: ['' as EEstado | ''],
   });
-
+private searchSubject = new Subject<string>();
   roles = Object.values(ERol);
   estados = Object.values(EEstado);
 
   ngOnInit(): void {
     this.load();
 
-    this.filtros.valueChanges
-      .pipe(
-        takeUntil(this.destroy$),
-        debounceTime(500), // <--- Espera 500ms a que el usuario termine de escribir
-        distinctUntilChanged() // <--- Evita recargar si el valor es el mismo
-      )
-      .subscribe(() => {
+    this.searchSubject
+            .pipe(
+                takeUntil(this.destroy$),
+                debounceTime(500), 
+                distinctUntilChanged() 
+            )
+            .subscribe((q) => {
+                // 1. Actualiza el valor del FormControl 'q'
+                this.filtros.controls.q.setValue(q, { emitEvent: false }); // No disparamos valueChanges
+                // 2. Ejecuta la carga del servidor
+                this.pagina.set(1);
+                this.load();
+            });
+          }
+
+          onSearchInput(event: Event): void {
+        const value = (event.target as HTMLInputElement).value;
+        this.searchSubject.next(value); // Envía el valor al Subject para debounce
+    }
+
+    // 🔹 MANEJO DE CAMBIO DE ROL (Desde el evento de mat-chip-listbox)
+    onRolChange(event: any): void {
+        // El valor ya está actualizado en el FormGroup gracias a formControlName="rol"
         this.pagina.set(1);
-        this.load();
-      });
+        this.load(); // Recarga inmediatamente al cambiar el chip
+    }
+
+  getFotoUrl(fileName: string | null | undefined): string {
+    if (!fileName) {
+      // Devuelve una imagen placeholder si no hay foto
+      return 'assets/images/default-avatar.png';
+    }
+    return `${this.imageBaseUrl}${fileName}`;
   }
-
   load(): void {
-    this.loading.set(true);
-    const { q, rol, estado } = this.filtros.value;
-
+    this.loading.set(true); // 🚀 CAMBIO: Usar getRawValue() para obtener todos los campos, incluyendo los nulos/no tocados
+    const formValues = this.filtros.getRawValue();
+    // Desestructuramos y aseguramos que todos los valores vacíos sean '' (string vacío)
+    const q = (formValues.q ?? '').trim();
+    const rol = formValues.rol ?? '';
+    const estado = formValues.estado ?? '';
     this.svc
       .listPaged({
         pagina: this.pagina(),
-        limite: this.limite(),
-        q: q ?? '',
-        rol: (rol ?? '') as any,
-        estado: (estado ?? '') as any,
+        limite: this.limite(), // 🚨 Ahora aseguramos que se envíe una cadena vacía si es null/undefined
+        // 🚨 Enviamos los valores estandarizados
+        q: q,
+        rol: rol as any,
+        estado: estado as any,
       })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -113,9 +142,19 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
       this.load();
     }
   }
-  limpiarFiltros() {
-    this.filtros.reset();
-  }
+limpiarFiltros() {
+        // Restablece a los valores iniciales y fuerza la recarga
+        this.filtros.reset(
+            {
+                q: '',
+                rol: '' as any,
+                estado: '' as any,
+            },
+            { emitEvent: false } // No disparamos valueChanges (ya no existe)
+        );
+        this.pagina.set(1);
+        this.load(); // Llama a load directamente
+    }
   toggleEstado(item: perfilModel) {
     const nuevo = item.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
     this.svc.setEstado(Number(item.id), nuevo as EEstado).subscribe({
