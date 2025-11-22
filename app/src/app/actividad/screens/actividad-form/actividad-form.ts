@@ -6,6 +6,7 @@ import { ActividadService } from '../../../share/services/actividad.service';
 import { PerfilService } from '../../../share/services/perfil.service';
 import { InventarioService } from '../../../share/services/inventario.service';
 import { firstValueFrom } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-actividad-form',
@@ -22,6 +23,7 @@ export class ActividadForm implements OnInit {
   actividadService = inject(ActividadService);
   perfilService = inject(PerfilService);
   inventarioService = inject(InventarioService);
+  snack = inject(MatSnackBar);
 
   form!: FormGroup;
 
@@ -123,10 +125,35 @@ export class ActividadForm implements OnInit {
 
     const value = this.form.value;
 
+    // Convertir fecha yyyy-mm-dd a Date base
+    const fechaBase = value.fechaActividad;
+
+    // Convertir hora a formato 24h válido
+    function convertirHora(hora: string): string {
+      // Caso 24h directo: "15:00"
+      if (!hora.includes(' ')) {
+        return `${hora}:00`; // → "15:00:00"
+      }
+
+      // Caso 12h: "03:00 PM"
+      const [time, modifier] = hora.split(' ');
+      let [h, m] = time.split(':').map(Number);
+
+      if (modifier === 'PM' && h < 12) h += 12;
+      if (modifier === 'AM' && h === 12) h = 0;
+
+      return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`;
+    }
+
+    const hora24 = convertirHora(value.horaInicio);
+
+    // Crear Date completo válido
+    const horaInicioFinal = new Date(`${fechaBase}T${hora24}`);
+
     const payload = {
       nombre: value.nombre,
       fechaActividad: value.fechaActividad,
-      horaInicio: value.horaInicio,
+      horaInicio: horaInicioFinal,
       duracion: value.duracion,
       tipoActividad: value.tipoActividad,
       idsPerfiles: [...value.idsPerfiles, value.idVoluntarioEncargado],
@@ -134,8 +161,24 @@ export class ActividadForm implements OnInit {
     };
 
     if (this.modo === 'crear') {
-      this.actividadService.create(payload).subscribe(() => {
-        this.cerrar.emit(true);
+      this.actividadService.create(payload).subscribe({
+        next: () => {
+          this.snack.open('✔ Actividad creada exitosamente', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-success',
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+          this.cerrar.emit(true);
+        },
+        error: () => {
+          this.snack.open('X Ocurrió un error al crear la actividad', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-error',
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+        },
       });
     } else {
       const itemActualizado = {
@@ -143,8 +186,24 @@ export class ActividadForm implements OnInit {
         ...payload,
       };
 
-      this.actividadService.update(itemActualizado).subscribe(() => {
-        this.cerrar.emit(true);
+      this.actividadService.update(itemActualizado).subscribe({
+        next: () => {
+          this.snack.open('✔ Actividad actualizada correctamente', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-success',
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+          this.cerrar.emit(true);
+        },
+        error: () => {
+          this.snack.open('X Error al actualizar la actividad', 'Cerrar', {
+            duration: 3000,
+            panelClass: 'snackbar-error',
+            horizontalPosition: 'right',
+            verticalPosition: 'top',
+          });
+        },
       });
     }
   }

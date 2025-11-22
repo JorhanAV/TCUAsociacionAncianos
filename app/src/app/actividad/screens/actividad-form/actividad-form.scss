@@ -1,3 +1,11 @@
+// Variables de Identidad AAMSA
+$primary: #5E2C5F;
+$accent: #F4B459;
+$warn: #c62828;
+$success: #2e7d32;
+$bg-body: #f8f9fa;
+$bg-card: #ffffff;
+
 .card {
   background: white;
   padding: 24px;
@@ -38,4 +46,52 @@ h2 {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.material-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .btn-add {
+    align-self: flex-start;
+    color: $primary;
+    font-weight: 600;
+
+    mat-icon {
+      font-size: 20px;
+    }
+  }
+
+  .material-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 40px;
+    gap: 16px;
+    align-items: center;
+
+    background: #fafafa;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid #eee;
+
+    .material-field,
+    .cantidad-field {
+      width: 100%;
+    }
+
+    .delete-btn {
+      margin-top: 4px;
+      mat-icon {
+        color: #b71c1c;
+      }
+    }
+  }
 }
