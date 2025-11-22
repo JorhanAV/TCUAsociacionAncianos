@@ -12,8 +12,16 @@ export class ActividadesController {
 
   get = async (request: Request, response: Response, next: NextFunction) => {
     try {
-      // 1. Obtener todos los productos con su categoría e imágenes
+      // Obtener la fecha actual sin hora (00:00:00)
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+
       const actividades = await this.prisma.actividad.findMany({
+        where: {
+          fechaActividad: {
+            gte: hoy, // >= fecha actual
+          },
+        },
         select: {
           id: true,
           nombre: true,
@@ -23,6 +31,9 @@ export class ActividadesController {
           tipoActividad: true,
           createdAt: true,
           updatedAt: true,
+        },
+        orderBy: {
+          fechaActividad: "asc",
         },
       });
 
