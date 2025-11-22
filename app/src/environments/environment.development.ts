@@ -4,7 +4,6 @@ export const environment = {
   endPointInventario: 'inventario',
   endPointHistInventario: 'historial',
   imageBaseUrl: 'http://localhost:3000/assets/uploads/',
-  endPointActividades: 'actividades',
-  imageBaseUrl: 'http://localhost:3000/imagenes/',
+  endPointActividades: 'actividades'
 
 };
