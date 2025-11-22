@@ -9,20 +9,20 @@
 </section>
 
 <section class="filters-bar" [formGroup]="filtros">
-  <mat-form-field appearance="outline" class="search-field" density="compact">
-    <mat-icon matPrefix>search</mat-icon>
-    <input matInput formControlName="q" placeholder="Buscar por nombre, cédula..." />
-  </mat-form-field>
+    <mat-form-field appearance="outline" class="search-field" density="compact">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput formControlName="q" placeholder="Buscar por nombre, cédula..." (keyup)="onSearchInput($event)" />
+    </mat-form-field>
 
-  <div class="filter-chips">
-    <mat-chip-listbox aria-label="Filtro de roles" formControlName="rol">
-      <mat-chip-option [value]="''" selected>Todos</mat-chip-option>
+    <div class="filter-chips">
+        <mat-chip-listbox aria-label="Filtro de roles" formControlName="rol" (change)="onRolChange($event)">
+            <mat-chip-option [value]="''" selected>Todos</mat-chip-option>
 
-      @for (r of roles; track r) {
-      <mat-chip-option [value]="r">{{ r }}</mat-chip-option>
-      }
-    </mat-chip-listbox>
-  </div>
+            @for (r of roles; track r) {
+            <mat-chip-option [value]="r">{{ r }}</mat-chip-option>
+            }
+        </mat-chip-listbox>
+    </div>
 </section>
 
 @if (loading()) {
