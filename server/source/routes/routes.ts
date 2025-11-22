@@ -3,6 +3,7 @@ import { InventarioRoutes } from "./inventario.routes";
 import { HistorialInventarioRoutes } from "./historialInventario.routes";
 import { PerfilRoutes } from "./perfiles.routes";
 import { ActividadesRoutes } from "./actividades.routes";
+import { ImageRoutes } from "./images.routes";
 
 
 export class AppRoutes {
@@ -20,6 +21,8 @@ export class AppRoutes {
     router.use("/perfiles", PerfilRoutes.routes);
 
     router.use("/actividades", ActividadesRoutes.routes);
+     // localhost:3000/imagenes/
+    router.use("/imagenes", ImageRoutes.routes);
     return router;
   }
 }

@@ -101,21 +101,6 @@ export class ImageController {
         // solo usamos la primera imagen
         const nuevoArchivo = archivosSubidos[0];
 
-        // 🔹 Opcional: si NO quieres depender de previousFileName,
-        // puedes limpiar la foto anterior desde la BD:
-        const perfilActual = await this.prisma.perfiles.findUnique({
-          where: { id: perfilId },
-          select: { fotoURL: true },
-        });
-
-        if (perfilActual?.fotoURL) {
-          const rutaAnterior = path.join(directoryPath, perfilActual.fotoURL);
-          if (fs.existsSync(rutaAnterior)) {
-            fs.unlinkSync(rutaAnterior);
-            console.log(`Foto anterior eliminada: ${perfilActual.fotoURL}`);
-          }
-        }
-
         // 🔹 Actualizar la columna fotoURL del perfil
         const perfilActualizado = await this.prisma.perfiles.update({
           where: { id: perfilId },

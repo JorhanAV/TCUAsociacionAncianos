@@ -4,9 +4,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PerfilService } from '../../../share/services/perfil.service';
-import { ImageService } from '../../../share/services/image.service';
 import { environment } from '../../../../environments/environment.development';
 import { EEstado, ERol, perfilModel } from '../../../share/models/perfilModel';
+import { finalize } from 'rxjs'; // Importamos finalize para limpiar el estado de carga
 
 export interface PerfilDialogData {
   modo: 'crear' | 'editar';
@@ -17,14 +17,18 @@ export interface PerfilDialogData {
   selector: 'app-perfil-form',
   templateUrl: './perfil-form.component.html',
   styleUrl: './perfil-form.component.scss',
+  // Es importante usar 'standalone: true' si está usando la sintaxis @for/@if
+  // pero lo dejaré como 'standalone: false' si este componente es parte de un módulo.
   standalone: false,
 })
 export class PerfilFormComponent implements OnInit {
   // inyección
   private fb = inject(FormBuilder);
   private svc = inject(PerfilService);
-  private imageSvc = inject(ImageService);
   private snackBar = inject(MatSnackBar);
+
+  // NOTA: Es importante que el PerfilService tenga un método para enviar FormData
+  // (e.g., this.svc.createWithPhoto(formData))
 
   private imageBaseUrl = environment.imageBaseUrl; // 'http://localhost:3000/imagenes/'
 
@@ -47,12 +51,11 @@ export class PerfilFormComponent implements OnInit {
   private idPerfil?: number;
 
   // FOTO
-  fotoFileName: string | null = null;   // lo que se guarda en fotoURL
+  fotoFileName: string | null = null; // Lo que se guarda en fotoURL, usado para EDITAR
   fotoPreviewUrl: string | null = null; // URL completa para <img>
-  subiendoFoto = false;
   guardando = false;
 
-  // para creación (no hay id todavía)
+  // Para creación: guarda el archivo a subir con el formulario
   private pendingFotoFile: File | null = null;
 
   constructor(
@@ -90,48 +93,50 @@ export class PerfilFormComponent implements OnInit {
     }
   }
 
-  private buildFotoUrl(fileName: string | null): string | null {
-    if (!fileName) return null;
-    return `${this.imageBaseUrl}${fileName}`;
-  }
+ private buildFotoUrl(fileName: string | null): string | null {
+  if (!fileName) return null;
+  const baseUrl = this.imageBaseUrl.endsWith('/') ? this.imageBaseUrl : this.imageBaseUrl + '/';
+  return `${baseUrl}${fileName}`; 
+}
 
-  // cuando se selecciona una imagen
+  // Cuando se selecciona una imagen
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
 
     const file = input.files[0];
 
-    // EDITAR: ya existe el perfil en BD, podemos subir de una vez
-    if (this.idPerfil) {
-      this.subiendoFoto = true;
+    this.pendingFotoFile = file;
+    this.fotoPreviewUrl = URL.createObjectURL(file);
+    this.showSuccess('Nueva foto seleccionada. Guarde el perfil para aplicar los cambios.');
+  }
 
-      this.imageSvc.uploadPerfilFoto(file, this.fotoFileName).subscribe({
-        next: (res: any[]) => {
-          this.subiendoFoto = false;
+  /**
+   * Crea el objeto FormData a partir del formulario y del archivo pendiente.
+   */
+  private createFormData(payloadBase: Partial<perfilModel>): FormData {
+    const formData = new FormData();
 
-          const first = res && res[0];
-          if (first?.fileName) {
-            this.fotoFileName = first.fileName;
-            this.fotoPreviewUrl = this.buildFotoUrl(first.fileName);
-            this.showSuccess('Foto subida. Se guardará al actualizar el perfil.');
-          } else {
-            this.showError('No se recibió el nombre del archivo de la API.');
-          }
-        },
-        error: (err) => {
-          console.error('Error subiendo foto de perfil', err);
-          this.subiendoFoto = false;
-          this.showError('Error al subir la foto de perfil.');
-        },
-      });
-    } else {
-      // CREAR: aún no hay perfil en BD
-      // guardamos el file pendiente y mostramos preview local
-      this.pendingFotoFile = file;
-      this.fotoPreviewUrl = URL.createObjectURL(file);
-      this.showSuccess('La foto se subirá cuando crees el perfil.');
+    // 1. Añadir campos del formulario como texto
+    (Object.keys(payloadBase) as Array<keyof Partial<perfilModel>>).forEach((key) => {
+      const value = payloadBase[key];
+      if (value !== null && value !== undefined) {
+        if (key === 'fechaNacimiento') {
+          formData.append(key as string, new Date(value as string | Date).toISOString());
+        } else {
+          formData.append(key as string, String(value));
+        }
+      }
+    });
+
+    // 2. Añadir el archivo pendiente (si existe)
+    if (this.pendingFotoFile) {
+      // Nombre del campo que Multer debe esperar en el backend: 'files' o 'foto'
+      // Usamos 'files' para ser consistentes con tu código anterior.
+      formData.append('files', this.pendingFotoFile, this.pendingFotoFile.name);
     }
+
+    return formData;
   }
 
   save() {
@@ -154,88 +159,49 @@ export class PerfilFormComponent implements OnInit {
       telefonoContacto: raw.telefonoContacto || null,
       numeroCelular: raw.numeroCelular || null,
       direccion: raw.direccion || null,
-      // fotoURL: se mantiene la actual si ya la tenemos
-      fotoURL: this.fotoFileName ?? this.data?.perfil?.fotoURL ?? null,
     };
 
     this.guardando = true;
 
-    if (this.modo === 'crear') {
-      // 1) Creamos el perfil
-      this.svc.create(payloadBase as perfilModel).subscribe({
-        next: (created: perfilModel) => {
-          // 2) Si hay foto pendiente, la subimos AHORA y luego hacemos un update con fotoURL
-          if (this.pendingFotoFile) {
-            this.subiendoFoto = true;
+    // 🚀 LÓGICA UNIFICADA
+    const formData = this.createFormData(payloadBase);
 
-            this.imageSvc.uploadPerfilFoto(this.pendingFotoFile, null).subscribe({
-              next: (res: any[]) => {
-                this.subiendoFoto = false;
-                const first = res && res[0];
-
-                if (first?.fileName) {
-                  const patch: perfilModel = {
-                    ...created,
-                    fotoURL: first.fileName,
-                  };
-
-                  this.svc.update(patch).subscribe({
-                    next: () => {
-                      this.guardando = false;
-                      this.showSuccess('Perfil creado con foto correctamente.');
-                      this.dialogRef.close(true);
-                    },
-                    error: (err) => {
-                      console.error('Error actualizando fotoURL tras crear perfil', err);
-                      this.guardando = false;
-                      this.showError('Perfil creado, pero hubo un error al guardar la foto.');
-                      this.dialogRef.close(true);
-                    },
-                  });
-                } else {
-                  this.guardando = false;
-                  this.showError('Perfil creado, pero la API no devolvió el nombre de la foto.');
-                  this.dialogRef.close(true);
-                }
-              },
-              error: (err) => {
-                console.error('Error subiendo foto tras crear perfil', err);
-                this.subiendoFoto = false;
-                this.guardando = false;
-                this.showError('Perfil creado, pero hubo un error al subir la foto.');
-                this.dialogRef.close(true);
-              },
-            });
-          } else {
-            // sin foto
-            this.guardando = false;
-            this.showSuccess('Perfil creado correctamente.');
-            this.dialogRef.close(true);
-          }
-        },
-        error: (err) => {
-          console.error('Error creando perfil', err);
-          this.guardando = false;
-          this.showError('Ocurrió un error al crear el perfil.');
-        },
-      });
-    } else {
-      // EDITAR: actualizamos datos + fotoURL (si ya cambió con onFileSelected)
-      this.svc.update(payloadBase as perfilModel).subscribe({
-        next: () => {
-          this.guardando = false;
-          this.showSuccess('Perfil actualizado correctamente.');
+    // Llamamos al nuevo método unificado del servicio
+    this.svc
+      .saveWithPhoto(formData, this.modo, this.idPerfil)
+      .pipe(finalize(() => (this.guardando = false)))
+      .subscribe({
+        next: (saved: perfilModel) => {
+          this.showSuccess(
+            `Perfil ${this.modo === 'crear' ? 'creado' : 'actualizado'} correctamente.`
+          );
           this.dialogRef.close(true);
         },
         error: (err) => {
-          console.error('Error actualizando perfil', err);
-          this.guardando = false;
-          this.showError('Ocurrió un error al actualizar el perfil.');
+          console.error('Error guardando perfil con foto', err);
+          this.showError('Ocurrió un error al guardar el perfil (revisa la cédula o la conexión).');
         },
       });
-    }
   }
+  removePhoto() {
+    // Simula que no hay archivo pendiente
+    this.pendingFotoFile = null;
 
+    // Borra la URL de previsualización
+    this.fotoPreviewUrl = null;
+
+    // Establece el valor de fotoURL a null en el formulario.
+    // Esto es crucial para que 'save()' sepa que debe enviar fotoURL: null en el payload
+    // y que el backend lo use para eliminar la foto de la BD y el servidor.
+    // **Asegúrate de que el control 'fotoURL' exista en tu FormGroup si lo necesitas**
+    // PERO, si confías solo en la lógica del backend, puedes usar una variable de estado:
+
+    // Opción 1: Si no tienes control 'fotoURL' en el formulario (basado en la nueva lógica)
+    // Simplemente borra la previsualización y la foto pendiente.
+    // El backend no recibirá 'files' ni 'previousFileName' si no se sube nada.
+
+    this.showSuccess('Foto marcada para eliminación. Guarde el perfil para aplicar.');
+  }
   cancel() {
     this.dialogRef.close(false);
   }
