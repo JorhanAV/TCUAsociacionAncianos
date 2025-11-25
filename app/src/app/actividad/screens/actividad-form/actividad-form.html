@@ -19,8 +19,17 @@
 
       <!-- Fecha -->
       <mat-form-field appearance="outline">
-        <mat-label>Fecha</mat-label>
-        <input matInput type="date" formControlName="fechaActividad" />
+        <mat-label>Fecha de la actividad</mat-label>
+
+        <input
+          matInput
+          [matDatepicker]="pickerFecha"
+          formControlName="fechaActividad"
+          placeholder="Seleccione una fecha"
+        />
+
+        <mat-datepicker-toggle matSuffix [for]="pickerFecha"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFecha></mat-datepicker>
 
         @if (form.get('fechaActividad')?.hasError('required')) {
         <mat-error>La fecha es obligatoria.</mat-error>
@@ -32,9 +41,19 @@
       <!-- Hora -->
       <mat-form-field appearance="outline">
         <mat-label>Hora de inicio</mat-label>
-        <input matInput type="time" formControlName="horaInicio" />
+
+        <mat-icon matPrefix>schedule</mat-icon>
+        
+        <mat-select formControlName="horaInicio">
+          @for (h of horasDisponibles; track h) {
+          <mat-option [value]="h">{{ h }}</mat-option>
+          } @empty {
+          <mat-option disabled>No hay horas disponibles</mat-option>
+          }
+        </mat-select>
+
         @if (form.get('horaInicio')?.hasError('required')) {
-        <mat-error>La hora de inicio es obligatoria.</mat-error>
+        <mat-error>La hora es obligatoria.</mat-error>
         }
       </mat-form-field>
 

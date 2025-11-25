@@ -24,6 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 
 
 import { MatChipListbox, MatChipsModule } from '@angular/material/chips';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 
 @NgModule({
   exports: [
@@ -51,6 +52,8 @@ import { MatChipListbox, MatChipsModule } from '@angular/material/chips';
     MatTableModule,
     FormsModule,
     MatNativeDateModule,
+    MatTimepickerModule
+    
   ],
 })
 export class MaterialModule {}
