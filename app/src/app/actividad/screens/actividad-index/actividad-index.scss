@@ -202,3 +202,41 @@ $bg-card: #ffffff;
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+// ============================
+//     TABS PERSONALIZADOS
+// ============================
+.tabs-container {
+  background: $bg-card;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  ::ng-deep .mat-mdc-tab-header {
+    border-bottom: 1px solid #eee;
+    border-radius: 16px 16px 0 0;
+    background: $bg-card;
+  }
+
+  // Tabs inactivos
+  ::ng-deep .mdc-tab {
+    color: #666 !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  // Tab activo
+  ::ng-deep .mdc-tab--active {
+    color: $primary !important;
+  }
+
+  // Línea inferior del tab activo
+  ::ng-deep .mdc-tab-indicator__content--underline {
+    border-color: $primary !important;
+  }
+
+  // Espaciado interior
+  .mat-mdc-tab-body-wrapper {
+    padding: 0;
+  }
+}

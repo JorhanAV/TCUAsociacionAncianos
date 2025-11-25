@@ -20,7 +20,13 @@ export class ActividadIndex implements OnInit {
     'acciones',
   ];
 
-  dataSource = new MatTableDataSource<ActividadModel>([]);
+  // TAB INDEX
+  tabIndex = 0;
+
+  // DataSource para ambos tabs
+  dataSourceTodas = new MatTableDataSource<ActividadModel>([]);
+  dataSourceProximas = new MatTableDataSource<ActividadModel>([]);
+
   cargando = false;
   error: string | null = null;
 
@@ -33,8 +39,8 @@ export class ActividadIndex implements OnInit {
   ngOnInit(): void {
     this.cargarActividades();
 
-    // Configuración del filtro
-    this.dataSource.filterPredicate = (data: ActividadModel, filter: string) => {
+    // Filtro para el tab "Todas"
+    this.dataSourceTodas.filterPredicate = (data: ActividadModel, filter: string) => {
       const dataStr = (
         data.nombre +
         data.tipoActividad +
@@ -51,7 +57,19 @@ export class ActividadIndex implements OnInit {
 
     this.actividadService.get().subscribe({
       next: (data) => {
-        this.dataSource.data = data;
+        // Data completa
+        this.dataSourceTodas.data = data;
+
+        // Filtrar próximas actividades
+        const ahora = new Date();
+
+        const proximas = data.filter((a) => {
+          const fechaHora = new Date(a.horaInicio);
+          return fechaHora >= ahora;
+        });
+
+        this.dataSourceProximas.data = proximas;
+
         this.cargando = false;
       },
       error: (err) => {
@@ -62,23 +80,22 @@ export class ActividadIndex implements OnInit {
     });
   }
 
-  // --- Búsqueda ---
+  // Búsqueda solo afecta al TAB "Todas"
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.dataSourceTodas.filter = filterValue.trim().toLowerCase();
   }
 
-  // --- Estadísticas ---
+  // Estadísticas
   get totalActividades(): number {
-    return this.dataSource.data.length;
+    return this.dataSourceTodas.data.length;
   }
 
   get actividadesProximas(): number {
-    const hoy = new Date().getTime();
-    return this.dataSource.data.filter((a) => new Date(a.fechaActividad).getTime() > hoy).length;
+    return this.dataSourceProximas.data.length;
   }
 
-  // --- Modal Form ---
+  // Crear
   abrirFormCrear(): void {
     this.modoForm = 'crear';
     this.actividadSeleccionada = null;

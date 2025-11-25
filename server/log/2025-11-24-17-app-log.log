@@ -1,0 +1,32 @@
+2025-11-24 17:29:33.205 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividadPerfil.create()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:187:38
+
+  184 // --- Perfiles asociados ---
+  185 if (Array.isArray(idsPerfiles) && idsPerfiles.length > 0) {
+  186   for (const idPerfil of idsPerfiles) {
+→ 187     await tx.actividadPerfil.create({
+            data: {
+              idPerfil: "",
+                        ~~
+              idActividad: 16
+            }
+          })
+
+Argument `idPerfil`: Invalid value provided. Expected Int, provided String.
+2025-11-24 17:29:34.216 error: 	jorha--Se produjo un error interno del servidor 
+Invalid `tx.actividadPerfil.create()` invocation in
+D:\UTN\XII Cuatrimestre\TCU\TCUAsociacionAncianos\server\source\controllers\actividadesController.ts:187:38
+
+  184 // --- Perfiles asociados ---
+  185 if (Array.isArray(idsPerfiles) && idsPerfiles.length > 0) {
+  186   for (const idPerfil of idsPerfiles) {
+→ 187     await tx.actividadPerfil.create({
+            data: {
+              idPerfil: "",
+                        ~~
+              idActividad: 17
+            }
+          })
+
+Argument `idPerfil`: Invalid value provided. Expected Int, provided String.
