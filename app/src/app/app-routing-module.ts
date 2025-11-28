@@ -50,6 +50,14 @@ const routes: Routes = [
           import('./actividad/actividad-module').then((m) => m.ActividadModule),
         data: { title: 'Actividades' },
       },
+
+      {
+  path: 'contacto',
+  loadChildren: () =>
+    import('./contacto/contacto-module').then((m) => m.ContactoModule),
+  data: { title: 'Contacto' },
+},
+
     ],
   },
 
