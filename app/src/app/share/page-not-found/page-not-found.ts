@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './page-not-found.html',
   styleUrl: './page-not-found.css'
 })
+
 export class PageNotFound {
 constructor(private router: Router) { }
 
