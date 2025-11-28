@@ -21,7 +21,7 @@ export class PerfilService extends BaseAPI<perfilModel> {
   ): Observable<perfilModel> {
     if (modo === 'crear') {
       // POST para crear
-      return this.http.post<perfilModel>(this.urlAPI, data);
+      return this.http.post<perfilModel>(`${this.urlAPI}/${this.endpoint}`, data);
     } else if (modo === 'editar' && idPerfil) {
       // PUT para actualizar
       return this.http.put<perfilModel>(`${this.urlAPI}/${this.endpoint}/${idPerfil}`, data);

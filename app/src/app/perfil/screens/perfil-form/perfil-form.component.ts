@@ -40,9 +40,11 @@ export class PerfilFormComponent implements OnInit {
     nombre: ['', [Validators.required, Validators.minLength(3)]],
     fechaNacimiento: [null as Date | null, [Validators.required, this.minAgeValidator(18)]],
 
-    cedula: ['', [Validators.required, Validators.pattern(/^[0-9]{9}$/)]],
-    telefonoContacto: ['', [Validators.pattern(/^[245][0-9]{7}$/)]],
-    numeroCelular: ['', [Validators.pattern(/^[678][0-9]{7}$/)]],
+    cedula: ['', [Validators.required, Validators.pattern(/^\d-\d{4}-\d{4}$/)]],
+
+    telefonoContacto: ['', [Validators.pattern(/^[245]\d{3}-\d{4}$/)]],
+    numeroCelular: ['', [Validators.pattern(/^[678]\d{3}-\d{4}$/)]],
+
     direccion: [''],
     rol: [ERol.Voluntario as ERol, Validators.required],
     estado: [EEstado.ACTIVO as EEstado, Validators.required],
