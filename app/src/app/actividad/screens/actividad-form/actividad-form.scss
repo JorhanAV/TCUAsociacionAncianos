@@ -95,3 +95,28 @@ h2 {
     }
   }
 }
+
+:host {
+  display: block;
+  width: 100%;
+  overflow-x: hidden !important;
+  padding: 0 24px;
+}
+
+
+/* Todas las filas del formulario */
+.section {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 20px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr; /* en pantallas pequeñas baja a 1 columna */
+  }
+}
+
+mat-form-field {
+  width: 100% !important;
+  min-width: 0 !important; /* ⬅ evita que expanda el contenedor */
+}
+

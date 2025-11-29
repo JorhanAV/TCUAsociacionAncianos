@@ -1,3 +1,6 @@
+<!-- ============================================================
+   DASHBOARD HEADER + KPIs
+=============================================================== -->
 <header class="dashboard-header">
   <div class="welcome-text">
     <h1>Bienvenido, Administración</h1>
@@ -9,7 +12,7 @@
       <mat-icon class="stat-icon">cake</mat-icon>
       <div class="stat-info">
         <span class="label">Cumpleaños hoy</span>
-        <span class="value">2</span>
+        <span class="value">{{ cumpleanosHoy() }}</span>
       </div>
     </mat-card>
 
@@ -17,85 +20,120 @@
       <mat-icon class="stat-icon">inventory_2</mat-icon>
       <div class="stat-info">
         <span class="label">Stock Bajo</span>
-        <span class="value">5</span>
+        <span class="value">{{ stockBajo() }}</span>
       </div>
     </mat-card>
 
     <mat-card class="stat-card">
-      <mat-icon class="stat-icon">elderly</mat-icon>
+      <mat-icon class="stat-icon">event_available</mat-icon>
       <div class="stat-info">
-        <span class="label">Adultos Mayores</span>
-        <span class="value">{{ clientes().length }}</span>
+        <span class="label">Actividades Próximas</span>
+        <span class="value">{{ actividadesProx() }}</span>
       </div>
     </mat-card>
   </div>
 </header>
 
-<section class="toolbar">
-  <mat-form-field appearance="outline" class="search-bar">
-    <mat-label>Buscar adulto mayor...</mat-label>
-    <mat-icon matPrefix>search</mat-icon>
-    <input matInput placeholder="Nombre o cédula">
-  </mat-form-field>
+<!-- ============================================================
+   CALENDARIO AAMSA
+=============================================================== -->
+<section class="calendar-section">
 
-  <button mat-stroked-button color="primary">
-    <mat-icon>filter_list</mat-icon> Filtros
-  </button>
-  
-  <button mat-flat-button color="primary" class="add-btn">
-    <mat-icon>person_add</mat-icon> Nuevo Ingreso
-  </button>
-</section>
+  <div class="calendar-header">
+    <button mat-icon-button (click)="prevMonth()">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
 
-<section class="grid">
-  @for (c of clientes(); track c.email) {
-    <mat-card class="cliente-card" matRipple>
-      <div class="status-indicator active" title="Estado: Activo"></div> 
-      
-      <div class="card-header">
-        @if (c.avatar) {
-          <img [src]="c.avatar" alt="{{ c.nombre }}" class="avatar" />
-        } @else {
-          <div class="avatar initials">{{ c.initials }}</div>
-        }
-        
-        <div class="info">
-          <h3 class="nombre">{{ c.nombre }}</h3>
-          <span class="chip-id">ID: 8842...</span> </div>
-        
-        <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
-          <mat-icon>more_vert</mat-icon>
-        </button>
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item><mat-icon>edit</mat-icon>Editar Perfil</button>
-          <button mat-menu-item><mat-icon>history</mat-icon>Ver Historial</button>
-        </mat-menu>
+    <h2>{{ meses[mesActual] }} {{ anioActual }}</h2>
+
+    <button mat-icon-button (click)="nextMonth()">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="calendar-grid">
+    <div class="weekday" *ngFor="let d of diasSemana">{{ d }}</div>
+
+    <div
+      class="day-cell"
+      *ngFor="let day of calendario"
+      [class.empty]="!day.numero"
+      [class.hoy]="esHoy(day.fecha)"
+      (click)="abrirDia(day)"
+    >
+      <span class="day-number">{{ day.numero }}</span>
+
+      <div class="events-preview">
+        <div class="event-dot" *ngFor="let ev of day.eventos"></div>
       </div>
-
-      <mat-divider></mat-divider>
-
-      <div class="card-body">
-        <div class="data-row">
-          <mat-icon class="mini-icon">email</mat-icon>
-          <span class="text-truncate">{{ c.email }}</span>
-        </div>
-        <div class="data-row">
-          <mat-icon class="mini-icon">phone</mat-icon>
-          <span>{{ c.tel }}</span>
-        </div>
-      </div>
-
-      <div class="card-actions">
-        <a mat-stroked-button color="accent" href="tel:{{c.tel}}" (click)="$event.stopPropagation()">
-          <mat-icon>call</mat-icon> Llamar
-        </a>
-        <button mat-button color="primary">Ver Expediente</button>
-      </div>
-    </mat-card>
-  } @empty {
-    <div class="empty-state">
-      <mat-icon>person_off</mat-icon>
-      <p>No se encontraron registros.</p>
     </div>
-  }
+  </div>
 </section>
+
+<!-- ============================================================
+   MODAL PRINCIPAL
+=============================================================== -->
+@if (modalAbierto) {
+<div class="overlay" (click)="cerrarModal()">
+  
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <!-- ========================================= -->
+    <!--   LISTA DE ACTIVIDADES DEL DÍA            -->
+    <!-- ========================================= -->
+    @if (!modoForm) {
+
+      <h3>Actividades del {{ diaSeleccionadoTexto }}</h3>
+
+      <div class="event-list">
+        @for (ev of actividadesDia; track ev.id) {
+        <mat-card class="event-card">
+          <div class="event-info">
+            <strong>{{ ev.nombre }}</strong>
+            <small>{{ ev.horaInicio | date: 'hh:mm a' }}</small>
+          </div>
+
+          <button 
+            mat-icon-button 
+            color="primary"
+            (click)="editarActividad(ev)"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </mat-card>
+        } @empty {
+        <p class="no-events">No hay actividades este día.</p>
+        }
+      </div>
+
+      <button 
+        mat-flat-button 
+        color="primary"
+        class="new-event-btn"
+        (click)="crearActividadNueva()"
+      >
+        <mat-icon>add</mat-icon>
+        Crear actividad
+      </button>
+
+    }
+
+    <!-- ========================================= -->
+    <!--   FORMULARIO DE ACTIVIDAD CENTRADO        -->
+    <!-- ========================================= -->
+    @if (modoForm) {
+
+      <div class="modal-content-wrapper">
+        <app-actividad-form
+          [actividad]="actividadSeleccionada"
+          [modo]="modoForm"
+          (cerrar)="onCerrarActividad($event)"
+        ></app-actividad-form>
+      </div>
+
+    }
+
+  </div>
+
+</div>
+}
