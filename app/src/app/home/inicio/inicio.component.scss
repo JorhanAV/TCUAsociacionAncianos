@@ -324,21 +324,15 @@ $bg-light: #f8f9fa;
 
   .modal {
     background: white;
-    padding-right: 90px;
-    padding-left: 30px;
-    padding-top: 10px;
-    padding-bottom: 20px;
+    padding: 40px;
     border-radius: 20px;
     width: 95%;
-    max-width: 800px;
+    max-width: 900px;
     max-height: 90vh;
     overflow-y: auto;
-    overflow-x: hidden !important; // ⬅⬅ arregla scroll horizontal
+    overflow-x: hidden !important;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    animation: modalFadeIn 0.25s ease-out;
   }
-
-  
 }
 
 @keyframes modalFadeIn {
