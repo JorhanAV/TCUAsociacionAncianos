@@ -345,3 +345,67 @@ $bg-light: #f8f9fa;
     transform: translateY(0);
   }
 }
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.event-card {
+  padding: 20px;
+  padding-bottom: 55px;  // 👈 Espacio para el botón
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #eee;
+  position: relative;     // 👈 Necesario para absolute bottom-right
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  }
+
+  .event-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    .ev-title {
+      font-size: 1.1rem;
+      color: #5e2c5f;
+      font-weight: bold;
+    }
+
+    .ev-time {
+      font-size: 0.95rem;
+      color: #444;
+      font-weight: 600;
+    }
+  }
+
+  .ev-details {
+    font-size: 0.9rem;
+    color: #555;
+
+    p {
+      margin: 2px 0;
+    }
+  }
+
+  .btn-edit {
+    position: absolute;
+    right: 16px;   // 👈 Ahora sí al borde derecho
+    bottom: 12px;  // 👈 Y al borde inferior
+  }
+}
+
+
+/* Espacio extra antes del botón */
+.new-event-btn {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+}
+

@@ -38,7 +38,6 @@
    CALENDARIO AAMSA
 =============================================================== -->
 <section class="calendar-section">
-
   <div class="calendar-header">
     <button mat-icon-button (click)="prevMonth()">
       <mat-icon>chevron_left</mat-icon>
@@ -75,46 +74,43 @@
 =============================================================== -->
 @if (modalAbierto) {
 <div class="overlay" (click)="cerrarModal()">
-  
   <div class="modal" (click)="$event.stopPropagation()">
-
     <!-- ========================================= -->
     <!--   LISTA DE ACTIVIDADES DEL DÍA            -->
     <!-- ========================================= -->
     @if (!modoForm) {
 
-      <h3>Actividades del {{ diaSeleccionadoTexto }}</h3>
+    <h3>Actividades del {{ diaSeleccionadoTexto }}</h3>
 
-      <div class="event-list">
-        @for (ev of actividadesDia; track ev.id) {
-        <mat-card class="event-card">
-          <div class="event-info">
-            <strong>{{ ev.nombre }}</strong>
-            <small>{{ ev.horaInicio | date: 'hh:mm a' }}</small>
-          </div>
+    <div class="event-list">
+      @for (ev of actividadesDia; track ev.id) {
+      <mat-card class="event-card">
+        <div class="event-header">
+          <strong class="ev-title">{{ ev.nombre }}</strong>
+          <span class="ev-time">
+            {{ ev.horaInicio | date : 'hh:mm a' }}
+          </span>
+        </div>
+        <div class="ev-details">
+          <p><strong>Tipo:</strong> {{ ev.tipoActividad }}</p>
+          <p><strong>Duración:</strong> {{ ev.duracion }} min</p>
+        </div>
 
-          <button 
-            mat-icon-button 
-            color="primary"
-            (click)="editarActividad(ev)"
-          >
+        <div class="event-footer">
+          <button mat-icon-button color="primary" class="btn-edit" (click)="editarActividad(ev)">
             <mat-icon>edit</mat-icon>
           </button>
-        </mat-card>
-        } @empty {
-        <p class="no-events">No hay actividades este día.</p>
-        }
-      </div>
+        </div>
+      </mat-card>
+      } @empty {
+      <p class="no-events">No hay actividades este día.</p>
+      }
+    </div>
 
-      <button 
-        mat-flat-button 
-        color="primary"
-        class="new-event-btn"
-        (click)="crearActividadNueva()"
-      >
-        <mat-icon>add</mat-icon>
-        Crear actividad
-      </button>
+    <button mat-flat-button color="primary" class="new-event-btn" (click)="crearActividadNueva()">
+      <mat-icon>add</mat-icon>
+      Crear actividad
+    </button>
 
     }
 
@@ -123,17 +119,15 @@
     <!-- ========================================= -->
     @if (modoForm) {
 
-      <div class="modal-content-wrapper">
-        <app-actividad-form
-          [actividad]="actividadSeleccionada"
-          [modo]="modoForm"
-          (cerrar)="onCerrarActividad($event)"
-        ></app-actividad-form>
-      </div>
+    <div class="modal-content-wrapper">
+      <app-actividad-form
+        [actividad]="actividadSeleccionada"
+        [modo]="modoForm"
+        (cerrar)="onCerrarActividad($event)"
+      ></app-actividad-form>
+    </div>
 
     }
-
   </div>
-
 </div>
 }
