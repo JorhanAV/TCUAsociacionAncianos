@@ -1,0 +1,118 @@
+<div class="dashboard-container">
+
+  <!-- Título Principal -->
+  <header class="dashboard-header">
+    <h1 class="title">Panel Analítico de Gestión de Recursos</h1>
+    <p class="subtitle">Análisis del estado actual de cuentas y transacciones en tiempo real.</p>
+  </header>
+
+  <!-- ===================== -->
+  <!--        KPIs (Métricas Clave)        -->
+  <!-- ===================== -->
+  <section class="kpi-grid">
+
+    <div class="kpi-card purple-bg-hover">
+      <!-- Iconos: person_check para activos -->
+      <div class="kpi-icon"><i class="material-icons">person_check</i></div>
+      <div class="kpi-body">
+        <h3>Cuentas de Usuario Activas</h3>
+        <span class="kpi-value">{{ kpis.perfiles?.activos }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card purple-bg-hover">
+      <!-- Iconos: person_remove para inactivos -->
+      <div class="kpi-icon"><i class="material-icons">person_remove</i></div>
+      <div class="kpi-body">
+        <h3>Cuentas de Usuario Inactivas</h3>
+        <span class="kpi-value">{{ kpis.perfiles?.inactivos }}</span>
+      </div>
+    </div>
+
+    <div class="kpi-card gold-bg-hover">
+      <!-- Iconos: insights para eventos dominantes -->
+      <div class="kpi-icon"><i class="material-icons">insights</i></div>
+      <div class="kpi-body">
+        <h3>Tipo de Evento Dominante</h3>
+        <!-- Usamos optional chaining para evitar errores si la data no está lista -->
+        <span class="kpi-value-small">{{ kpis.actividadMasFrecuente?.tipoActividad }}</span>
+      </div>
+    </div>
+
+    <!-- KPI de Transacciones con Terminología Mejorada -->
+    <div class="kpi-card gold-bg-hover">
+      <!-- Iconos: swap_horiz para transacciones -->
+      <div class="kpi-icon"><i class="material-icons">swap_horiz</i></div>
+      <div class="kpi-body">
+        <h3>Transacciones de Inventario Hoy</h3>
+        <span class="kpi-value">
+          {{ kpis.movimientosHoy?.ADD || 0 }} Altas / {{ kpis.movimientosHoy?.DELETE || 0 }} Bajas
+        </span>
+        <div class="subtext">
+          <!-- Cálculo de Total Neto directamente en el template -->
+          Total Neto: {{ (kpis.movimientosHoy?.ADD || 0) - (kpis.movimientosHoy?.DELETE || 0) }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== -->
+  <!--        GRÁFICOS (Layout Grid)      -->
+  <!-- ===================== -->
+  <!-- La clase charts-grid gestiona el layout 3-columnas/responsivo -->
+  <section class="charts-grid">
+
+    <div class="chart-card">
+      <h3>Distribución de Cuentas por Rol</h3>
+      <canvas id="chartRoles"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Distribución de Eventos por Categoría</h3>
+      <canvas id="chartTipos"></canvas>
+    </div>
+
+    <!-- Gráfico Largo que ocupa 2 columnas en desktop -->
+    <div class="chart-card large-chart">
+      <h3>Tendencia Histórica de Eventos</h3>
+      <canvas id="chartFechas"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Flujo Neto de Inventario (Altas vs. Bajas)</h3>
+      <canvas id="chartMovimientos"></canvas>
+    </div>
+
+  </section>
+
+  <!-- ===================== -->
+  <!--        ALERTAS (Sección Dedicada)       -->
+  <!-- ===================== -->
+  <section class="alert-section">
+    <h2>Gestión de Novedades y Alertas</h2>
+    <div class="alert-cards-container">
+      <!-- Usamos *ngIf para manejar la lógica de visibilidad si el valor es > 0 -->
+      <ng-container *ngIf="alerts.inventarioCritico > 0">
+        <div class="alert-card critical-alert">
+          <i class="material-icons">warning</i> 
+          Inventario Crítico: {{ alerts.inventarioCritico }} ítems requieren atención inmediata.
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="alerts.perfilesInactivos > 0">
+        <div class="alert-card warning-alert">
+          <i class="material-icons">info</i> 
+          Revisión de Seguridad: {{ alerts.perfilesInactivos }} cuentas inactivas detectadas.
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="alerts.actividadesProximas > 0">
+        <div class="alert-card info-alert">
+          <i class="material-icons">event_available</i> 
+          Agenda Próxima (3 días): {{ alerts.actividadesProximas }} eventos programados.
+        </div>
+      </ng-container>
+    </div>
+  </section>
+
+</div>

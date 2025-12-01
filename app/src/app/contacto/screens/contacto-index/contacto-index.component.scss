@@ -39,30 +39,24 @@ $light: #f8f9fa;
   margin-bottom: 40px;
 
   .info-card {
-    padding: 24px;
-    text-align: center;
-    border-radius: 20px;
+  padding: 24px;
+  border-radius: 20px;
 
-    .icon {
-      font-size: 38px;
-      width: 38px;
-      height: 38px;
-      margin-bottom: 10px;
-      color: $primary;
-    }
+  display: flex;
+  flex-direction: column;        // Orden vertical
+  align-items: center;           // Centrado horizontal
+  justify-content: center;       // Centrado vertical
+  text-align: center;            // Centrado de texto 
 
-    h3 {
-      margin: 0;
-      font-weight: 700;
-      color: #333;
-    }
-
-    p {
-      margin-top: 6px;
-      color: #666;
-      font-size: 0.95rem;
-    }
+  .icon {
+    font-size: 38px;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 10px;
+    color: $primary;
   }
+}
+
 }
 
 /* ======================== */
@@ -86,10 +80,12 @@ $light: #f8f9fa;
 }
 
 .dev-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;  // <-- CENTRA HORIZONTALMENTE
   gap: 24px;
 }
+
 
 .dev-card {
   padding: 24px;
@@ -185,5 +181,12 @@ $light: #f8f9fa;
     display: flex;
     justify-content: center;
     gap: 16px;
+    a[mat-mini-fab] {
+  background-color: #032f72 !important; // azul
+  color: #fff !important;               // icono blanco
+}
+a[mat-mini-fab] mat-icon {
+  color: #fff !important;               // asegurar que el icono quede blanco
+}
   }
 }

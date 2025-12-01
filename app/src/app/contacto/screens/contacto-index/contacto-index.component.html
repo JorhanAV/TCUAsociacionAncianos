@@ -82,17 +82,30 @@
 
         <mat-divider></mat-divider>
 
-        <div class="social">
-          <a mat-mini-fab color="primary" [href]="d.github" target="_blank">
-            <mat-icon>code</mat-icon>
-          </a>
-          <a mat-mini-fab color="accent" [href]="d.linkedin" target="_blank">
-            <mat-icon>business_center</mat-icon>
-          </a>
-          <a mat-mini-fab color="warn" href="mailto:{{ d.email }}">
-            <mat-icon>mail</mat-icon>
-          </a>
-        </div>
+       <div class="social">
+
+  <a mat-mini-fab 
+     matTooltip="Ver repositorio en GitHub"
+     [href]="d.github" 
+     target="_blank">
+    <mat-icon>code</mat-icon>
+  </a>
+
+  <a mat-mini-fab 
+     matTooltip="Perfil profesional en LinkedIn"
+     [href]="d.linkedin" 
+     target="_blank">
+    <mat-icon>business_center</mat-icon>
+  </a>
+
+  <a mat-mini-fab 
+     matTooltip="Enviar correo"
+     href="mailto:{{ d.email }}">
+    <mat-icon>mail</mat-icon>
+  </a>
+
+</div>
+
 
       </mat-card>
     }
