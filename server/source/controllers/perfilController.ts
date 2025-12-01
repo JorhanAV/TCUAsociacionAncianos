@@ -33,10 +33,13 @@ export class PerfilesController {
           fechaNacimiento: true,
           cedula: true,
           rol: true,
-          fotoURL: true, // ✔️ Correcto: Se retorna la URL de la foto
+          fotoURL: true,
           telefonoContacto: true,
           numeroCelular: true,
           direccion: true,
+          provincia: true,
+          canton: true,
+          distrito: true,
           estado: true,
         },
         orderBy: { id: "desc" },
@@ -103,6 +106,9 @@ export class PerfilesController {
           telefonoContacto,
           numeroCelular,
           direccion,
+          provincia,
+          canton,
+          distrito,
           estado,
         } = req.body; // 3. Validaciones existentes
 
@@ -145,6 +151,10 @@ export class PerfilesController {
             telefonoContacto: telefonoContacto ?? null,
             numeroCelular: numeroCelular ?? null,
             direccion: direccion ?? null,
+            provincia: provincia ?? null,
+            canton: canton ?? null,
+            distrito: distrito ?? null,
+
             estado: estado ?? EEstado.ACTIVO,
           },
         });
@@ -180,11 +190,9 @@ export class PerfilesController {
 
         if (err) {
           console.error("Error al subir imagen:", err);
-          return res
-            .status(500)
-            .json({
-              message: "Error al subir la imagen durante la actualización.",
-            });
+          return res.status(500).json({
+            message: "Error al subir la imagen durante la actualización.",
+          });
         }
 
         const archivosSubidos = req.files as Express.Multer.File[] | undefined;
@@ -197,6 +205,9 @@ export class PerfilesController {
           telefonoContacto,
           numeroCelular,
           direccion,
+          provincia,
+          canton,
+          distrito,
           estado,
         } = req.body; // 1. Manejo de la foto
 
@@ -236,6 +247,10 @@ export class PerfilesController {
             ...(telefonoContacto !== undefined ? { telefonoContacto } : {}),
             ...(numeroCelular !== undefined ? { numeroCelular } : {}),
             ...(direccion !== undefined ? { direccion } : {}),
+            ...(provincia !== undefined ? { provincia } : {}),
+            ...(canton !== undefined ? { canton } : {}),
+            ...(distrito !== undefined ? { distrito } : {}),
+
             ...(estado !== undefined ? { estado } : {}),
           },
         });
