@@ -241,12 +241,38 @@ $bg-light: #f8f9fa;
     margin-bottom: 16px;
   }
 }
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px; // ← Calendario + Lateral
+  gap: 24px;
+  align-items: start;
+}
 
+/* CALENDARIO MÁS PEQUEÑO */
 .calendar-section {
   background: white;
-  padding: 20px;
+  padding: 24px;
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+
+  max-width: 1300px; // ← CALENDARIO MÁS COMPACTO
+  margin: 0 auto; // ← Centrado dentro de la columna izquierda
+  width: 90%;
+
+  /* PANEL DERECHO */
+  .sidebar {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    min-height: 200px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #777;
+    font-style: italic;
+  }
 
   .calendar-header {
     display: flex;

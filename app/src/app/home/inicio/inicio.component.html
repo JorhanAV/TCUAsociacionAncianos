@@ -37,41 +37,45 @@
 <!-- ============================================================
    CALENDARIO AAMSA
 =============================================================== -->
-<section class="calendar-section">
-  <div class="calendar-header">
-    <button mat-icon-button (click)="prevMonth()">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
+<div class="dashboard-layout">
+  <section class="calendar-section">
+    <div class="calendar-header">
+      <button mat-icon-button (click)="prevMonth()">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
 
-    <h2>{{ meses[mesActual] }} {{ anioActual }}</h2>
+      <h2>{{ meses[mesActual] }} {{ anioActual }}</h2>
 
-    <button mat-icon-button (click)="nextMonth()">
-      <mat-icon>chevron_right</mat-icon>
-    </button>
-  </div>
+      <button mat-icon-button (click)="nextMonth()">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
 
-  <div class="calendar-grid">
-    <div class="weekday" *ngFor="let d of diasSemana">{{ d }}</div>
+    <div class="calendar-grid">
+      <div class="weekday" *ngFor="let d of diasSemana">{{ d }}</div>
 
-    <div
-      class="day-cell"
-      *ngFor="let day of calendario"
-      [class.empty]="!day.numero"
-      [class.hoy]="esHoy(day.fecha)"
-      (click)="abrirDia(day)"
-    >
-      <span class="day-number">{{ day.numero }}</span>
+      <div
+        class="day-cell"
+        *ngFor="let day of calendario"
+        [class.empty]="!day.numero"
+        [class.hoy]="esHoy(day.fecha)"
+        (click)="abrirDia(day)"
+      >
+        <span class="day-number">{{ day.numero }}</span>
 
-      <div class="events-preview">
-        <!-- actividades -->
-        <div class="dot-actividad" *ngFor="let ev of day.eventos"></div>
+        <div class="events-preview">
+          <!-- actividades -->
+          <div class="dot-actividad" *ngFor="let ev of day.eventos"></div>
 
-        <!-- cumpleaños -->
-        <div class="dot-cumple" *ngFor="let c of day.cumpleanos"></div>
+          <!-- cumpleaños -->
+          <div class="dot-cumple" *ngFor="let c of day.cumpleanos"></div>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <aside class="sidebar">(Espacio para próximas funciones)</aside>
+</div>
 
 <!-- ============================================================
    MODAL PRINCIPAL
