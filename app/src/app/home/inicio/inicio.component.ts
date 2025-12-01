@@ -1,6 +1,8 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { ActividadService } from '../../share/services/actividad.service';
 import { ActividadModel } from '../../share/models/actividadModel';
+import { PerfilService } from '../../share/services/perfil.service';
+import { InventarioService } from '../../share/services/inventario.service';
 
 @Component({
   selector: 'app-inicio',
@@ -45,9 +47,15 @@ export class InicioComponent implements OnInit {
   actividadSeleccionada: ActividadModel | null = null;
   fechaSeleccionada!: Date;
 
-  constructor(private actividadService: ActividadService) {}
+  constructor(
+    private actividadService: ActividadService,
+    private perfilService: PerfilService,
+    private inventarioService: InventarioService
+  ) {}
 
   ngOnInit() {
+    this.cargarClientes();
+    this.cargarInventario();
     this.cargarActividades();
     this.generarCalendario();
   }
@@ -56,11 +64,20 @@ export class InicioComponent implements OnInit {
   // KPI getters
   // -----------------------------------------------------
   cumpleanosHoy() {
-    return 2;
-  } // luego lo conectamos al backend
-  stockBajo() {
-    return 5;
+    const hoy = new Date();
+
+    return this.clientes().filter((c) => {
+      if (!c.fechaNacimiento) return false;
+
+      const cumple = new Date(c.fechaNacimiento);
+      return cumple.getDate() === hoy.getDate() && cumple.getMonth() === hoy.getMonth();
+    }).length;
   }
+
+  stockBajo() {
+    return this.inventario().filter((i) => i.stock <= 10).length;
+  }
+
   actividadesProx() {
     const hoy = new Date();
     return this.actividades().filter((a) => new Date(a.fechaActividad) >= hoy).length;
@@ -73,6 +90,18 @@ export class InicioComponent implements OnInit {
     this.actividadService.get().subscribe((data) => {
       this.actividades.set(data);
       this.generarCalendario();
+    });
+  }
+
+  cargarClientes() {
+    this.perfilService.get().subscribe((data) => {
+      this.clientes.set(data);
+    });
+  }
+
+  cargarInventario() {
+    this.inventarioService.get().subscribe((data) => {
+      this.inventario.set(data);
     });
   }
 
@@ -181,6 +210,5 @@ export class InicioComponent implements OnInit {
     this.modalAbierto = false; // <--- Cierra el modal completamente
     this.modoForm = null;
     this.actividadSeleccionada = null;
-
   }
 }
