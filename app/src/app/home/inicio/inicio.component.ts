@@ -9,7 +9,6 @@ import { ActividadModel } from '../../share/models/actividadModel';
   styleUrls: ['./inicio.component.scss'],
 })
 export class InicioComponent implements OnInit {
-
   // ---------- KPI señales ----------
   clientes = signal<any[]>([]);
   inventario = signal<any[]>([]);
@@ -17,7 +16,20 @@ export class InicioComponent implements OnInit {
 
   // ---------- Calendario ----------
   diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-  meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Setiembre','Octubre','Noviembre','Diciembre'];
+  meses = [
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Setiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
+  ];
 
   mesActual = new Date().getMonth();
   anioActual = new Date().getFullYear();
@@ -43,11 +55,15 @@ export class InicioComponent implements OnInit {
   // -----------------------------------------------------
   // KPI getters
   // -----------------------------------------------------
-  cumpleanosHoy() { return 2; } // luego lo conectamos al backend
-  stockBajo() { return 5; }
+  cumpleanosHoy() {
+    return 2;
+  } // luego lo conectamos al backend
+  stockBajo() {
+    return 5;
+  }
   actividadesProx() {
     const hoy = new Date();
-    return this.actividades().filter(a => new Date(a.fechaActividad) >= hoy).length;
+    return this.actividades().filter((a) => new Date(a.fechaActividad) >= hoy).length;
   }
 
   // -----------------------------------------------------
@@ -127,8 +143,7 @@ export class InicioComponent implements OnInit {
     this.fechaSeleccionada = day.fecha;
 
     this.actividadesDia = day.eventos;
-    this.diaSeleccionadoTexto =
-      day.numero + ' de ' + this.meses[this.mesActual];
+    this.diaSeleccionadoTexto = day.numero + ' de ' + this.meses[this.mesActual];
 
     this.modalAbierto = true;
     this.modoForm = null;
@@ -145,8 +160,10 @@ export class InicioComponent implements OnInit {
   // -----------------------------------------------------
   crearActividadNueva() {
     this.modoForm = 'crear';
+
     this.actividadSeleccionada = {
       fechaActividad: this.fechaSeleccionada.toISOString(),
+      fechaBloqueada: true, // <--- ⚡ NUEVO
     } as any;
   }
 
@@ -156,10 +173,14 @@ export class InicioComponent implements OnInit {
   }
 
   onCerrarActividad(recargar: boolean) {
-    this.modoForm = null;
-
     if (recargar) {
       this.cargarActividades();
+      this.generarCalendario();
     }
+
+    this.modalAbierto = false; // <--- Cierra el modal completamente
+    this.modoForm = null;
+    this.actividadSeleccionada = null;
+
   }
 }

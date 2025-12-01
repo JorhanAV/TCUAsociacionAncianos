@@ -23,6 +23,37 @@ export class ActividadesController {
           tipoActividad: true,
           createdAt: true,
           updatedAt: true,
+
+          perfiles: {
+            select: {
+              id: true,
+              perfil: {
+                select: {
+                  id: true,
+                  nombre: true,
+                  cedula: true,
+                  rol: true,
+                },
+              },
+            },
+          },
+
+          // 🔥 Inventarios asociados (N:M)
+          inventarios: {
+            select: {
+              id: true,
+              cantidadxPersona: true,
+              inventario: {
+                select: {
+                  id: true,
+                  Nombre: true,
+                  descripcion: true,
+                  stock: true,
+                  idCategoria: true,
+                },
+              },
+            },
+          },
         },
         orderBy: {
           fechaActividad: "asc",

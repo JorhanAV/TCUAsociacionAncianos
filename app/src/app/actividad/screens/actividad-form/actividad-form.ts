@@ -36,7 +36,12 @@ export class ActividadForm implements OnInit {
   async ngOnInit() {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
-      fechaActividad: ['', [Validators.required, this.fechaNoPasadaValidator]],
+
+      fechaActividad: [
+        { value: '', disabled: false },
+        [Validators.required, this.fechaNoPasadaValidator.bind(this)],
+      ],
+
       horaInicio: ['', Validators.required],
       duracion: ['', [Validators.required, Validators.min(1)]],
       tipoActividad: ['', Validators.required],
@@ -47,13 +52,23 @@ export class ActividadForm implements OnInit {
       inventarios: this.fb.array([]),
     });
 
-    // Generar horas al cambiar fecha
+    // Generar horas cuando cambia la fecha
     this.form.get('fechaActividad')?.valueChanges.subscribe((valor) => {
       this.generarHorasDisponibles(valor);
     });
 
     await this.cargarListas();
 
+    // Si viene desde el calendario con fecha bloqueada
+    if (this.modo === 'crear' && (this.actividad as any)?.fechaBloqueada) {
+      const fecha = new Date(this.actividad!.fechaActividad);
+      this.form.get('fechaActividad')?.setValue(fecha);
+      this.form.get('fechaActividad')?.disable();
+
+      this.generarHorasDisponibles(fecha);
+    }
+
+    // Modo edición
     if (this.modo === 'editar' && this.actividad) {
       this.cargarDatosEdicion();
     }
@@ -63,9 +78,7 @@ export class ActividadForm implements OnInit {
     const perfiles = await firstValueFrom(this.perfilService.get());
     const inventarios = await firstValueFrom(this.inventarioService.get());
 
-    this.listaPersonas = perfiles.filter((p: any) =>
-      ['Adulto', 'Admin', 'Socio'].includes(p.rol)
-    );
+    this.listaPersonas = perfiles.filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.rol));
 
     this.listaVoluntarios = perfiles.filter((p: any) => p.rol === 'Voluntario');
 
@@ -74,10 +87,9 @@ export class ActividadForm implements OnInit {
 
   cargarDatosEdicion() {
     const a = this.actividad!;
-
     const fecha = new Date(a.fechaActividad);
 
-    // ========= CONVERTIR HORA A FORMATO 12h ==========
+    // Convertir hora a formato 12h
     const horaOriginal = new Date(a.horaInicio);
     let h = horaOriginal.getHours();
     let m = horaOriginal.getMinutes();
@@ -87,8 +99,6 @@ export class ActividadForm implements OnInit {
     const mm = m.toString().padStart(2, '0');
     const horaFormateada = `${h12}:${mm} ${ampm}`;
 
-    // =================================================
-
     this.form.patchValue({
       nombre: a.nombre,
       fechaActividad: fecha,
@@ -97,8 +107,8 @@ export class ActividadForm implements OnInit {
       tipoActividad: a.tipoActividad,
     });
 
-    const idsPerfiles = a.perfiles!
-      .filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.perfil.rol))
+    const idsPerfiles = a
+      .perfiles!.filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.perfil.rol))
       .map((p: any) => p.perfil.id);
 
     this.form.patchValue({ idsPerfiles });
@@ -112,7 +122,6 @@ export class ActividadForm implements OnInit {
       this.agregarInventario(i.inventario.id, i.cantidadxPersona);
     });
 
-    // Generar horas según fecha de edición
     this.generarHorasDisponibles(fecha);
   }
 
@@ -140,7 +149,7 @@ export class ActividadForm implements OnInit {
       return;
     }
 
-    const value = this.form.value;
+    const value = this.form.getRawValue(); // <-- importante si fecha está deshabilitada
 
     // Convertir fecha YYYY-MM-DD
     function convertirFecha(fecha: any): string {
@@ -249,18 +258,14 @@ export class ActividadForm implements OnInit {
     const horas: string[] = [];
     const hoy = new Date();
 
-    const fechaEsHoy =
-      fecha && new Date(fecha).toDateString() === hoy.toDateString();
+    const fechaEsHoy = fecha && new Date(fecha).toDateString() === hoy.toDateString();
 
     const horaActual = hoy.getHours();
     const minutoActual = hoy.getMinutes();
 
     for (let h = 4; h <= 22; h++) {
       for (let m of [0, 30]) {
-        const esFuturo =
-          !fechaEsHoy ||
-          h > horaActual ||
-          (h === horaActual && m >= minutoActual);
+        const esFuturo = !fechaEsHoy || h > horaActual || (h === horaActual && m >= minutoActual);
 
         if (esFuturo) {
           const ampm = h >= 12 ? 'PM' : 'AM';
