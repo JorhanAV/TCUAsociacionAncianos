@@ -300,11 +300,18 @@ $bg-light: #f8f9fa;
         gap: 4px;
         margin-top: 6px;
 
-        .event-dot {
+        .dot-actividad {
           width: 8px;
           height: 8px;
-          background: #5e2c5f;
           border-radius: 50%;
+          background: #5e2c5f; // morado actividades
+        }
+
+        .dot-cumple {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: #f4b459; // dorado cumpleaños
         }
       }
     }
@@ -355,11 +362,11 @@ $bg-light: #f8f9fa;
 
 .event-card {
   padding: 20px;
-  padding-bottom: 55px;  // 👈 Espacio para el botón
+  padding-bottom: 55px; // 👈 Espacio para el botón
   border-radius: 16px;
   background: #ffffff;
   border: 1px solid #eee;
-  position: relative;     // 👈 Necesario para absolute bottom-right
+  position: relative; // 👈 Necesario para absolute bottom-right
   transition: box-shadow 0.2s ease;
 
   &:hover {
@@ -395,11 +402,10 @@ $bg-light: #f8f9fa;
 
   .btn-edit {
     position: absolute;
-    right: 16px;   // 👈 Ahora sí al borde derecho
-    bottom: 12px;  // 👈 Y al borde inferior
+    right: 16px; // 👈 Ahora sí al borde derecho
+    bottom: 12px; // 👈 Y al borde inferior
   }
 }
-
 
 /* Espacio extra antes del botón */
 .new-event-btn {
@@ -408,4 +414,3 @@ $bg-light: #f8f9fa;
   border-radius: 12px;
   font-size: 1rem;
 }
-

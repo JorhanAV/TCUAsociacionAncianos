@@ -63,7 +63,11 @@
       <span class="day-number">{{ day.numero }}</span>
 
       <div class="events-preview">
-        <div class="event-dot" *ngFor="let ev of day.eventos"></div>
+        <!-- actividades -->
+        <div class="dot-actividad" *ngFor="let ev of day.eventos"></div>
+
+        <!-- cumpleaños -->
+        <div class="dot-cumple" *ngFor="let c of day.cumpleanos"></div>
       </div>
     </div>
   </div>
@@ -104,6 +108,24 @@
       </mat-card>
       } @empty {
       <p class="no-events">No hay actividades este día.</p>
+      }
+      <!-- LISTA DE CUMPLEAÑOS -->
+      @if (cumpleanosDia.length > 0) {
+      <h3>Cumpleaños 🎂</h3>
+
+      <div class="event-list">
+        @for (c of cumpleanosDia; track c.id) {
+        <mat-card class="event-card cumple-card">
+          <div class="event-header">
+            <span class="ev-title">{{ c.nombre }}</span>
+          </div>
+
+          <div class="ev-details">
+            <p><strong>Edad:</strong> {{ calcularEdad(c.fechaNacimiento) }} años</p>
+          </div>
+        </mat-card>
+        }
+      </div>
       }
     </div>
 

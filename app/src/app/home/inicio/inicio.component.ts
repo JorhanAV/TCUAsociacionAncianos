@@ -41,6 +41,7 @@ export class InicioComponent implements OnInit {
   modalAbierto = false;
   actividadesDia: ActividadModel[] = [];
   diaSeleccionadoTexto = '';
+  cumpleanosDia: any[] = [];
 
   // ---------- Formulario ----------
   modoForm: 'crear' | 'editar' | null = null;
@@ -129,14 +130,27 @@ export class InicioComponent implements OnInit {
         (a) => new Date(a.fechaActividad).toDateString() === fecha.toDateString()
       );
 
+      const cumpleanos = this.getCumpleanosDelDia(fecha);
+
       celdas.push({
         numero: d,
         fecha,
         eventos,
+        cumpleanos,
       });
     }
 
     this.calendario = celdas;
+  }
+
+  getCumpleanosDelDia(fecha: Date) {
+    return this.clientes().filter((c) => {
+      if (!c.fechaNacimiento) return false;
+
+      const cumple = new Date(c.fechaNacimiento);
+
+      return cumple.getDate() === fecha.getDate() && cumple.getMonth() === fecha.getMonth();
+    });
   }
 
   esHoy(f: any) {
@@ -163,6 +177,18 @@ export class InicioComponent implements OnInit {
     this.generarCalendario();
   }
 
+  calcularEdad(fecha: string) {
+    const f = new Date(fecha);
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - f.getFullYear();
+    const m = hoy.getMonth() - f.getMonth();
+
+    if (m < 0 || (m === 0 && hoy.getDate() < f.getDate())) {
+      edad--;
+    }
+    return edad;
+  }
+
   // -----------------------------------------------------
   // Modal
   // -----------------------------------------------------
@@ -173,6 +199,7 @@ export class InicioComponent implements OnInit {
 
     this.actividadesDia = day.eventos;
     this.diaSeleccionadoTexto = day.numero + ' de ' + this.meses[this.mesActual];
+    this.cumpleanosDia = this.getCumpleanosDelDia(day.fecha);
 
     this.modalAbierto = true;
     this.modoForm = null;
