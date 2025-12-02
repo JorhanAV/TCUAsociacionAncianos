@@ -68,6 +68,9 @@ model Perfiles {
   telefonoContacto String?
   numeroCelular    String?
   direccion        String?
+  provincia        String?
+  canton           String?
+  distrito         String?
   estado           EEstado    @default(ACTIVO)
 
   // Relaciones

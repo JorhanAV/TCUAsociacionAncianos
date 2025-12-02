@@ -21,56 +21,18 @@ export class PerfilService extends BaseAPI<perfilModel> {
   ): Observable<perfilModel> {
     if (modo === 'crear') {
       // POST para crear
-      return this.http.post<perfilModel>(this.urlAPI, data);
+      return this.http.post<perfilModel>(`${this.urlAPI}/${this.endpoint}`, data);
     } else if (modo === 'editar' && idPerfil) {
       // PUT para actualizar
       return this.http.put<perfilModel>(`${this.urlAPI}/${this.endpoint}/${idPerfil}`, data);
     }
     throw new Error('Modo o ID de perfil inválido para la operación de guardado.');
   }
-  /**
-   * Listado con filtros/paginación:
-   * GET /api/perfiles?pagina=&limite=&rol=&estado=&q=
-   */
-  listPaged(options?: {
-    pagina?: number;
-    limite?: number;
-    rol?: ERol | '';
-    estado?: EEstado | '';
-    q?: string;
-  }): Observable<{
-    pagina: number;
-    limite: number;
-    total: number;
-    paginas: number;
-    items: perfilModel[];
-  }> {
-    let params = new HttpParams();
 
-    if (options?.pagina !== undefined) {
-      params = params.set('pagina', options.pagina);
-    }
-    if (options?.limite !== undefined) {
-      params = params.set('limite', options.limite);
-    }
-    if (options?.rol !== undefined && options.rol !== '') {
-      params = params.set('rol', options.rol);
-    }
-    if (options?.estado !== undefined && options.estado !== '') {
-      params = params.set('estado', options.estado);
-    }
-    if (options?.q) {
-      params = params.set('q', options.q);
-    }
+  getAll(): Observable<perfilModel[]> {
+  return this.http.get<perfilModel[]>(`${this.urlAPI}/${this.endpoint}`);
+}
 
-    return this.http.get<{
-      pagina: number;
-      limite: number;
-      total: number;
-      paginas: number;
-      items: perfilModel[];
-    }>(`${this.urlAPI}/${this.endpoint}`, { params });
-  }
 
   /**
    * Cambiar estado (ACTIVO / INACTIVO)
