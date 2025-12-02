@@ -2,14 +2,13 @@ import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, distinctUntilChanged } from 'rxjs';
 
 import { PerfilService } from '../../../share/services/perfil.service';
 import { perfilModel, ERol, EEstado } from '../../../share/models/perfilModel';
 import { PerfilFormComponent } from '../perfil-form/perfil-form.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDeleteDialog } from '../../../share/confirm-delete.dialog';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
 
 @Component({
@@ -26,196 +25,127 @@ export class PerfilIndexComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private dialog = inject(MatDialog);
   private snackBar = inject(MatSnackBar);
+
   loading = signal(false);
+
+  // LISTA ORIGINAL (sin filtros)
+  allItems: perfilModel[] = [];
+
+  // LISTA FILTRADA (lo que se muestra)
   items = signal<perfilModel[]>([]);
-  pagina = signal(1);
-  limite = signal(8);
-  total = signal(0);
-  paginas = signal(0);
 
   private imageBaseUrl = environment.imageBaseUrl;
 
   filtros = this.fb.group({
     q: [''],
-    rol: ['' as ERol | ''],
-    estado: ['' as EEstado | ''],
+    rol: [''],
+    estado: [''],
   });
-private searchSubject = new Subject<string>();
+
   roles = Object.values(ERol);
   estados = Object.values(EEstado);
+
+  private searchSubject = new Subject<string>();
 
   ngOnInit(): void {
     this.load();
 
+    // BÚSQUEDA CON DEBOUNCE
     this.searchSubject
-            .pipe(
-                takeUntil(this.destroy$),
-                debounceTime(500), 
-                distinctUntilChanged() 
-            )
-            .subscribe((q) => {
-                // 1. Actualiza el valor del FormControl 'q'
-                this.filtros.controls.q.setValue(q, { emitEvent: false }); // No disparamos valueChanges
-                // 2. Ejecuta la carga del servidor
-                this.pagina.set(1);
-                this.load();
-            });
-          }
-
-          onSearchInput(event: Event): void {
-        const value = (event.target as HTMLInputElement).value;
-        this.searchSubject.next(value); // Envía el valor al Subject para debounce
-    }
-
-    // 🔹 MANEJO DE CAMBIO DE ROL (Desde el evento de mat-chip-listbox)
-    onRolChange(event: any): void {
-        // El valor ya está actualizado en el FormGroup gracias a formControlName="rol"
-        this.pagina.set(1);
-        this.load(); // Recarga inmediatamente al cambiar el chip
-    }
-
-  getFotoUrl(fileName: string | null | undefined): string {
-    if (!fileName) {
-      // Devuelve una imagen placeholder si no hay foto
-      return 'assets/images/default-avatar.png';
-    }
-    return `${this.imageBaseUrl}${fileName}`;
+      .pipe(takeUntil(this.destroy$), distinctUntilChanged())
+      .subscribe(() => this.applyFilters());
   }
+
+  // INPUT DE BUSQUEDA
+  onSearchInput(event: Event): void {
+    this.searchSubject.next((event.target as HTMLInputElement).value);
+  }
+
+  // CARGA INICIAL (como Inventario)
   load(): void {
-    this.loading.set(true); // 🚀 CAMBIO: Usar getRawValue() para obtener todos los campos, incluyendo los nulos/no tocados
-    const formValues = this.filtros.getRawValue();
-    // Desestructuramos y aseguramos que todos los valores vacíos sean '' (string vacío)
-    const q = (formValues.q ?? '').trim();
-    const rol = formValues.rol ?? '';
-    const estado = formValues.estado ?? '';
+    this.loading.set(true);
+
     this.svc
-      .listPaged({
-        pagina: this.pagina(),
-        limite: this.limite(), // 🚨 Ahora aseguramos que se envíe una cadena vacía si es null/undefined
-        // 🚨 Enviamos los valores estandarizados
-        q: q,
-        rol: rol as any,
-        estado: estado as any,
-      })
+      .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (res: any) => {
-          let items: perfilModel[] = [];
-          let total = 0;
-          let paginas = 1;
-
-          if (Array.isArray(res)) {
-            items = res;
-            total = res.length;
-            paginas = Math.max(1, Math.ceil(total / this.limite()));
-          } else {
-            items = res.items ?? [];
-            total = res.total ?? items.length;
-            paginas = res.paginas ?? Math.max(1, Math.ceil(total / this.limite()));
-          }
-
-          this.items.set(items);
-          this.total.set(total);
-          this.paginas.set(paginas);
+        next: (res) => {
+          this.allItems = res;
+          this.applyFilters();
           this.loading.set(false);
         },
         error: (err) => {
           console.error('Error cargando perfiles', err);
           this.items.set([]);
-          this.total.set(0);
-          this.paginas.set(1);
           this.loading.set(false);
         },
       });
   }
 
-  nextPage() {
-    if (this.pagina() < this.paginas()) {
-      this.pagina.update((p) => p + 1);
-      this.load();
-    }
+  // FILTRADO LOCAL (100% instantáneo)
+  applyFilters(): void {
+  const q = (this.filtros.value.q ?? '').toLowerCase().trim();
+  const rol = this.filtros.value.rol ?? '';
+  const estado = this.filtros.value.estado ?? '';
+
+  const filtrado = this.allItems.filter((p) => {
+
+    const matchQ =
+      p.nombre.toLowerCase().includes(q) ||
+      (p.cedula ?? '').toLowerCase().includes(q);
+
+    const matchRol = rol === '' || p.rol === rol;
+    const matchEstado = estado === '' || p.estado === estado;
+
+    return matchQ && matchRol && matchEstado;
+  });
+
+  this.items.set(filtrado);
+}
+
+
+  limpiarFiltros(): void {
+    this.filtros.reset({ q: '', rol: '', estado: '' });
+    this.applyFilters();
   }
 
-  prevPage() {
-    if (this.pagina() > 1) {
-      this.pagina.update((p) => p - 1);
-      this.load();
-    }
+  getFotoUrl(fileName: string | null | undefined): string {
+    if (!fileName) return 'assets/images/default-avatar.png';
+    return `${this.imageBaseUrl}${fileName}`;
   }
-limpiarFiltros() {
-        // Restablece a los valores iniciales y fuerza la recarga
-        this.filtros.reset(
-            {
-                q: '',
-                rol: '' as any,
-                estado: '' as any,
-            },
-            { emitEvent: false } // No disparamos valueChanges (ya no existe)
-        );
-        this.pagina.set(1);
-        this.load(); // Llama a load directamente
-    }
+
   toggleEstado(item: perfilModel) {
     const nuevo = item.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
+
     this.svc.setEstado(Number(item.id), nuevo as EEstado).subscribe({
       next: () => {
-        const msg =
-          nuevo === 'ACTIVO'
-            ? 'Perfil activado correctamente.'
-            : 'Perfil desactivado correctamente.';
-        this.snackBar.open(msg, 'OK', {
+        this.snackBar.open('Estado actualizado', 'OK', {
           duration: 2500,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['snackbar-success'],
         });
         this.load();
       },
-      error: (err) => {
-        console.error('Error cambiando estado', err);
-        this.snackBar.open('Error al cambiar el estado del perfil.', 'Cerrar', {
-          duration: 4000,
-          horizontalPosition: 'right',
-          verticalPosition: 'top',
-          panelClass: ['snackbar-error'],
-        });
-      },
     });
   }
-  // 🔹 CREAR en MatDialog
+
   crear() {
     const ref = this.dialog.open(PerfilFormComponent, {
-      width: '750px', // ancho fijo
-      maxHeight: '90vh', // alto máximo antes de scroll
-      autoFocus: false,
+      width: '750px',
+      maxHeight: '90vh',
       disableClose: true,
-      data: {
-        modo: 'crear',
-        perfil: null,
-      },
+      data: { modo: 'crear', perfil: null },
     });
 
-    ref.afterClosed().subscribe((recargar: boolean) => {
-      if (recargar) {
-        this.load();
-      }
-    });
+    ref.afterClosed().subscribe((x) => x && this.load());
   }
 
-  // 🔹 EDITAR en MatDialog
   editar(it: perfilModel) {
     const ref = this.dialog.open(PerfilFormComponent, {
       width: '750px',
-      maxHeight: '100vh',
-      autoFocus: false,
       disableClose: true,
       data: { modo: 'editar', perfil: it },
     });
-    ref.afterClosed().subscribe((recargar: boolean) => {
-      if (recargar) {
-        this.load();
-      }
-    });
+
+    ref.afterClosed().subscribe((x) => x && this.load());
   }
 
   eliminar(it: perfilModel) {
@@ -228,31 +158,10 @@ limpiarFiltros() {
       },
     });
 
-    ref.afterClosed().subscribe((confirmado: boolean) => {
-      if (!confirmado) {
-        return;
-      }
+    ref.afterClosed().subscribe((confirmado) => {
+      if (!confirmado) return;
 
-      this.svc.delete(it).subscribe({
-        next: () => {
-          this.snackBar.open('Perfil eliminado correctamente.', 'OK', {
-            duration: 3000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-            panelClass: ['snackbar-success'],
-          });
-          this.load(); // recargar listado
-        },
-        error: (err) => {
-          console.error('Error eliminando perfil', err);
-          this.snackBar.open('Error al eliminar el perfil.', 'Cerrar', {
-            duration: 4000,
-            horizontalPosition: 'right',
-            verticalPosition: 'top',
-            panelClass: ['snackbar-error'],
-          });
-        },
-      });
+      this.svc.delete(it).subscribe(() => this.load());
     });
   }
 

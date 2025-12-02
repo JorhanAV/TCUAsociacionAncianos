@@ -64,6 +64,26 @@
       <mat-label>Dirección</mat-label>
       <textarea matInput rows="2" formControlName="direccion"></textarea>
     </mat-form-field>
+    <mat-form-field appearance="outline">
+  <mat-label>Provincia</mat-label>
+  <mat-select formControlName="provincia" (selectionChange)="loadCantones()">
+    <mat-option *ngFor="let p of provincias" [value]="p.codigo">{{ p.nombre }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Cantón</mat-label>
+  <mat-select formControlName="canton" (selectionChange)="loadDistritos()">
+    <mat-option *ngFor="let c of cantones" [value]="c.codigo">{{ c.nombre }}</mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field appearance="outline">
+  <mat-label>Distrito</mat-label>
+  <mat-select formControlName="distrito">
+    <mat-option *ngFor="let d of distritos" [value]="d.codigo">{{ d.nombre }}</mat-option>
+  </mat-select>
+</mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Rol</mat-label>

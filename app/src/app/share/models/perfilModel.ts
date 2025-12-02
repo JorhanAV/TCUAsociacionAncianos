@@ -47,6 +47,9 @@ export interface perfilModel {
   telefonoContacto?: string | null;
   numeroCelular?: string | null;
   direccion?: string | null;
+  canton?: string | null;
+  provincia?: string | null;
+  distrito?: string | null;
   estado: EEstado;
 
   // Para vistas donde quieras mostrar relaciones contadas o listas:
