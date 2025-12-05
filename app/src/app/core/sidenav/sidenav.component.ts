@@ -22,5 +22,6 @@ export class SidenavComponent {
     { icon: 'inventory_2', label: 'Inventario', path: '/inventario' }, // Icono caja
     { icon: 'event', label: 'Actividades', path: '/actividades' }, // Agregado basado en doc
     { icon: 'settings', label: 'Configuración', path: '/configuracion' },
+    { icon: 'person', label: 'Usuario', path: '/usuario' }, // Icono usuario para sección user
   ];
 }

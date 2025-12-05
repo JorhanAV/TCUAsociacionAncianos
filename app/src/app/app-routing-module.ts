@@ -14,18 +14,16 @@ const routes: Routes = [
       // HOME (lazy)
       {
         path: '',
-        loadChildren: () =>
-          import('./home/home-module').then((m) => m.HomeModule),
+        loadChildren: () => import('./home/home-module').then((m) => m.HomeModule),
       },
 
       // PERFILES (lazy)
       {
         path: 'perfiles',
-        loadChildren: () =>
-          import('./perfil/perfil-module').then((m) => m.PerfilModule),
+        loadChildren: () => import('./perfil/perfil-module').then((m) => m.PerfilModule),
         data: { title: 'Perfiles' },
       },
-      
+
       // INVENTARIO (lazy)
       {
         path: 'inventario',
@@ -33,22 +31,28 @@ const routes: Routes = [
           import('./inventario/inventario-module').then((m) => m.InventarioModule),
         data: { title: 'Inventario' },
       },
-      
+
       // INVENTARIO-HISTORIAL (lazy)
-       {
+      {
         path: 'inventario-historial',
         loadChildren: () =>
-          import('./historial-inventario/historial-inventario-module')
-            .then((m) => m.HistorialInventarioModule),
+          import('./historial-inventario/historial-inventario-module').then(
+            (m) => m.HistorialInventarioModule
+          ),
         data: { title: 'Historial inventario' },
       },
-      
+
       // ACTIVIDADES (lazy)
       {
         path: 'actividades',
-        loadChildren: () =>
-          import('./actividad/actividad-module').then((m) => m.ActividadModule),
+        loadChildren: () => import('./actividad/actividad-module').then((m) => m.ActividadModule),
         data: { title: 'Actividades' },
+      },
+      // USER (lazy)
+       {
+        path: 'usuario',
+        loadChildren: () => import('./user/user-module').then((m) => m.UserModule),
+        data: { title: 'Usuario' },
       },
     ],
   },

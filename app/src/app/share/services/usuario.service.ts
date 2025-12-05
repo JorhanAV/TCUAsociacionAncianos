@@ -3,9 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { BaseAPI } from '../base-api';
 import { environment } from '../../../environments/environment.development';
 import { HttpClient } from '@angular/common/http';
-import { UsuarioModel } from '../models/UsuarioModel';
 import { AuthenticationService } from '../authentication.service';
 import { Observable } from 'rxjs';
+import { UsuarioModel } from '../models/usuarioModel';
 
 @Injectable({
   providedIn: 'root',
