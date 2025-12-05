@@ -1,0 +1,174 @@
+// === Variables de Identidad AAMSA ===
+$primary: #5e2c5f;
+$accent: #f4b459;
+$warn: #c62828;
+$success: #2e7d32;
+$bg-body: #f8f9fa;
+$bg-card: #ffffff;
+
+// === Contenedor Principal ===
+:host {
+  display: block;
+  padding: 24px;
+  background-color: $bg-body;
+  min-height: 100%;
+}
+
+// === Sección de Encabezado ===
+.header-section {
+  margin-bottom: 24px;
+
+  .title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: $primary;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// === Toolbar (Buscador + Botón Crear) ===
+.table-toolbar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  background: $bg-card;
+  padding: 16px 24px;
+  gap: 16px;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid #eee;
+
+  .search-field {
+    max-width: 400px;
+    justify-self: start;
+  }
+
+  .actions {
+    display: flex;
+    gap: 12px;
+    justify-self: end;
+  }
+}
+
+// === Contenedor de Tabla ===
+.table-container {
+  background: $bg-card;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  table {
+    width: 100%;
+
+    th {
+      background: #f9f9f9;
+      color: #555;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 16px;
+    }
+
+    td {
+      padding: 16px;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background-color: rgba($primary, 0.02);
+    }
+  }
+}
+
+// === Columna de Nombre Estilizada ===
+.col-nombre {
+  .main-text {
+    font-weight: 600;
+    display: block;
+    color: #2c3e50;
+    font-size: 1rem;
+  }
+
+  .sub-text {
+    font-size: 0.8rem;
+    color: #888;
+  }
+}
+
+// === Badges para Roles (Admin / User) ===
+.role-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+
+}
+
+// === Estados (Loading / Error / Empty) ===
+.loading-state,
+.error-state {
+  padding: 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  color: #666;
+}
+
+.empty-row {
+  padding: 32px;
+  text-align: center;
+  color: #999;
+  font-style: italic;
+}
+
+// === Botones de Acción en la Tabla ===
+.action-buttons {
+  display: flex;
+  gap: 6px;
+
+  button {
+    mat-icon {
+      font-size: 18px;
+    }
+  }
+}
+.form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(2px);
+}
+
+.form-dialog-wrapper {
+  width: 100%;
+  max-width: 550px;
+  padding: 20px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

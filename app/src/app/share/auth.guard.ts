@@ -38,7 +38,7 @@ export const authGuard: CanActivateFn = (
       'Datos de usuario no disponibles. Reautenticación necesaria.';
   }
 
-  const userRole = currentUser?.ERol;
+  const userRole = currentUser?.rol;
   const rolesAllowed = route.data['roles'] || []; // Obtener roles permitidos de la data de la ruta
 
   // 3. Verificar roles si están definidos en la ruta
