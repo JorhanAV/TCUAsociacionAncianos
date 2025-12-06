@@ -7,7 +7,7 @@ export interface UsuarioModel {
   correo: string;
   contrasenia?: string;
   ultimo_inicio_sesion?: string | Date;
-
+  rol: string;
   // Relaciones
   historialInventario?: HistorialInventarioModel[];
   actas?: ActaModel[];

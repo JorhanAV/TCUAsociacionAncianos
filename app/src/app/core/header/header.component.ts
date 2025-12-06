@@ -1,5 +1,6 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { NotificationsService } from '../../share/services/notification.service';
+import { AuthenticationService } from '../../share/authentication.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -9,11 +10,16 @@ import { NotificationsService } from '../../share/services/notification.service'
 export class HeaderComponent {
   private notif = inject(NotificationsService);
   @Output() menuClick = new EventEmitter<void>();
+  
+  private auth = inject(AuthenticationService);
 
   notis = this.notif.ultimas5;
   unreadCount = this.notif.unreadCount;
 
   marcarTodasLeidas() {
     this.notif.marcarTodas();
+  }
+  logout() {
+    this.auth.logout();
   }
 }

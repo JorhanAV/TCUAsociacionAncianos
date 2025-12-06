@@ -5,6 +5,7 @@ import { PerfilRoutes } from "./perfiles.routes";
 import { ActividadesRoutes } from "./actividades.routes";
 import { ImageRoutes } from "./images.routes";
 import { DashboardRoutes } from "./dashboard.routes";
+import { UsuarioRoutes } from "./usuario.routes";
 
 
 export class AppRoutes {
@@ -12,7 +13,9 @@ export class AppRoutes {
     const router = Router();
 
     // ----Agregar las rutas----
-    // Ruta de inventario
+   
+    // localhost:3000/usuario/
+    router.use("/usuario", UsuarioRoutes.routes);
 
     // localhost:3000/inventario/
     router.use("/inventario", InventarioRoutes.routes);

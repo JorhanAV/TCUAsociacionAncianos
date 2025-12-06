@@ -3,8 +3,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ShellComponent } from './core/layout/shell.component';
 import { PageNotFound } from './share/page-not-found/page-not-found';
+import { UserLogin } from './user/screens/user-login/user-login';
 
 const routes: Routes = [
+  
+  { path: 'user-login', component: UserLogin },
   {
     path: '',
     component: ShellComponent,
@@ -48,7 +51,11 @@ const routes: Routes = [
         loadChildren: () => import('./actividad/actividad-module').then((m) => m.ActividadModule),
         data: { title: 'Actividades' },
       },
-
+       {
+        path: 'usuario',
+        loadChildren: () => import('./user/user-module').then((m) => m.UserModule),
+        data: { title: 'Usuario' },
+      },
       {
         path: 'contacto',
         loadChildren: () => import('./contacto/contacto-module').then((m) => m.ContactoModule),
