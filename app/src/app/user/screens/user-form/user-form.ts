@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UsuarioService } from '../../../share/services/usuario.service';
 import { UsuarioModel } from '../../../share/models/usuarioModel';
+import { AuthenticationService } from '../../../share/authentication.service';
 
 @Component({
   selector: 'app-user-form',
@@ -22,7 +23,8 @@ export class UserForm implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private auth: AuthenticationService
   ) {}
 
   ngOnInit() {
@@ -58,7 +60,7 @@ export class UserForm implements OnInit {
 
     if (this.modo === 'crear') {
       payload.contrasenia = this.form.value.contrasenia!;
-      this.usuarioService.create(payload).subscribe({
+      this.auth.createUser(payload).subscribe({
         next: () => this.cerrar.emit(true),
         error: (err) => console.error(err),
       });

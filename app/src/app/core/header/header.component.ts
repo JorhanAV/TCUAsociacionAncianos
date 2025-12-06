@@ -26,7 +26,6 @@ export class HeaderComponent {
   isAuthenticated = this.auth.isAuthenticatedSignal;
   currentUser = this.auth.currentUserSignal;
 
-  // signal reactiva (en lugar de array mutable)
  
 
   notis = this.notif.ultimas5;
@@ -34,11 +33,6 @@ export class HeaderComponent {
 
   constructor(private dialog: MatDialog) {
   }
-/* 
-  private updateUnread() {
-    const count = this.notis().filter((n) => !n.leido).length;
-    this.unreadCount.set(count);
-  } */
 
   marcarTodasLeidas() {
     this.notif.marcarTodas();
