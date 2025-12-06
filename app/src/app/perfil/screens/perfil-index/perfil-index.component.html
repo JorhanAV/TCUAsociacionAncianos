@@ -9,20 +9,56 @@
 </section>
 
 <section class="filters-bar" [formGroup]="filtros">
-    <mat-form-field appearance="outline" class="search-field" density="compact">
-        <mat-icon matPrefix>search</mat-icon>
-        <input matInput formControlName="q" placeholder="Buscar por nombre, cédula..." (keyup)="onSearchInput($event)" />
-    </mat-form-field>
 
-    <div class="filter-chips">
-        <mat-chip-listbox aria-label="Filtro de roles" formControlName="rol" (change)="onRolChange($event)">
-            <mat-chip-option [value]="''" selected>Todos</mat-chip-option>
+  <!-- 🔍 Campo de Búsqueda -->
+  <mat-form-field appearance="outline" class="search-field" floatLabel="auto">
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      formControlName="q"
+      placeholder="Buscar por nombre, cédula..."
+      (input)="onSearchInput($event)"
+    />
+    @if (filtros.controls.q.value) {
+      <button matSuffix mat-icon-button aria-label="Limpiar búsqueda"
+              (click)="filtros.controls.q.setValue(''); applyFilters()">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
 
-            @for (r of roles; track r) {
-            <mat-chip-option [value]="r">{{ r }}</mat-chip-option>
-            }
-        </mat-chip-listbox>
-    </div>
+  <!-- Selección de filtros -->
+  <div class="filter-chips">
+
+    <div class="chip-group-wrapper">
+  <span class="chip-label">Rol:</span>
+  <mat-button-toggle-group formControlName="rol" (change)="applyFilters()">
+    <mat-button-toggle value="">Todos</mat-button-toggle>
+    @for (r of roles; track r) {
+      <mat-button-toggle [value]="r">{{ r }}</mat-button-toggle>
+    }
+  </mat-button-toggle-group>
+</div>
+
+<div class="chip-group-wrapper">
+  <span class="chip-label">Estado:</span>
+  <mat-button-toggle-group formControlName="estado" (change)="applyFilters()">
+    <mat-button-toggle value="">Todos</mat-button-toggle>
+    @for (e of estados; track e) {
+      <mat-button-toggle [value]="e">{{ e }}</mat-button-toggle>
+    }
+  </mat-button-toggle-group>
+</div>
+
+    <!-- 🔁 LIMPIAR FILTROS -->
+    @if (filtros.controls.q.value || filtros.controls.rol.value || filtros.controls.estado.value) {
+      <button mat-stroked-button color="warn" (click)="limpiarFiltros()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpiar filtros
+      </button>
+    }
+
+  </div>
 </section>
 
 @if (loading()) {
@@ -43,6 +79,7 @@
           [src]="getFotoUrl(c.fotoURL)"
           alt="Foto de {{ c.nombre }}"
           class="avatar-list"
+          (error)="c.fotoURL = null"
         />
         } @else {
         <div class="initials">{{ c.nombre.charAt(0) }}</div>

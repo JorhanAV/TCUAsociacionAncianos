@@ -59,6 +59,16 @@ const routes: Routes = [
         path: 'usuario',
         loadChildren: () => import('./user/user-module').then((m) => m.UserModule),
         data: { title: 'Usuario' },
+
+      {
+        path: 'contacto',
+        loadChildren: () => import('./contacto/contacto-module').then((m) => m.ContactoModule),
+        data: { title: 'Contacto' },
+      },
+      {
+        path: 'dashboard',
+        loadChildren: () => import('./dashboard/dashboard-module').then((m) => m.DashboardModule),
+        data: { title: 'Dashboard' },
       },
     ],
   },

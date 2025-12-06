@@ -1,0 +1,116 @@
+
+<header class="page-header">
+  <h1>Contacto</h1>
+  <p>Comuníquese con nuestro equipo administrativo o técnico.</p>
+</header>
+
+<!-- ========================= -->
+<!--   SECCIÓN: INFORMACIÓN    -->
+<!-- ========================= -->
+<section class="card-grid">
+
+  <mat-card class="info-card" matRipple>
+    <mat-icon class="icon">call</mat-icon>
+    <h3>Teléfono</h3>
+    <p>{{ infoGeneral().telefono }}</p>
+  </mat-card>
+
+  <mat-card class="info-card" matRipple>
+    <mat-icon class="icon">mail</mat-icon>
+    <h3>Correo Electrónico</h3>
+    <p>{{ infoGeneral().correo }}</p>
+  </mat-card>
+
+  <mat-card class="info-card" matRipple>
+    <mat-icon class="icon">location_on</mat-icon>
+    <h3>Dirección</h3>
+    <p>{{ infoGeneral().direccion }}</p>
+  </mat-card>
+
+  <mat-card class="info-card" matRipple>
+    <mat-icon class="icon">schedule</mat-icon>
+    <h3>Horario</h3>
+    <p>{{ infoGeneral().horario }}</p>
+  </mat-card>
+
+</section>
+
+<mat-divider></mat-divider>
+
+<!-- ========================== -->
+<!--   SECCIÓN EQUIPO TÉCNICO   -->
+<!-- ========================== -->
+<section class="team-section">
+  <h2>Equipo Técnico y Desarrollo</h2>
+  <p class="section-description">
+    Conozca a los profesionales encargados del mantenimiento, soporte y evolución del sistema.
+  </p>
+
+  <div class="dev-grid">
+
+    @for (d of equipoTecnico(); track d.email) {
+      <mat-card class="dev-card" matRipple>
+
+        <div class="avatar-wrapper">
+          @if (d.avatar) {
+            <img [src]="d.avatar" class="avatar" />
+          } @else {
+            <div class="avatar initials">{{ d.initials }}</div>
+          }
+        </div>
+
+        <div class="info">
+          <h3>{{ d.nombre }}</h3>
+          <span class="rol">{{ d.rol }}</span>
+          <p class="bio">{{ d.bio }}</p>
+        </div>
+
+        <div class="skills">
+          <h4>Habilidades</h4>
+          <div class="chip-list">
+            @for (s of d.skills; track s) { <span class="chip">{{ s }}</span> }
+          </div>
+        </div>
+
+        <div class="stacks">
+          <h4>Stack Tecnológico</h4>
+          <div class="chip-list">
+            @for (st of d.stacks; track st) { 
+              <span class="chip tech">{{ st }}</span> 
+            }
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+       <div class="social">
+
+  <a mat-mini-fab 
+     matTooltip="Ver repositorio en GitHub"
+     [href]="d.github" 
+     target="_blank">
+    <mat-icon>code</mat-icon>
+  </a>
+
+  <a mat-mini-fab 
+     matTooltip="Perfil profesional en LinkedIn"
+     [href]="d.linkedin" 
+     target="_blank">
+    <mat-icon>business_center</mat-icon>
+  </a>
+
+  <a mat-mini-fab 
+     matTooltip="Enviar correo"
+     href="mailto:{{ d.email }}">
+    <mat-icon>mail</mat-icon>
+  </a>
+
+</div>
+
+
+      </mat-card>
+    }
+
+  </div>
+
+</section>

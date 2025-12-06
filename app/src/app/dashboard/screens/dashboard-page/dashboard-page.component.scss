@@ -1,0 +1,222 @@
+/* Definición de Variables SCSS */
+$primary-color: #5E2C5F; /* Morado Oscuro */
+$accent-color: #F4B459; /* Dorado */
+$bg-light: #f8f9fa;
+$card-bg: white;
+
+.dashboard-container {
+  padding: 24px;
+  background: $bg-light;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* Espacio entre secciones */
+  // Aseguramos que el contenedor principal no genere scroll inesperado
+  overflow: hidden; 
+}
+
+/* --------------------
+  HEADER
+-------------------- */
+.dashboard-header {
+  padding: 0 4px;
+}
+.title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: $primary-color;
+  margin: 0;
+}
+.subtitle {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+/* --------------------
+  KPI GRID
+-------------------- */
+.kpi-grid {
+  display: grid;
+  /* Fija un mínimo de 250px por columna y se ajusta automáticamente */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.kpi-card {
+  background: $card-bg;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  overflow: hidden;
+}
+
+/* Efectos de color en KPI al pasar el mouse */
+.kpi-card.purple-bg-hover:hover {
+  border-color: $primary-color;
+  box-shadow: 0 6px 16px rgba($primary-color, 0.15);
+  transform: translateY(-2px);
+}
+.kpi-card.gold-bg-hover:hover {
+  border-color: $accent-color;
+  box-shadow: 0 6px 16px rgba($accent-color, 0.15);
+  transform: translateY(-2px);
+}
+
+.kpi-icon {
+  // Uso de funciones SCSS para la opacidad
+  background: rgba($primary-color, 0.1); 
+  color: $primary-color;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  i {
+    font-size: 28px;
+  }
+}
+
+// Iconos para los últimos dos KPIs (usando color de acento)
+.kpi-card:nth-child(3) .kpi-icon,
+.kpi-card:nth-child(4) .kpi-icon {
+  background: rgba($accent-color, 0.15);
+  color: $accent-color;
+}
+
+h3 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #777;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.kpi-value {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #333;
+}
+.kpi-value-small {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.subtext {
+  font-size: 0.7rem;
+  color: $primary-color;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+/* --------------------
+  CHARTS GRID (Estructura fija para evitar scroll)
+-------------------- */
+.charts-grid {
+  display: grid;
+  /* Por defecto: 1 columna en móvil */
+  grid-template-columns: 1fr;
+  gap: 20px;
+  /* Altura fija para evitar scroll vertical */
+  grid-auto-rows: 300px; 
+}
+
+.chart-card {
+  background: $card-bg;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $primary-color;
+    margin-bottom: 12px;
+    text-transform: none; // No queremos mayúsculas en títulos de gráficos
+  }
+}
+
+/* Asegura que el canvas use el espacio restante del chart-card */
+.chart-card canvas {
+  flex-grow: 1;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0; // Permite que flexbox lo comprima
+}
+
+/* Media query para Tablet y Desktop (Layout de 3 columnas) */
+@media (min-width: 768px) {
+  .charts-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 320px; 
+  }
+
+  /* El gráfico largo ocupa 2 columnas */
+  .large-chart {
+    grid-column: span 2;
+  }
+}
+
+/* --------------------
+  ALERTAS
+-------------------- */
+.alert-section {
+  padding: 0 4px;
+}
+
+.alert-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.alert-card {
+  background: #ffffff;
+  padding: 15px 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1; /* Ocupa el espacio disponible */
+  min-width: 250px;
+  
+  i {
+    font-size: 20px;
+  }
+}
+
+/* Estilos específicos para Alertas (uso de colores) */
+.critical-alert {
+  border-left: 5px solid #E57373; /* Rojo */
+  color: #D32F2F;
+  background: #FFEBEE;
+  i { color: #E57373; }
+}
+
+.warning-alert {
+  border-left: 5px solid $accent-color; /* Dorado */
+  color: darken($accent-color, 30%); // C28B38
+  background: lighten($accent-color, 20%); // FFF8E1
+  i { color: $accent-color; }
+}
+
+.info-alert {
+  border-left: 5px solid $primary-color; /* Morado */
+  color: $primary-color;
+  background: lighten($primary-color, 50%); // EFEAF0
+  i { color: $primary-color; }
+}

@@ -22,6 +22,9 @@ CREATE TABLE `Perfiles` (
     `telefonoContacto` VARCHAR(191) NULL,
     `numeroCelular` VARCHAR(191) NULL,
     `direccion` VARCHAR(191) NULL,
+    `provincia` VARCHAR(191) NULL,
+    `canton` VARCHAR(191) NULL,
+    `distrito` VARCHAR(191) NULL,
     `estado` ENUM('ACTIVO', 'INACTIVO') NOT NULL DEFAULT 'ACTIVO',
 
     UNIQUE INDEX `Perfiles_cedula_key`(`cedula`),

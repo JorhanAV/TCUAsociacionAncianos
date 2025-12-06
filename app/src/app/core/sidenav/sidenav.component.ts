@@ -21,6 +21,8 @@ export class SidenavComponent {
     { icon: 'groups', label: 'Perfiles', path: '/perfiles' }, // Groups para comunidad
     { icon: 'inventory_2', label: 'Inventario', path: '/inventario' }, // Icono caja
     { icon: 'event', label: 'Actividades', path: '/actividades' }, // Agregado basado en doc
+    { icon: 'contact_mail', label: 'Contacto', path: '/contacto' },
+  { icon: 'bar_chart', label: 'Dashboard', path: '/dashboard' },
     { icon: 'settings', label: 'Configuración', path: '/configuracion' },
     { icon: 'person', label: 'Usuario', path: '/usuario' }, // Icono usuario para sección user
   ];

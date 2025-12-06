@@ -7,6 +7,7 @@ import { PerfilService } from '../../../share/services/perfil.service';
 import { environment } from '../../../../environments/environment.development';
 import { EEstado, ERol, perfilModel } from '../../../share/models/perfilModel';
 import { finalize } from 'rxjs'; // Importamos finalize para limpiar el estado de carga
+import { UbicacionesService } from '../../../share/services/ubicaciones.service';
 
 export interface PerfilDialogData {
   modo: 'crear' | 'editar';
@@ -26,6 +27,11 @@ export class PerfilFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private svc = inject(PerfilService);
   private snackBar = inject(MatSnackBar);
+  provincias: any[] = [];
+  cantones: any[] = [];
+  distritos: any[] = [];
+
+  private ubicaciones = inject(UbicacionesService);
 
   // NOTA: Es importante que el PerfilService tenga un método para enviar FormData
   // (e.g., this.svc.createWithPhoto(formData))
@@ -38,14 +44,38 @@ export class PerfilFormComponent implements OnInit {
 
   form = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
-    fechaNacimiento: [null as Date | null, [Validators.required]],
-    cedula: ['', [Validators.required]],
-    telefonoContacto: [''],
-    numeroCelular: [''],
+    fechaNacimiento: [null as Date | null, [Validators.required, this.minAgeValidator(18)]],
+    cedula: ['', [Validators.required, Validators.pattern(/^\d-\d{4}-\d{4}$/)]],
+    telefonoContacto: ['', [Validators.pattern(/^[245]\d{3}-\d{4}$/)]],
+    numeroCelular: ['', [Validators.pattern(/^[678]\d{3}-\d{4}$/)]],
     direccion: [''],
-    rol: [ERol.Voluntario as ERol, Validators.required],
-    estado: [EEstado.ACTIVO as EEstado, Validators.required],
+
+    provincia: ['', Validators.required],
+    canton: ['', Validators.required],
+    distrito: ['', Validators.required],
+
+    rol: [ERol.Voluntario, Validators.required],
+    estado: [EEstado.ACTIVO, Validators.required],
   });
+
+  private minAgeValidator(minAge: number) {
+    return (control: any) => {
+      const value = control.value;
+      if (!value) return null;
+
+      const birthDate = new Date(value);
+      const today = new Date();
+
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const hasBirthdayPassed =
+        today.getMonth() > birthDate.getMonth() ||
+        (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+      const realAge = hasBirthdayPassed ? age : age - 1;
+
+      return realAge >= minAge ? null : { minAge: true };
+    };
+  }
 
   modo: 'crear' | 'editar' = 'crear';
   private idPerfil?: number;
@@ -64,6 +94,7 @@ export class PerfilFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.ubicaciones.provincias().subscribe((data) => (this.provincias = data));
     this.modo = this.data?.modo ?? 'crear';
 
     if (this.data?.perfil) {
@@ -79,25 +110,51 @@ export class PerfilFormComponent implements OnInit {
         telefonoContacto: p.telefonoContacto ?? '',
         numeroCelular: p.numeroCelular ?? '',
         direccion: p.direccion ?? '',
-        rol: p.rol as ERol,
-        estado: p.estado as EEstado,
+        provincia: p.provincia ?? '',
+        canton: p.canton ?? '',
+        distrito: p.distrito ?? '',
+        rol: p.rol,
+        estado: p.estado,
       });
 
       if (p.fotoURL) {
         this.fotoFileName = p.fotoURL;
         this.fotoPreviewUrl = this.buildFotoUrl(p.fotoURL);
       }
+      this.loadCantones();
+      this.loadDistritos();
     } else {
       this.modo = 'crear';
       this.title = 'Nuevo perfil';
     }
   }
 
- private buildFotoUrl(fileName: string | null): string | null {
-  if (!fileName) return null;
-  const baseUrl = this.imageBaseUrl.endsWith('/') ? this.imageBaseUrl : this.imageBaseUrl + '/';
-  return `${baseUrl}${fileName}`; 
+loadCantones() {
+  const provincia = this.form.value.provincia;
+  if (!provincia) return;
+
+  this.ubicaciones.cantones(provincia).subscribe(data => {
+    this.cantones = data;  // c.codigo = "01", "02", "03"
+  });
 }
+
+
+ loadDistritos() {
+  const provincia = this.form.value.provincia;
+  const canton = this.form.value.canton;
+
+  if (!provincia || !canton) return;
+
+  this.ubicaciones.distritos(provincia, canton).subscribe(data => {
+    this.distritos = data;
+  });
+}
+
+  private buildFotoUrl(fileName: string | null): string | null {
+    if (!fileName) return null;
+    const baseUrl = this.imageBaseUrl.endsWith('/') ? this.imageBaseUrl : this.imageBaseUrl + '/';
+    return `${baseUrl}${fileName}`;
+  }
 
   // Cuando se selecciona una imagen
   onFileSelected(event: Event) {
@@ -151,14 +208,18 @@ export class PerfilFormComponent implements OnInit {
 
     const payloadBase: Partial<perfilModel> = {
       ...(this.idPerfil ? { id: this.idPerfil } : {}),
-      nombre: raw.nombre ?? '',
-      fechaNacimiento: fecha ? fecha.toISOString() : new Date().toISOString(),
-      cedula: raw.cedula ?? '',
-      rol: raw.rol as ERol,
-      estado: raw.estado as EEstado,
+      nombre: raw.nombre,
+      fechaNacimiento: fecha?.toISOString(),
+      cedula: raw.cedula,
+      rol: raw.rol,
+      estado: raw.estado,
       telefonoContacto: raw.telefonoContacto || null,
       numeroCelular: raw.numeroCelular || null,
       direccion: raw.direccion || null,
+
+      provincia: raw.provincia || null,
+      canton: raw.canton || null,
+      distrito: raw.distrito || null,
     };
 
     this.guardando = true;
@@ -222,5 +283,44 @@ export class PerfilFormComponent implements OnInit {
       verticalPosition: 'top',
       panelClass: ['snackbar-error'],
     });
+  }
+
+  // ---- MÁSCARA SOLO NÚMEROS ----
+  onlyNumbers(e: any, controlName: string) {
+    const clean = e.target.value.replace(/\D/g, '');
+    const control = this.form.get(controlName);
+    if (control) {
+      control.setValue(clean, { emitEvent: false });
+    }
+  }
+
+  // ---- MÁSCARA PARA TELÉFONO (####-####) ----
+  formatPhone(e: any, controlName: string) {
+    let v = e.target.value.replace(/\D/g, '');
+
+    if (v.length > 4) {
+      v = v.replace(/^(\d{4})(\d+)/, '$1-$2');
+    }
+
+    const control = this.form.get(controlName);
+    if (control) {
+      control.setValue(v, { emitEvent: false });
+    }
+  }
+
+  // ---- MÁSCARA PARA CÉDULA CR (1-2345-6789) ----
+  formatCedula(e: any) {
+    let v = e.target.value.replace(/\D/g, '');
+
+    if (v.length > 1 && v.length <= 5) {
+      v = v.replace(/^(\d)(\d+)/, '$1-$2');
+    } else if (v.length > 5) {
+      v = v.replace(/^(\d)(\d{4})(\d+)/, '$1-$2-$3');
+    }
+
+    const control = this.form.get('cedula');
+    if (control) {
+      control.setValue(v, { emitEvent: false });
+    }
   }
 }

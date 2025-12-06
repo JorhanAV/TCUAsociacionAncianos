@@ -5,6 +5,8 @@ import { PerfilRoutes } from "./perfiles.routes";
 import { ActividadesRoutes } from "./actividades.routes";
 import { ImageRoutes } from "./images.routes";
 import { UsuarioRoutes } from "./usuario.routes";
+import { DashboardRoutes } from "./dashboard.routes";
+
 
 export class AppRoutes {
   static get routes(): Router {
@@ -25,6 +27,8 @@ export class AppRoutes {
     router.use("/actividades", ActividadesRoutes.routes);
     // localhost:3000/imagenes/
     router.use("/imagenes", ImageRoutes.routes);
+    
+    router.use("/dashboard", DashboardRoutes.routes);
     return router;
   }
 }
