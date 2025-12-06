@@ -1,34 +1,66 @@
-$primary: #5E2C5F;
-$bg-body: #f4f4f7;
-
 .login-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100%;
   height: 100vh;
-  background: $bg-body;
+
+  display: flex;
+  justify-content: center; // Centra horizontalmente
+  align-items: center; // Centra verticalmente
+
+  background: #eef0f5; // Gris claro tipo Facebook
+  padding: 0 40px;
+}
+
+.login-container {
+  display: flex;
+  align-items: center;
+  gap: 80px; // Separación entre logo y formulario
+  max-width: 1200px;
+  width: 100%;
+}
+
+.logo-section {
+  text-align: left;
+
+  img {
+    width: 380px;
+    height: auto;
+    border-radius: 10px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-top: 10px;
+    color: #5e2c5f;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #555;
+    max-width: 350px;
+  }
 }
 
 .login-card {
-  background: #fff;
+  width: 420px;
+  background: white;
   padding: 32px;
-  width: 360px;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   text-align: center;
 }
 
 .title {
-  font-size: 1.6rem;
-  color: $primary;
   margin-bottom: 4px;
+  color: #5e2c5f;
+  font-size: 1.6rem;
   font-weight: 700;
 }
 
 .subtitle {
-  font-size: 0.9rem;
-  color: #888;
   margin-bottom: 24px;
+  font-size: 0.9rem;
+  color: #777;
 }
 
 .login-form {
@@ -38,7 +70,8 @@ $bg-body: #f4f4f7;
 }
 
 .btn-login {
-  margin-top: 10px;
   width: 100%;
-  height: 44px;
+  margin-top: 10px;
+  padding: 10px 0;
+  border-radius: 8px;
 }
