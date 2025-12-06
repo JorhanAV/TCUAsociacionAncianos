@@ -59,7 +59,7 @@ const routes: Routes = [
         path: 'usuario',
         loadChildren: () => import('./user/user-module').then((m) => m.UserModule),
         data: { title: 'Usuario' },
-
+      },
       {
         path: 'contacto',
         loadChildren: () => import('./contacto/contacto-module').then((m) => m.ContactoModule),

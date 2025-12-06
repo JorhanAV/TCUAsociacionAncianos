@@ -7,6 +7,7 @@ import { AuthenticationService } from '../../../share/authentication.service';
 @Component({
   selector: 'app-user-pass',
   templateUrl: './user-pass.html',
+  standalone: false,
   styleUrls: ['./user-pass.scss'],
 })
 export class UserPass implements OnInit {
