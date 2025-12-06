@@ -12,7 +12,7 @@ export class ActividadesController {
 
   get = async (request: Request, response: Response, next: NextFunction) => {
     try {
-      // 1. Obtener todos los productos con su categoría e imágenes
+      // Obtener la fecha actual sin hora (00:00:00)
       const actividades = await this.prisma.actividad.findMany({
         select: {
           id: true,
@@ -23,6 +23,40 @@ export class ActividadesController {
           tipoActividad: true,
           createdAt: true,
           updatedAt: true,
+
+          perfiles: {
+            select: {
+              id: true,
+              perfil: {
+                select: {
+                  id: true,
+                  nombre: true,
+                  cedula: true,
+                  rol: true,
+                },
+              },
+            },
+          },
+
+          // 🔥 Inventarios asociados (N:M)
+          inventarios: {
+            select: {
+              id: true,
+              cantidadxPersona: true,
+              inventario: {
+                select: {
+                  id: true,
+                  Nombre: true,
+                  descripcion: true,
+                  stock: true,
+                  idCategoria: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          fechaActividad: "asc",
         },
       });
 

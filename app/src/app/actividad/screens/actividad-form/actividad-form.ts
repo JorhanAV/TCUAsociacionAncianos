@@ -27,28 +27,48 @@ export class ActividadForm implements OnInit {
 
   form!: FormGroup;
 
-  // Listas cargadas del backend
-  listaPersonas: any[] = []; // Adulto + Admin + Socio
+  listaPersonas: any[] = [];
   listaVoluntarios: any[] = [];
   listaInventarios: any[] = [];
+
+  horasDisponibles: string[] = [];
 
   async ngOnInit() {
     this.form = this.fb.group({
       nombre: ['', Validators.required],
-      fechaActividad: ['', [Validators.required, this.fechaNoPasadaValidator]],
+
+      fechaActividad: [
+        { value: '', disabled: false },
+        [Validators.required, this.fechaNoPasadaValidator.bind(this)],
+      ],
+
       horaInicio: ['', Validators.required],
       duracion: ['', [Validators.required, Validators.min(1)]],
       tipoActividad: ['', Validators.required],
 
-      // seleccionados
       idsPerfiles: [[]],
-      idVoluntarioEncargado: [''],
+      idVoluntarioEncargado: ['', Validators.required],
 
       inventarios: this.fb.array([]),
     });
 
+    // Generar horas cuando cambia la fecha
+    this.form.get('fechaActividad')?.valueChanges.subscribe((valor) => {
+      this.generarHorasDisponibles(valor);
+    });
+
     await this.cargarListas();
 
+    // Si viene desde el calendario con fecha bloqueada
+    if (this.modo === 'crear' && (this.actividad as any)?.fechaBloqueada) {
+      const fecha = new Date(this.actividad!.fechaActividad);
+      this.form.get('fechaActividad')?.setValue(fecha);
+      this.form.get('fechaActividad')?.disable();
+
+      this.generarHorasDisponibles(fecha);
+    }
+
+    // Modo edición
     if (this.modo === 'editar' && this.actividad) {
       this.cargarDatosEdicion();
     }
@@ -67,39 +87,45 @@ export class ActividadForm implements OnInit {
 
   cargarDatosEdicion() {
     const a = this.actividad!;
+    const fecha = new Date(a.fechaActividad);
 
-    // ---> FECHA Y HORA
-    const fecha = new Date(a.fechaActividad).toISOString().substring(0, 10);
-    const hora = new Date(a.horaInicio).toISOString().substring(11, 16);
+    // Convertir hora a formato 12h
+    const horaOriginal = new Date(a.horaInicio);
+    let h = horaOriginal.getHours();
+    let m = horaOriginal.getMinutes();
+
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    const mm = m.toString().padStart(2, '0');
+    const horaFormateada = `${h12}:${mm} ${ampm}`;
 
     this.form.patchValue({
       nombre: a.nombre,
       fechaActividad: fecha,
-      horaInicio: hora,
+      horaInicio: horaFormateada,
       duracion: a.duracion,
       tipoActividad: a.tipoActividad,
     });
 
-    // ---> PERFILES SELECCIONADOS
     const idsPerfiles = a
       .perfiles!.filter((p: any) => ['Adulto', 'Admin', 'Socio'].includes(p.perfil.rol))
       .map((p: any) => p.perfil.id);
 
     this.form.patchValue({ idsPerfiles });
 
-    // ---> VOLUNTARIO ENCARGADO
     const voluntario = a.perfiles!.find((p: any) => p.perfil.rol === 'Voluntario');
     if (voluntario) {
       this.form.patchValue({ idVoluntarioEncargado: voluntario.perfil!.id });
     }
 
-    // ---> INVENTARIOS (YA TENEMOS listaInventarios cargada!)
     a.inventarios!.forEach((i: any) => {
       this.agregarInventario(i.inventario.id, i.cantidadxPersona);
     });
+
+    this.generarHorasDisponibles(fecha);
   }
 
-  // ------------ INVENTARIOS DINÁMICOS ---------------
+  // ========= Inventarios Dinámicos ==========
   get inventariosArr(): FormArray<FormGroup> {
     return this.form.get('inventarios') as FormArray<FormGroup>;
   }
@@ -116,39 +142,44 @@ export class ActividadForm implements OnInit {
     this.inventariosArr.removeAt(index);
   }
 
-  // ------------ GUARDAR ---------------
+  // ========= Guardar ==========
   guardar() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const value = this.form.value;
+    const value = this.form.getRawValue(); // <-- importante si fecha está deshabilitada
 
-    // Convertir fecha yyyy-mm-dd a Date base
-    const fechaBase = value.fechaActividad;
+    // Convertir fecha YYYY-MM-DD
+    function convertirFecha(fecha: any): string {
+      if (!fecha) return '';
 
-    // Convertir hora a formato 24h válido
-    function convertirHora(hora: string): string {
-      // Caso 24h directo: "15:00"
-      if (!hora.includes(' ')) {
-        return `${hora}:00`; // → "15:00:00"
+      if (fecha instanceof Date) {
+        const y = fecha.getFullYear();
+        const m = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        const d = fecha.getDate().toString().padStart(2, '0');
+        return `${y}-${m}-${d}`;
       }
 
-      // Caso 12h: "03:00 PM"
-      const [time, modifier] = hora.split(' ');
+      return fecha;
+    }
+
+    const fechaISO = convertirFecha(value.fechaActividad);
+
+    // Convertir hora "8:30 AM" → "HH:mm:ss"
+    function convertirHora(hora: string): string {
+      const [time, mod] = hora.split(' ');
       let [h, m] = time.split(':').map(Number);
 
-      if (modifier === 'PM' && h < 12) h += 12;
-      if (modifier === 'AM' && h === 12) h = 0;
+      if (mod === 'PM' && h < 12) h += 12;
+      if (mod === 'AM' && h === 12) h = 0;
 
       return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:00`;
     }
 
     const hora24 = convertirHora(value.horaInicio);
-
-    // Crear Date completo válido
-    const horaInicioFinal = new Date(`${fechaBase}T${hora24}`);
+    const horaInicioFinal = new Date(`${fechaISO}T${hora24}`);
 
     const payload = {
       nombre: value.nombre,
@@ -181,10 +212,7 @@ export class ActividadForm implements OnInit {
         },
       });
     } else {
-      const itemActualizado = {
-        id: this.actividad!.id,
-        ...payload,
-      };
+      const itemActualizado = { id: this.actividad!.id, ...payload };
 
       this.actividadService.update(itemActualizado).subscribe({
         next: () => {
@@ -212,20 +240,42 @@ export class ActividadForm implements OnInit {
     this.cerrar.emit(false);
   }
 
+  // ========= Validaciones ==========
   fechaNoPasadaValidator(control: any) {
-  const valor = control.value;
-  if (!valor) return null;
+    const valor = control.value;
+    if (!valor) return null;
 
-  const fechaSeleccionada = new Date(valor);
-  const hoy = new Date();
+    const f = new Date(valor);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    f.setHours(0, 0, 0, 0);
 
-  // dejar solo fecha sin hora para comparación limpia
-  hoy.setHours(0, 0, 0, 0);
-  fechaSeleccionada.setHours(0, 0, 0, 0);
+    return f < hoy ? { fechaPasada: true } : null;
+  }
 
-  return fechaSeleccionada < hoy
-    ? { fechaPasada: true }
-    : null;
-}
+  // ========= Generador de Horas ==========
+  generarHorasDisponibles(fecha: Date) {
+    const horas: string[] = [];
+    const hoy = new Date();
 
+    const fechaEsHoy = fecha && new Date(fecha).toDateString() === hoy.toDateString();
+
+    const horaActual = hoy.getHours();
+    const minutoActual = hoy.getMinutes();
+
+    for (let h = 4; h <= 22; h++) {
+      for (let m of [0, 30]) {
+        const esFuturo = !fechaEsHoy || h > horaActual || (h === horaActual && m >= minutoActual);
+
+        if (esFuturo) {
+          const ampm = h >= 12 ? 'PM' : 'AM';
+          const h12 = h % 12 === 0 ? 12 : h % 12;
+          const mm = m.toString().padStart(2, '0');
+          horas.push(`${h12}:${mm} ${ampm}`);
+        }
+      }
+    }
+
+    this.horasDisponibles = horas;
+  }
 }

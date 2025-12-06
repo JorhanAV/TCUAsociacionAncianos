@@ -1,0 +1,45 @@
+<div class="form-card">
+  <!-- TÍTULO -->
+  <h2 class="form-title">
+    {{ modo === 'crear' ? 'Crear Usuario' : 'Editar Usuario' }}
+  </h2>
+
+  <!-- FORMULARIO -->
+  <form [formGroup]="form" class="form-body">
+    <!-- Nombre -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre_usuario" />
+    </mat-form-field>
+
+    <!-- Correo -->
+    <mat-form-field appearance="outline">
+      <mat-label>Correo</mat-label>
+      <input matInput formControlName="correo" />
+    </mat-form-field>
+
+    <!-- Rol -->
+    <mat-form-field appearance="outline">
+      <mat-label>Rol</mat-label>
+      <mat-select formControlName="rol">
+        <mat-option value="Admin">Admin</mat-option>
+        <mat-option value="Socio">Socio</mat-option>
+        <mat-option value="Voluntario">Voluntario</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Contraseña SOLO cuando modo === crear -->
+    <ng-container *ngIf="modo === 'crear'">
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input matInput type="password" formControlName="contrasenia" />
+      </mat-form-field>
+    </ng-container>
+  </form>
+
+  <!-- ACCIONES -->
+  <div class="form-actions">
+    <button mat-button (click)="cerrar.emit(false)">Cancelar</button>
+    <button mat-flat-button color="primary" (click)="guardar()">Guardar</button>
+  </div>
+</div>

@@ -95,3 +95,20 @@ h2 {
     }
   }
 }
+
+:host {
+  display: block;
+  width: 100%;
+  padding: 0 !important;     // ❗ elimina el padding que rompe el modal
+  background: transparent !important;
+  box-sizing: border-box;
+}
+.form-wrapper {
+  padding: 30px 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+
+

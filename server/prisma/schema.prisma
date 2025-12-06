@@ -50,12 +50,14 @@ model Usuario {
   correo               String               @unique @db.VarChar(191)
   contrasenia          String
   ultimo_inicio_sesion DateTime?
+  rol                 ERol
 
   // Relaciones
   historialInventario  HistorialInventario[]
   actas                Actas[]
 
   @@index([nombre_usuario])
+  @@index([rol])
 }
 
 model Perfiles {

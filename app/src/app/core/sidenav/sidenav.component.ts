@@ -24,5 +24,6 @@ export class SidenavComponent {
     { icon: 'contact_mail', label: 'Contacto', path: '/contacto' },
   { icon: 'bar_chart', label: 'Dashboard', path: '/dashboard' },
     { icon: 'settings', label: 'Configuración', path: '/configuracion' },
+    { icon: 'person', label: 'Usuario', path: '/usuario' }, // Icono usuario para sección user
   ];
 }

@@ -1,0 +1,28 @@
+<div class="login-wrapper">
+
+  <div class="login-card">
+
+    <h2 class="title">Iniciar Sesión</h2>
+    <p class="subtitle">Acceso al sistema AAMSA</p>
+
+    <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+
+      <mat-form-field appearance="outline">
+        <mat-label>Correo</mat-label>
+        <input matInput formControlName="correo" type="email">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Contraseña</mat-label>
+        <input matInput formControlName="contrasenia" type="password">
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" class="btn-login" [disabled]="form.invalid">
+        Ingresar
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
