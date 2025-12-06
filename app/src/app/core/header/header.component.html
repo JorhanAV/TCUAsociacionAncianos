@@ -18,7 +18,11 @@
 
     <button mat-button class="glass-profile" [matMenuTriggerFor]="menuUsuario">
       <mat-icon>person</mat-icon>
-      <span class="glass-profileName">Administración</span>
+      <span class="glass-profileName">
+        @if (isAuthenticated()) {
+        {{ currentUser()?.nombre_usuario }}
+        } @else { Invitado }
+      </span>
 
       <mat-icon>expand_more</mat-icon>
     </button>
@@ -64,18 +68,29 @@
     <mat-icon>person</mat-icon>
     <span>Mi Perfil</span>
   </button>
+
   <button mat-menu-item>
     <mat-icon>settings</mat-icon>
     <span>Configuración</span>
   </button>
+
   <mat-divider></mat-divider>
+
+  @if (!isAuthenticated()) {
   <button mat-menu-item [routerLink]="'user-login'">
     <mat-icon color="warn">login</mat-icon>
     <span>Iniciar Sesión</span>
   </button>
+  } @if (isAuthenticated()) {
+  <button mat-menu-item (click)="abrirCambioPass()">
+    <mat-icon>lock_reset</mat-icon>
+    <span>Cambiar Contraseña</span>
+  </button>
 
+  } @if (isAuthenticated()) {
   <button mat-menu-item (click)="logout()">
     <mat-icon color="warn">logout</mat-icon>
     <span>Cerrar Sesión</span>
   </button>
+  }
 </mat-menu>

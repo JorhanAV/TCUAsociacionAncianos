@@ -1,1 +1,36 @@
-<p>user-pass works!</p>
+<div class="pass-card">
+
+  <h2 class="pass-title">Cambiar Contraseña</h2>
+
+  <form [formGroup]="form" class="pass-body">
+
+    <!-- Contraseña actual -->
+    <mat-form-field appearance="outline">
+      <mat-label>Contraseña actual</mat-label>
+      <input matInput type="password" formControlName="actual" />
+    </mat-form-field>
+
+    <!-- Nueva contraseña -->
+    <mat-form-field appearance="outline">
+      <mat-label>Nueva contraseña</mat-label>
+      <input matInput type="password" formControlName="nueva" />
+    </mat-form-field>
+
+    <!-- Confirmar nueva -->
+    <mat-form-field appearance="outline">
+      <mat-label>Confirmar contraseña</mat-label>
+      <input matInput type="password" formControlName="confirmar" />
+    </mat-form-field>
+
+    @if (!contraseniasCoinciden()) {
+      <p class="error-text">Las contraseñas no coinciden</p>
+    }
+
+  </form>
+
+  <div class="pass-actions">
+    <button mat-button (click)="cancelar()">Cancelar</button>
+    <button mat-flat-button color="primary" (click)="guardar()">Guardar</button>
+  </div>
+
+</div>

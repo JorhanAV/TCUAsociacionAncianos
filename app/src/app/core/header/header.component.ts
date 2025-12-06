@@ -1,6 +1,8 @@
 // core/header/header.component.ts
 import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
 import { AuthenticationService } from '../../share/authentication.service';
+import { MatDialog } from '@angular/material/dialog';
+import { UserPass } from '../../user/screens/user-pass/user-pass';
 
 type NotiType = 'success' | 'warning' | 'info' | 'error';
 interface Notificacion {
@@ -19,6 +21,8 @@ interface Notificacion {
 export class HeaderComponent {
   @Output() menuClick = new EventEmitter<void>();
   private auth = inject(AuthenticationService);
+  isAuthenticated = this.auth.isAuthenticatedSignal;
+  currentUser = this.auth.currentUserSignal;
 
   // signal reactiva (en lugar de array mutable)
   notis = signal<Notificacion[]>([
@@ -30,7 +34,7 @@ export class HeaderComponent {
 
   unreadCount = signal(0);
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
     this.updateUnread();
   }
 
@@ -47,5 +51,11 @@ export class HeaderComponent {
   }
   logout() {
     this.auth.logout();
+  }
+  abrirCambioPass() {
+    this.dialog.open(UserPass, {
+      width: '470px',
+      panelClass: 'blur-modal',
+    });
   }
 }

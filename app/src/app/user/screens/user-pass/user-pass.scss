@@ -1,0 +1,47 @@
+// Variables AAMSA
+$primary: #5e2c5f;
+$bg-card: #ffffff;
+
+// Card principal
+.pass-card {
+  background: $bg-card;
+  padding: 24px 28px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  animation: fadeUp 0.25s ease-out;
+}
+
+.pass-title {
+  margin: 0 0 20px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: $primary;
+  text-align: center;
+}
+
+.pass-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.pass-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.error-text {
+  font-size: 0.85rem;
+  color: #c62828;
+  margin-top: -10px;
+}
+
+// Animación
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
