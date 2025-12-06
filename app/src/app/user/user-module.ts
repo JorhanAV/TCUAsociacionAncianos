@@ -22,7 +22,6 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
     CommonModule,
     ReactiveFormsModule,
     MaterialModule,
-    MatDialogModule,
     UserRoutingModule
   ]
 })

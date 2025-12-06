@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-login',
-  standalone: false,
   templateUrl: './user-login.html',
   styleUrls: ['./user-login.scss'],
+  standalone: false,
 })
 export class UserLogin {
   form!: FormGroup; // <- se declara aquí, sin inicializar
