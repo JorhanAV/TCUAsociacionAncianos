@@ -1,5 +1,6 @@
 // core/header/header.component.ts
-import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { Component, EventEmitter, inject, Output, signal } from '@angular/core';
+import { AuthenticationService } from '../../share/authentication.service';
 
 type NotiType = 'success' | 'warning' | 'info' | 'error';
 interface Notificacion {
@@ -17,6 +18,7 @@ interface Notificacion {
 })
 export class HeaderComponent {
   @Output() menuClick = new EventEmitter<void>();
+  private auth = inject(AuthenticationService);
 
   // signal reactiva (en lugar de array mutable)
   notis = signal<Notificacion[]>([
@@ -33,14 +35,17 @@ export class HeaderComponent {
   }
 
   private updateUnread() {
-    const count = this.notis().filter(n => !n.leido).length;
+    const count = this.notis().filter((n) => !n.leido).length;
     this.unreadCount.set(count);
   }
 
   marcarTodasLeidas(event?: Event) {
-    if(event) event.stopPropagation(); // Evita que el menú se cierre al hacer click
-    
-    this.notis.update(arr => arr.map(n => ({ ...n, leido: true })));
+    if (event) event.stopPropagation(); // Evita que el menú se cierre al hacer click
+
+    this.notis.update((arr) => arr.map((n) => ({ ...n, leido: true })));
     this.updateUnread();
+  }
+  logout() {
+    this.auth.logout();
   }
 }

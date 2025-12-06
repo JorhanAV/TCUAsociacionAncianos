@@ -3,10 +3,16 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ShellComponent } from './core/layout/shell.component';
 import { PageNotFound } from './share/page-not-found/page-not-found';
+import { UserLogin } from './user/screens/user-login/user-login';
+import { authGuard } from './share/auth.guard';
 
 const routes: Routes = [
+
+  { path: 'user-login', component: UserLogin },
+
   {
     path: '',
+    canActivate: [authGuard],
     component: ShellComponent,
     children: [
       { path: '', redirectTo: 'inicio', pathMatch: 'full' },

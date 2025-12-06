@@ -88,7 +88,7 @@ export class AuthenticationService {
   localStorage.removeItem(this.tokenKey);
   this.tokenUser.set(null);
   this.usuario.set(null);
-  this.router.navigate(['/login']);
+  this.router.navigate(['/user-login']);
 }
 
 }

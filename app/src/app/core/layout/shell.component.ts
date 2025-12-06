@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
@@ -14,7 +14,7 @@ export class ShellComponent {
   isHandset = false;
   opened = true;
 
-  constructor() {
+  constructor(private router: Router) {
     this.bp
       .observe([Breakpoints.Handset])
       .pipe(map(r => r.matches))
@@ -23,5 +23,9 @@ export class ShellComponent {
 
   handleNavigate() {
     if (this.isHandset) this.opened = false;
+  }
+
+  isLoginPage(): boolean {
+    return this.router.url.includes('/user-login');
   }
 }

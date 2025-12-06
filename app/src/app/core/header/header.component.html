@@ -2,25 +2,26 @@
   <button mat-icon-button (click)="menuClick.emit()" aria-label="Abrir menú">
     <mat-icon>menu</mat-icon>
   </button>
-  
+
   <span class="spacer"></span>
 
   <div class="actions-container">
-    <button mat-icon-button
-            [matBadge]="unreadCount()"
-            [matBadgeHidden]="!unreadCount()"
-            matBadgeColor="accent"
-            [matMenuTriggerFor]="menuNotificaciones">
+    <button
+      mat-icon-button
+      [matBadge]="unreadCount()"
+      [matBadgeHidden]="!unreadCount()"
+      matBadgeColor="accent"
+      [matMenuTriggerFor]="menuNotificaciones"
+    >
       <mat-icon>notifications</mat-icon>
     </button>
 
-   <button mat-button class="glass-profile" [matMenuTriggerFor]="menuUsuario">
-  <mat-icon>person</mat-icon>
-  <span class="glass-profileName">Administración</span>
+    <button mat-button class="glass-profile" [matMenuTriggerFor]="menuUsuario">
+      <mat-icon>person</mat-icon>
+      <span class="glass-profileName">Administración</span>
 
-  <mat-icon>expand_more</mat-icon>
-</button>
-
+      <mat-icon>expand_more</mat-icon>
+    </button>
   </div>
 </mat-toolbar>
 
@@ -28,33 +29,32 @@
   <div class="menu-head">
     <span>Notificaciones</span>
     @if (unreadCount() > 0) {
-      <button mat-button (click)="marcarTodasLeidas($event)">Marcar leídas</button>
+    <button mat-button (click)="marcarTodasLeidas($event)">Marcar leídas</button>
     }
   </div>
-  
+
   @for (n of notis(); track n.id) {
-    <button mat-menu-item class="noti-item">
-      <mat-icon [ngClass]="n.tipo">
-        @switch (n.tipo) {
-          @case ('success') { check_circle }
-          @case ('warning') { warning }
-          @case ('error')   { error }
-          @default          { info }
-        }
-      </mat-icon>
-      <span class="noti-text" [class.unread]="!n.leido" [class.read]="n.leido">
-        {{ n.texto }}
-      </span>
-    </button>
+  <button mat-menu-item class="noti-item">
+    <mat-icon [ngClass]="n.tipo">
+      @switch (n.tipo) { @case ('success') { check_circle } @case ('warning') { warning } @case
+      ('error') { error } @default { info } }
+    </mat-icon>
+    <span class="noti-text" [class.unread]="!n.leido" [class.read]="n.leido">
+      {{ n.texto }}
+    </span>
+  </button>
   } @empty {
-    <div style="padding: 20px; text-align: center; color: #999;">
-      <mat-icon>notifications_off</mat-icon>
-      <p style="margin:0; font-size: 0.9rem;">Sin novedades</p>
-    </div>
+  <div style="padding: 20px; text-align: center; color: #999">
+    <mat-icon>notifications_off</mat-icon>
+    <p style="margin: 0; font-size: 0.9rem">Sin novedades</p>
+  </div>
   }
 
   <mat-divider></mat-divider>
-  <button mat-menu-item style="justify-content: center; text-align: center; font-size: 0.9rem; color: #666;">
+  <button
+    mat-menu-item
+    style="justify-content: center; text-align: center; font-size: 0.9rem; color: #666"
+  >
     Ver todo el historial
   </button>
 </mat-menu>
@@ -69,7 +69,12 @@
     <span>Configuración</span>
   </button>
   <mat-divider></mat-divider>
-  <button mat-menu-item>
+  <button mat-menu-item [routerLink]="'user-login'">
+    <mat-icon color="warn">login</mat-icon>
+    <span>Iniciar Sesión</span>
+  </button>
+
+  <button mat-menu-item (click)="logout()">
     <mat-icon color="warn">logout</mat-icon>
     <span>Cerrar Sesión</span>
   </button>
