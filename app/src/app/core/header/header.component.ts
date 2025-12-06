@@ -12,6 +12,9 @@ export class HeaderComponent {
   @Output() menuClick = new EventEmitter<void>();
   
   private auth = inject(AuthenticationService);
+  
+  isAuthenticated = this.auth.isAuthenticatedSignal;
+  currentUser = this.auth.currentUserSignal;
 
   notis = this.notif.ultimas5;
   unreadCount = this.notif.unreadCount;
