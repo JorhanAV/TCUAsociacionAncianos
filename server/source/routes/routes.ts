@@ -6,6 +6,7 @@ import { ActividadesRoutes } from "./actividades.routes";
 import { ImageRoutes } from "./images.routes";
 import { DashboardRoutes } from "./dashboard.routes";
 import { UsuarioRoutes } from "./usuario.routes";
+import { ActasRoutes } from "./actas.routes";
 
 
 export class AppRoutes {
@@ -29,6 +30,8 @@ export class AppRoutes {
     router.use("/imagenes", ImageRoutes.routes);
     
     router.use("/dashboard", DashboardRoutes.routes);
+    
+    router.use("/actas", ActasRoutes.routes);
     return router;
   }
 }

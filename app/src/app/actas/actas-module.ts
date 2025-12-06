@@ -3,25 +3,23 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../share/material.module';
-import { PerfilIndexComponent } from './screens/perfil-index/perfil-index.component';
+
 import { ConfirmDeleteDialog } from '../share/confirm-delete.dialog';
-import { PerfilFormComponent } from './screens/perfil-form/perfil-form.component';
-import { PerfilRoutingModule } from './perfil-routing-module';
+import { ActasIndexComponent } from './screens/actas-index.component';
+import { ActasRoutingModule } from './actas-routing-module';
 import { SharedModule } from '../share/shared.module';
 
 @NgModule({
   declarations: [
-    PerfilIndexComponent,
-    PerfilFormComponent,
-    
+    ActasIndexComponent,     
   ],
   imports: [
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
     MaterialModule,
-    PerfilRoutingModule,
+    ActasRoutingModule,
     SharedModule
   ]
 })
-export class PerfilModule {}
+export class ActasModule {}

@@ -20,6 +20,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     MaterialModule,
     ActividadRoutingModule
+  ],exports: [
+    ActividadIndex,
+    ActividadDetail,
+    ActividadForm
   ]
+ 
 })
 export class ActividadModule { }

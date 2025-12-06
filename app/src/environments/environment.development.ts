@@ -6,4 +6,5 @@ export const environment = {
   imageBaseUrl: 'http://localhost:3000/assets/uploads/',
   endPointActividades: 'actividades',
   endPointUsuario: 'usuario',
+  actasBaseUrl: "http://localhost:3000/assets/uploads/actas/"
 };

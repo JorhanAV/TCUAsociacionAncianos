@@ -1,0 +1,92 @@
+
+// Colores
+$primary: #5E2C5F;
+$accent: #F4B459;
+$text-main: #2c3e50;
+$text-light: #7f8c8d;
+
+:host {
+  display: block;
+  padding: 24px;
+  background-color: #f8f9fa;
+  min-height: 100%;
+}
+
+// HEADER
+.btn-nueva-acta {
+  background-color: $accent !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+// GRID
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+// CARD DE ACTA
+.acta-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .doc-icon {
+    font-size: 48px;
+    color: $primary;
+    margin-bottom: 12px;
+  }
+
+  .info {
+    margin-bottom: 12px;
+
+    .nombre {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: $primary;
+    }
+
+    .sub {
+      font-size: 0.9rem;
+      color: $text-light;
+    }
+
+    .fecha {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: $text-light;
+    }
+  }
+
+  .btn-ver {
+    margin-top: 8px;
+    width: 100%;
+    font-weight: 600;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 12px;
+  }
+}
+
+// EMPTY STATE
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px;
+  background: white;
+  border-radius: 16px;
+  border: 2px dashed #ddd;
+
+  h3 {
+    margin: 12px 0 6px;
+    color: $primary;
+  }
+}

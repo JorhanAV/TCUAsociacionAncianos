@@ -2,7 +2,7 @@ import { ActaPerfilModel } from "./actaPerfilModel";
 import { UsuarioModel } from "./usuarioModel";
 
 export interface ActaModel {
-  id?: number;
+  id: number;
   URL: string;
   idUsuario: number;
   fecha: string | Date;

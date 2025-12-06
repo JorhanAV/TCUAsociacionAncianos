@@ -68,6 +68,11 @@ const routes: Routes = [
         loadChildren: () => import('./dashboard/dashboard-module').then((m) => m.DashboardModule),
         data: { title: 'Dashboard' },
       },
+      {
+        path: 'actas',
+        loadChildren: () => import('./actas/actas-module').then((m) => m.ActasModule),
+        data: { title: 'Actas' },
+      },
     ],
   },
 

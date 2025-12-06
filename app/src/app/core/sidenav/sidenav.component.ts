@@ -20,10 +20,10 @@ export class SidenavComponent {
     { icon: 'dashboard', label: 'Inicio', path: '/inicio' }, // Dashboard es más pro que Home
     { icon: 'groups', label: 'Perfiles', path: '/perfiles' }, // Groups para comunidad
     { icon: 'inventory_2', label: 'Inventario', path: '/inventario' }, // Icono caja
-    { icon: 'event', label: 'Actividades', path: '/actividades' }, // Agregado basado en doc
-    { icon: 'contact_mail', label: 'Contacto', path: '/contacto' },
-    { icon: 'bar_chart', label: 'Dashboard', path: '/dashboard' },
-    { icon: 'settings', label: 'Configuración', path: '/configuracion' },
+    { icon: 'event', label: 'Actividades', path: '/actividades' }, // Agregado basado en doc   
+    { icon: 'description', label: 'Actas', path: '/actas' }, 
     { icon: 'person', label: 'Usuario', path: '/usuario' }, // Icono usuario para sección user
+    { icon: 'bar_chart', label: 'Dashboard', path: '/dashboard' },
+    { icon: 'contact_mail', label: 'Contacto', path: '/contacto' },
   ];
 }

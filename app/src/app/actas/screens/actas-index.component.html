@@ -1,0 +1,93 @@
+<section class="head">
+  <div>
+    <h2>Registro de Actas</h2>
+    <small style="color: #666">Documentos oficiales PDF / Word</small>
+  </div>
+
+  <button mat-flat-button color="primary" class="btn-nueva-acta" (click)="crearActa()">
+    <mat-icon>description</mat-icon>
+    Nueva Acta
+  </button>
+</section>
+
+<section class="filters-bar" [formGroup]="filtros">
+  <mat-form-field appearance="outline" class="search-field" floatLabel="auto">
+    <mat-icon matPrefix>search</mat-icon>
+    <input
+      matInput
+      formControlName="q"
+      placeholder="Buscar actas por nombre archivo o usuario..."
+      (input)="onSearchInput($event)"
+    />
+    @if (filtros.controls.q.value) {
+      <button
+        matSuffix
+        mat-icon-button
+        aria-label="Limpiar búsqueda"
+        (click)="filtros.controls.q.setValue(''); applyFilters()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  @if (filtros.controls.q.value) {
+    <button mat-stroked-button color="warn" (click)="limpiarFiltros()">
+      <mat-icon>filter_alt_off</mat-icon>
+      Limpiar filtros
+    </button>
+  }
+</section>
+
+@if (loading()) {
+  <div class="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p style="margin-top: 16px">Cargando actas...</p>
+  </div>
+} @else {
+
+<section class="grid">
+  @for (a of items(); track a.id) {
+
+  <mat-card class="acta-card">
+
+    <div class="card-content">
+      <mat-icon class="doc-icon">description</mat-icon>
+
+      <div class="info">
+        <div class="nombre">Acta #{{ a.id }}</div>
+        <div class="sub">Usuario: {{ a.idUsuario }}</div>
+        <div class="fecha">{{ a.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
+      </div>
+
+      <button mat-flat-button color="primary" class="btn-ver" (click)="verActa(a)">
+        <mat-icon>visibility</mat-icon>
+        Ver Archivo
+      </button>
+    </div>
+
+    <div class="actions">
+      <button mat-icon-button color="warn" (click)="eliminar(a)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </div>
+
+  </mat-card>
+
+  } @empty {
+
+  <div class="empty-state">
+    <mat-icon style="font-size: 64px; width: 64px; height: 64px; color: #ccc">
+      folder_off
+    </mat-icon>
+    <h3>No se encontraron actas</h3>
+    <p>Sube una nueva acta para empezar.</p>
+    <button mat-stroked-button color="primary" (click)="crearActa()" style="margin-top: 16px">
+      Subir Acta
+    </button>
+  </div>
+
+  }
+</section>
+
+}

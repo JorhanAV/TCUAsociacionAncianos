@@ -1,28 +1,44 @@
 <div class="login-wrapper">
+  <div class="login-container">
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="logo-section">
+      <img src="/logo.png" alt="AAMSA" />
 
-  <div class="login-card">
+      <h1>AAMSA</h1>
+      <p>Sistema interno para gestión de usuarios, inventario y actividades.</p>
+    </div>
 
-    <h2 class="title">Iniciar Sesión</h2>
-    <p class="subtitle">Acceso al sistema AAMSA</p>
+    <!-- COLUMNA DERECHA -->
+    <div class="login-card">
+      <h2 class="title">Iniciar Sesión</h2>
+      <p class="subtitle">Acceso al sistema AAMSA</p>
 
-    <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+      <form [formGroup]="form" (ngSubmit)="login()" class="login-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Correo</mat-label>
+          <input matInput formControlName="correo" type="email" />
+        </mat-form-field>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Correo</mat-label>
-        <input matInput formControlName="correo" type="email">
-      </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Contraseña</mat-label>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Contraseña</mat-label>
-        <input matInput formControlName="contrasenia" type="password">
-      </mat-form-field>
+          <input
+            matInput
+            formControlName="contrasenia"
+            [type]="passwordVisible ? 'text' : 'password'"
+          />
 
-      <button mat-flat-button color="primary" class="btn-login" [disabled]="form.invalid">
-        Ingresar
-      </button>
+          <button mat-icon-button matSuffix type="button" (click)="togglePasswordVisibility()">
+            <mat-icon>
+              {{ passwordVisible ? 'visibility' : 'visibility_off' }}
+            </mat-icon>
+          </button>
+        </mat-form-field>
 
-    </form>
-
+        <button mat-flat-button color="primary" class="btn-login" [disabled]="form.invalid">
+          Ingresar
+        </button>
+      </form>
+    </div>
   </div>
-
 </div>
