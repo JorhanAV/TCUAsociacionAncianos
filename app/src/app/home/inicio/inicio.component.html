@@ -74,7 +74,26 @@
     </div>
   </section>
 
-  <aside class="sidebar">(Espacio para próximas funciones)</aside>
+  <aside class="sidebar">
+    <h3 class="sidebar-title">Actividades de Hoy</h3>
+
+    @if (actividadesHoy.length > 0) {
+    <div class="sidebar-activity-list">
+      @for (ev of actividadesHoy; track ev.id) {
+      <div class="sidebar-activity-item">
+        <div>
+          <strong>{{ ev.nombre }}</strong>
+          <p class="tipo">{{ ev.tipoActividad }}</p>
+        </div>
+
+        <span class="hora">{{ ev.horaInicio | date : 'hh:mm a' }}</span>
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="no-activities">No hay actividades programadas hoy.</p>
+    }
+  </aside>
 </div>
 
 <!-- ============================================================

@@ -440,3 +440,62 @@ $bg-light: #f8f9fa;
   border-radius: 12px;
   font-size: 1rem;
 }
+
+.sidebar {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  min-height: 200px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .sidebar-title {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #5e2c5f;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .sidebar-activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sidebar-activity-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fafafa;
+    border: 1px solid #eee;
+
+    strong {
+      font-size: 0.95rem;
+      color: #5e2c5f;
+    }
+
+    .tipo {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .hora {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+      white-space: nowrap;
+    }
+  }
+
+  .no-activities {
+    margin-top: 10px;
+    font-style: italic;
+    text-align: center;
+    color: #777;
+  }
+}

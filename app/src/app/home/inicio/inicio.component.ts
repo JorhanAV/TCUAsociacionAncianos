@@ -42,6 +42,7 @@ export class InicioComponent implements OnInit {
   actividadesDia: ActividadModel[] = [];
   diaSeleccionadoTexto = '';
   cumpleanosDia: any[] = [];
+  actividadesHoy: ActividadModel[] = [];
 
   // ---------- Formulario ----------
   modoForm: 'crear' | 'editar' | null = null;
@@ -90,7 +91,18 @@ export class InicioComponent implements OnInit {
   cargarActividades() {
     this.actividadService.get().subscribe((data) => {
       this.actividades.set(data);
+
+      this.actualizarActividadesHoy();
       this.generarCalendario();
+    });
+  }
+
+  actualizarActividadesHoy() {
+    const hoy = new Date();
+
+    this.actividadesHoy = this.actividades().filter((a) => {
+      const fecha = new Date(a.fechaActividad);
+      return fecha.toDateString() === hoy.toDateString();
     });
   }
 
