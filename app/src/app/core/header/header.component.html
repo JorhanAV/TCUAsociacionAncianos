@@ -86,11 +86,11 @@
     <mat-icon color="warn">logout</mat-icon>
     <span>Cerrar Sesión</span>
   </button>
-  }
-  @if (isAuthenticated()) {
-  <button mat-menu-item (click)="logout()">
-    <mat-icon color="warn">password</mat-icon>
-    <span>Cambiar Contraseña</span>
+  } @if (isAuthenticated()) {
+  <button mat-menu-item [routerLink]="'/usuario/user-pass'">
+    <mat-icon>password</mat-icon>
+    <span>Cambiar contraseña</span>
   </button>
+
   }
 </mat-menu>

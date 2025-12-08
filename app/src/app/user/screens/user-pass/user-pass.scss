@@ -1,0 +1,53 @@
+$password-color: #5e2c5f;
+
+.password-wrapper {
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  h2 {
+    margin: 0;
+    color: $password-color;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #777;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .full {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    button {
+      border-radius: 10px;
+      padding: 10px 18px;
+    }
+
+    mat-flat-button {
+      background-color: $password-color;
+      color: white;
+    }
+  }
+
+  
+}
+:host {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px); // altura visible menos el header
+  }
