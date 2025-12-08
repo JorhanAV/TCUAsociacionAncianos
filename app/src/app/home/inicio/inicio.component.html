@@ -75,7 +75,10 @@
   </section>
 
   <aside class="sidebar">
-    <h3 class="sidebar-title">Actividades de Hoy</h3>
+    <h3 class="sidebar-title">Hoy</h3>
+
+    <!-- ACTIVIDADES DEL DÍA -->
+    <h4 class="sidebar-subtitle">Actividades</h4>
 
     @if (actividadesHoy.length > 0) {
     <div class="sidebar-activity-list">
@@ -91,7 +94,25 @@
       }
     </div>
     } @else {
-    <p class="no-activities">No hay actividades programadas hoy.</p>
+    <p class="no-activities">No hay actividades hoy.</p>
+    }
+
+    <!-- CUMPLEAÑOS DEL DÍA -->
+    <h4 class="sidebar-subtitle birthday">Cumpleaños 🎂</h4>
+
+    @if (cumpleanosHoySidebar.length > 0) {
+    <div class="sidebar-birthday-list">
+      @for (c of cumpleanosHoySidebar; track c.id) {
+      <div class="sidebar-birthday-item">
+        <div>
+          <strong>{{ c.nombre }}</strong>
+          <p class="edad">{{ calcularEdad(c.fechaNacimiento) }} años</p>
+        </div>
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="no-birthdays">No hay cumpleaños hoy.</p>
     }
   </aside>
 </div>

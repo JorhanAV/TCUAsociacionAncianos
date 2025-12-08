@@ -449,16 +449,28 @@ $bg-light: #f8f9fa;
   box-shadow: 0 4px 16px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 
   .sidebar-title {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: #5e2c5f;
     font-weight: 700;
-    text-align: left;
   }
 
+  .sidebar-subtitle {
+    margin: 0;
+    margin-top: 5px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #444;
+
+    &.birthday {
+      color: #d47a00; // dorado oscuro
+    }
+  }
+
+  /* ACTIVIDADES */
   .sidebar-activity-list {
     display: flex;
     flex-direction: column;
@@ -492,10 +504,37 @@ $bg-light: #f8f9fa;
     }
   }
 
-  .no-activities {
-    margin-top: 10px;
+  /* CUMPLEAÑOS */
+  .sidebar-birthday-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .sidebar-birthday-item {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #fff8e6; // suave dorado pastel
+    border: 1px solid #f4b459;
+
+    strong {
+      font-size: 0.95rem;
+      color: #d47a00;
+    }
+
+    .edad {
+      margin: 2px 0 0;
+      font-size: 0.8rem;
+      color: #666;
+    }
+  }
+
+  .no-activities,
+  .no-birthdays {
     font-style: italic;
     text-align: center;
     color: #777;
+    font-size: 0.9rem;
   }
 }
+

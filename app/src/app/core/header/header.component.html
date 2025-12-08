@@ -87,4 +87,10 @@
     <span>Cerrar Sesión</span>
   </button>
   }
+  @if (isAuthenticated()) {
+  <button mat-menu-item (click)="logout()">
+    <mat-icon color="warn">password</mat-icon>
+    <span>Cambiar Contraseña</span>
+  </button>
+  }
 </mat-menu>

@@ -8,13 +8,15 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { UserForm } from './screens/user-form/user-form';
 import { UserAdmin } from './screens/user-admin/user-admin';
 import { UserLogin } from './screens/user-login/user-login';
+import { UserPass } from './screens/user-pass/user-pass';
 
 
 @NgModule({
   declarations: [
     UserForm,
     UserAdmin,
-    UserLogin
+    UserLogin,
+    UserPass
   ],
   imports: [
     CommonModule,

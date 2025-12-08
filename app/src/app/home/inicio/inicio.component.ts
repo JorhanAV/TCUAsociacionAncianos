@@ -43,6 +43,7 @@ export class InicioComponent implements OnInit {
   diaSeleccionadoTexto = '';
   cumpleanosDia: any[] = [];
   actividadesHoy: ActividadModel[] = [];
+  cumpleanosHoySidebar: any[] = [];
 
   // ---------- Formulario ----------
   modoForm: 'crear' | 'editar' | null = null;
@@ -109,6 +110,17 @@ export class InicioComponent implements OnInit {
   cargarClientes() {
     this.perfilService.get().subscribe((data) => {
       this.clientes.set(data);
+      this.actualizarCumpleanosHoy();
+    });
+  }
+  actualizarCumpleanosHoy() {
+    const hoy = new Date();
+
+    this.cumpleanosHoySidebar = this.clientes().filter((c) => {
+      if (!c.fechaNacimiento) return false;
+      const cumple = new Date(c.fechaNacimiento);
+
+      return cumple.getDate() === hoy.getDate() && cumple.getMonth() === hoy.getMonth();
     });
   }
 
