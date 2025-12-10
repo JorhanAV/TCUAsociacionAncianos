@@ -1,13 +1,13 @@
-// src/app/perfil/screens/perfil-form/perfil-form.component.ts
-import { Component, OnInit, Inject, inject } from '@angular/core';
+import { Component, OnInit, Inject, inject, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PerfilService } from '../../../share/services/perfil.service';
 import { environment } from '../../../../environments/environment.development';
 import { EEstado, ERol, perfilModel } from '../../../share/models/perfilModel';
-import { finalize } from 'rxjs'; // Importamos finalize para limpiar el estado de carga
+import { finalize, Subscription } from 'rxjs'; 
 import { UbicacionesService } from '../../../share/services/ubicaciones.service';
+import { take, startWith } from 'rxjs/operators'; // Importamos startWith para la carga inicial
 
 export interface PerfilDialogData {
   modo: 'crear' | 'editar';
@@ -18,11 +18,9 @@ export interface PerfilDialogData {
   selector: 'app-perfil-form',
   templateUrl: './perfil-form.component.html',
   styleUrl: './perfil-form.component.scss',
-  // Es importante usar 'standalone: true' si está usando la sintaxis @for/@if
-  // pero lo dejaré como 'standalone: false' si este componente es parte de un módulo.
   standalone: false,
 })
-export class PerfilFormComponent implements OnInit {
+export class PerfilFormComponent implements OnInit, OnDestroy {
   // inyección
   private fb = inject(FormBuilder);
   private svc = inject(PerfilService);
@@ -33,10 +31,9 @@ export class PerfilFormComponent implements OnInit {
 
   private ubicaciones = inject(UbicacionesService);
 
-  // NOTA: Es importante que el PerfilService tenga un método para enviar FormData
-  // (e.g., this.svc.createWithPhoto(formData))
+  private ubicacionSubs: Subscription[] = []; // Para gestionar las suscripciones de valueChanges
 
-  private imageBaseUrl = environment.imageBaseUrl; // 'http://localhost:3000/imagenes/'
+  private imageBaseUrl = environment.imageBaseUrl; 
 
   title = 'Nuevo perfil';
   roles = Object.values(ERol);
@@ -50,6 +47,7 @@ export class PerfilFormComponent implements OnInit {
     numeroCelular: ['', [Validators.pattern(/^[678]\d{3}-\d{4}$/)]],
     direccion: [''],
 
+    // Usaremos los códigos (strings) del JSON como valor
     provincia: ['', Validators.required],
     canton: ['', Validators.required],
     distrito: ['', Validators.required],
@@ -81,11 +79,10 @@ export class PerfilFormComponent implements OnInit {
   private idPerfil?: number;
 
   // FOTO
-  fotoFileName: string | null = null; // Lo que se guarda en fotoURL, usado para EDITAR
-  fotoPreviewUrl: string | null = null; // URL completa para <img>
+  fotoFileName: string | null = null; 
+  fotoPreviewUrl: string | null = null; 
   guardando = false;
 
-  // Para creación: guarda el archivo a subir con el formulario
   private pendingFotoFile: File | null = null;
 
   constructor(
@@ -94,7 +91,9 @@ export class PerfilFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ubicaciones.provincias().subscribe((data) => (this.provincias = data));
+    // Cargar las provincias estáticas (una sola vez)
+    this.ubicaciones.provincias().pipe(take(1)).subscribe((data) => (this.provincias = data));
+
     this.modo = this.data?.modo ?? 'crear';
 
     if (this.data?.perfil) {
@@ -110,9 +109,12 @@ export class PerfilFormComponent implements OnInit {
         telefonoContacto: p.telefonoContacto ?? '',
         numeroCelular: p.numeroCelular ?? '',
         direccion: p.direccion ?? '',
-        provincia: p.provincia ?? '',
+        
+        // 🚨 Es crucial que los valores guardados sean el CÓDIGO de la ubicación
+        provincia: p.provincia ?? '', 
         canton: p.canton ?? '',
         distrito: p.distrito ?? '',
+
         rol: p.rol,
         estado: p.estado,
       });
@@ -121,34 +123,118 @@ export class PerfilFormComponent implements OnInit {
         this.fotoFileName = p.fotoURL;
         this.fotoPreviewUrl = this.buildFotoUrl(p.fotoURL);
       }
-      this.loadCantones();
-      this.loadDistritos();
+      
+      // En modo edición, cargamos las listas iniciales con los valores guardados
+      this.loadCantones(p.provincia ?? '');
+      this.loadDistritos(p.provincia ?? '', p.canton ?? '');
+      
     } else {
       this.modo = 'crear';
       this.title = 'Nuevo perfil';
     }
+    
+    // 🚀 Configurar la cadena de selectores después de patchValue
+    this.setupUbicacionChain();
   }
 
-loadCantones() {
-  const provincia = this.form.value.provincia;
-  if (!provincia) return;
+  // Eliminamos loadCantones/loadDistritos antiguos, o los re-adaptamos para solo cargar la data
+  // si el modo es edición y no ha sido cargada la cadena.
+  
+  /**
+   * Carga la lista de cantones para el código de provincia dado.
+   * Usado para inicializar en modo Edición.
+   */
+  loadCantones(provinciaId: string): void {
+    if (!provinciaId) return;
+    this.ubicaciones.cantones(provinciaId).pipe(take(1)).subscribe(data => {
+      this.cantones = data; 
+    });
+  }
 
-  this.ubicaciones.cantones(provincia).subscribe(data => {
-    this.cantones = data;  // c.codigo = "01", "02", "03"
-  });
-}
+  /**
+   * Carga la lista de distritos para el código de provincia y cantón dados.
+   * Usado para inicializar en modo Edición.
+   */
+  loadDistritos(provinciaId: string, cantonId: string): void {
+    if (!provinciaId || !cantonId) return;
+    this.ubicaciones.distritos(provinciaId, cantonId).pipe(take(1)).subscribe(data => {
+      this.distritos = data;
+    });
+  }
 
 
- loadDistritos() {
-  const provincia = this.form.value.provincia;
-  const canton = this.form.value.canton;
+  /**
+   * Configura las suscripciones para manejar la carga en cascada de ubicaciones.
+   */
+  setupUbicacionChain() {
+    const pControl = this.form.get('provincia');
+    const cControl = this.form.get('canton');
+    const dControl = this.form.get('distrito');
 
-  if (!provincia || !canton) return;
+    if (!pControl || !cControl || !dControl) return;
 
-  this.ubicaciones.distritos(provincia, canton).subscribe(data => {
-    this.distritos = data;
-  });
-}
+    // 🚀 **Cadena de Provincia -> Cantón**
+    const provinciaSub = pControl.valueChanges
+      .pipe(startWith(pControl.value)) // Dispara la carga inicial si hay valor (edición)
+      .subscribe((provinciaId: string | null) => {
+        if (!provinciaId) {
+          this.cantones = [];
+          this.distritos = [];
+          cControl.setValue('', { emitEvent: false }); 
+          dControl.setValue('', { emitEvent: false });
+          return;
+        }
+
+        this.ubicaciones.cantones(provinciaId).pipe(take(1)).subscribe((data) => {
+          this.cantones = data;
+          
+          const cantonActual = cControl.value;
+          // Si el cantón actual NO existe en la nueva lista de cantones, lo limpiamos.
+          // Además, si estamos en modo crear, siempre limpiamos el cantón al cambiar la provincia.
+          const shouldResetCanton = this.modo === 'crear' || !cantonActual || !this.cantones.some(c => c.codigo === cantonActual);
+
+          if (shouldResetCanton) {
+            cControl.setValue('', { emitEvent: false }); 
+            dControl.setValue('', { emitEvent: false });
+            this.distritos = [];
+          }
+          // Si el cantón existe y no se resetea, el valueChanges del Cantón se dispara automáticamente.
+        });
+      });
+
+    // 🚀 **Cadena de Cantón -> Distrito**
+    const cantonSub = cControl.valueChanges
+      .pipe(startWith(cControl.value)) // Dispara la carga inicial si hay valor (edición)
+      .subscribe((cantonId: string | null) => {
+        const provinciaId = pControl.value;
+
+        if (!provinciaId || !cantonId) {
+          this.distritos = [];
+          dControl.setValue('', { emitEvent: false });
+          return;
+        }
+
+        this.ubicaciones.distritos(provinciaId, cantonId).pipe(take(1)).subscribe((data) => {
+          this.distritos = data;
+
+          const distritoActual = dControl.value;
+          // Si el distrito actual NO existe en la nueva lista de distritos, lo limpiamos.
+          const shouldResetDistrito = this.modo === 'crear' || !distritoActual || !this.distritos.some(d => d.codigo === distritoActual);
+
+          if (shouldResetDistrito) {
+            dControl.setValue('', { emitEvent: false });
+          }
+        });
+      });
+
+    this.ubicacionSubs.push(provinciaSub, cantonSub);
+  }
+  
+  ngOnDestroy(): void {
+    this.ubicacionSubs.forEach(sub => sub.unsubscribe());
+  }
+
+  // ... (buildFotoUrl, onFileSelected, createFormData, save, removePhoto, cancel se mantienen igual) ...
 
   private buildFotoUrl(fileName: string | null): string | null {
     if (!fileName) return null;
@@ -156,7 +242,6 @@ loadCantones() {
     return `${baseUrl}${fileName}`;
   }
 
-  // Cuando se selecciona una imagen
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) return;
@@ -168,28 +253,22 @@ loadCantones() {
     this.showSuccess('Nueva foto seleccionada. Guarde el perfil para aplicar los cambios.');
   }
 
-  /**
-   * Crea el objeto FormData a partir del formulario y del archivo pendiente.
-   */
   private createFormData(payloadBase: Partial<perfilModel>): FormData {
     const formData = new FormData();
 
-    // 1. Añadir campos del formulario como texto
     (Object.keys(payloadBase) as Array<keyof Partial<perfilModel>>).forEach((key) => {
       const value = payloadBase[key];
       if (value !== null && value !== undefined) {
         if (key === 'fechaNacimiento') {
           formData.append(key as string, new Date(value as string | Date).toISOString());
         } else {
+          // Aseguramos que provincia, canton y distrito se envíen como códigos
           formData.append(key as string, String(value));
         }
       }
     });
 
-    // 2. Añadir el archivo pendiente (si existe)
     if (this.pendingFotoFile) {
-      // Nombre del campo que Multer debe esperar en el backend: 'files' o 'foto'
-      // Usamos 'files' para ser consistentes con tu código anterior.
       formData.append('files', this.pendingFotoFile, this.pendingFotoFile.name);
     }
 
@@ -217,17 +296,16 @@ loadCantones() {
       numeroCelular: raw.numeroCelular || null,
       direccion: raw.direccion || null,
 
-      provincia: raw.provincia || null,
+      // 🚨 Los valores del formulario (código de provincia/cantón/distrito) se envían directamente
+      provincia: raw.provincia || null, 
       canton: raw.canton || null,
       distrito: raw.distrito || null,
     };
 
     this.guardando = true;
 
-    // 🚀 LÓGICA UNIFICADA
     const formData = this.createFormData(payloadBase);
 
-    // Llamamos al nuevo método unificado del servicio
     this.svc
       .saveWithPhoto(formData, this.modo, this.idPerfil)
       .pipe(finalize(() => (this.guardando = false)))
@@ -245,24 +323,11 @@ loadCantones() {
       });
   }
   removePhoto() {
-    // Simula que no hay archivo pendiente
     this.pendingFotoFile = null;
-
-    // Borra la URL de previsualización
     this.fotoPreviewUrl = null;
-
-    // Establece el valor de fotoURL a null en el formulario.
-    // Esto es crucial para que 'save()' sepa que debe enviar fotoURL: null en el payload
-    // y que el backend lo use para eliminar la foto de la BD y el servidor.
-    // **Asegúrate de que el control 'fotoURL' exista en tu FormGroup si lo necesitas**
-    // PERO, si confías solo en la lógica del backend, puedes usar una variable de estado:
-
-    // Opción 1: Si no tienes control 'fotoURL' en el formulario (basado en la nueva lógica)
-    // Simplemente borra la previsualización y la foto pendiente.
-    // El backend no recibirá 'files' ni 'previousFileName' si no se sube nada.
-
     this.showSuccess('Foto marcada para eliminación. Guarde el perfil para aplicar.');
   }
+  
   cancel() {
     this.dialogRef.close(false);
   }
@@ -285,7 +350,7 @@ loadCantones() {
     });
   }
 
-  // ---- MÁSCARA SOLO NÚMEROS ----
+  // ---- MÁSCARAS (se mantienen igual) ----
   onlyNumbers(e: any, controlName: string) {
     const clean = e.target.value.replace(/\D/g, '');
     const control = this.form.get(controlName);
@@ -294,7 +359,6 @@ loadCantones() {
     }
   }
 
-  // ---- MÁSCARA PARA TELÉFONO (####-####) ----
   formatPhone(e: any, controlName: string) {
     let v = e.target.value.replace(/\D/g, '');
 
@@ -308,7 +372,6 @@ loadCantones() {
     }
   }
 
-  // ---- MÁSCARA PARA CÉDULA CR (1-2345-6789) ----
   formatCedula(e: any) {
     let v = e.target.value.replace(/\D/g, '');
 

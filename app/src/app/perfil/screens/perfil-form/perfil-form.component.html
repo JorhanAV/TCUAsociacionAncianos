@@ -2,8 +2,6 @@
 <br />
 <mat-dialog-content>
   <form [formGroup]="form" class="form">
-    <!-- CAMPOS DEL PERFIL -->
-
     <mat-form-field appearance="outline">
       <mat-label>Nombre</mat-label>
       <input matInput formControlName="nombre" />
@@ -64,26 +62,27 @@
       <mat-label>Dirección</mat-label>
       <textarea matInput rows="2" formControlName="direccion"></textarea>
     </mat-form-field>
+
     <mat-form-field appearance="outline">
-  <mat-label>Provincia</mat-label>
-  <mat-select formControlName="provincia" (selectionChange)="loadCantones()">
-    <mat-option *ngFor="let p of provincias" [value]="p.codigo">{{ p.nombre }}</mat-option>
-  </mat-select>
-</mat-form-field>
+      <mat-label>Provincia</mat-label>
+      <mat-select formControlName="provincia"> 
+        <mat-option *ngFor="let p of provincias" [value]="p.codigo">{{ p.nombre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<mat-form-field appearance="outline">
-  <mat-label>Cantón</mat-label>
-  <mat-select formControlName="canton" (selectionChange)="loadDistritos()">
-    <mat-option *ngFor="let c of cantones" [value]="c.codigo">{{ c.nombre }}</mat-option>
-  </mat-select>
-</mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Cantón</mat-label>
+      <mat-select formControlName="canton"> 
+        <mat-option *ngFor="let c of cantones" [value]="c.codigo">{{ c.nombre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<mat-form-field appearance="outline">
-  <mat-label>Distrito</mat-label>
-  <mat-select formControlName="distrito">
-    <mat-option *ngFor="let d of distritos" [value]="d.codigo">{{ d.nombre }}</mat-option>
-  </mat-select>
-</mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Distrito</mat-label>
+      <mat-select formControlName="distrito">
+        <mat-option *ngFor="let d of distritos" [value]="d.codigo">{{ d.nombre }}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Rol</mat-label>
@@ -101,7 +100,6 @@
         <mat-option [value]="e">{{ e }}</mat-option> }
       </mat-select>
     </mat-form-field>
-    <!-- FOTO DE PERFIL -->
     <div class="foto-section">
       <div class="preview">
         @if (fotoPreviewUrl) {
